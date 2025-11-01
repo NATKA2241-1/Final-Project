@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ExploreWise – Travel Preferences Quiz</title>
+  <meta name="description" content="Answer a quick quiz to discover your ideal travel styles and get up to four tailored trip ideas." />
+  <style>
+    :root{
+      --bg:#0b0f14;           /* deep navy */
+      --card:#101720;         /* card surface */
+      --muted:#8aa0b4;        /* text muted */
+      --text:#e6eef7;         /* text */
+      --accent:#4fd1c5;       /* teal */
+      --accent-2:#7aa2f7;     /* blue */
+      --danger:#ff6b6b;       /* red */
+      --ok:#5ad769;           /* green */
+      --shadow: 0 10px 30px rgba(0,0,0,.35);
+      --radius: 18px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0; background: radial-gradient(1200px 800px at 80% -20%, #14202e 0%, #0b0f14 60%) fixed;
+      color:var(--text); font: 16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,"Helvetica Neue",Arial,"Apple Color Emoji","Segoe UI Emoji";
+      display:flex; align-items:center; justify-content:center; padding:32px;
+    }
+    .app{width:min(1000px,100%);}
+    header{display:flex; gap:16px; align-items:center; margin-bottom:22px}
+    .logo{width:44px; height:44px; display:grid; place-content:center; background:linear-gradient(135deg,var(--accent),var(--accent-2)); border-radius:12px; box-shadow:var(--shadow); font-weight:800}
+    h1{margin:0; font-size:clamp(22px,4vw,32px)}
+    .muted{color:var(--muted)}
+
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02)); border:1px solid rgba(255,255,255,.06); border-radius:var(--radius); box-shadow:var(--shadow)}
+
+    .panel{padding:22px}
+    .grid{display:grid; gap:18px}
+
+    /* Progress */
+    .progress-wrap{display:flex; align-items:center; gap:12px; margin:14px 0 6px}
+    .progress{height:10px; background:#1a2230; border-radius:999px; overflow:hidden; flex:1}
+    .progress > span{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--accent),var(--accent-2)); transition:width .35s ease}
+
+    /* Buttons */
+    .row{display:flex; gap:10px; flex-wrap:wrap}
+    .btn{appearance:none; border:none; background:#1a2230; color:var(--text); padding:12px 16px; border-radius:12px; cursor:pointer; transition:transform .04s ease, background .2s ease, box-shadow .2s ease; font-weight:600}
+    .btn:hover{background:#223047}
+    .btn:active{transform:translateY(1px)}
+    .btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:#04121a; box-shadow:0 6px 20px rgba(79,209,197,.35)}
+    .btn.ghost{background:transparent; border:1px solid rgba(255,255,255,.12)}
+    .btn.disabled{opacity:.5; pointer-events:none}
+
+    /* Question list */
+    .question{padding:14px 16px; background:#0f1621; border:1px solid rgba(255,255,255,.06); border-radius:14px}
+    .question h4{margin:0 0 8px 0; font-size:16px}
+    .options{display:flex; gap:8px; flex-wrap:wrap}
+    .chip{padding:10px 14px; border-radius:999px; background:#1a2230; border:1px solid rgba(255,255,255,.08); cursor:pointer; user-select:none}
+    .chip[aria-checked="true"]{background:rgba(79,209,197,.18); border-color:var(--accent)}
+
+    /* Footer nav */
+    .footer{display:flex; justify-content:space-between; align-items:center; padding:16px; border-top:1px solid rgba(255,255,255,.06)}
+
+    /* Results */
+    .results{display:grid; gap:16px}
+    .result-card{padding:16px; border:1px solid rgba(255,255,255,.06); border-radius:16px; background:#0e141e}
+    .pill{display:inline-flex; align-items:center; gap:8px; background:rgba(122,162,247,.15); padding:6px 10px; border-radius:999px; border:1px solid rgba(122,162,247,.35)}
+
+    .meta{display:flex; gap:8px; flex-wrap:wrap}
+    .meta .tag{background:#182132; border:1px solid rgba(255,255,255,.06); padding:6px 10px; border-radius:999px}
+
+    .hidden{display:none !important}
+
+    /* Responsive tweaks */
+    @media (max-width:720px){
+      .panel{padding:16px}
+      .footer{flex-direction:column; gap:10px}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <!-- Header -->
+    <header>
+      <div class="logo" aria-hidden="true">🌍</div>
+      <div>
+        <h1>ExploreWise: Travel Preferences Quiz</h1>
+        <div class="muted">Answer a few quick questions. We'll score your interests and suggest up to four travel styles that fit you.</div>
+      </div>
+    </header>
+
+    <!-- Quiz Card -->
+    <section class="card" id="quizCard" role="region" aria-labelledby="quizTitle">
+      <div class="panel grid">
+        <div class="progress-wrap" aria-live="polite">
+          <strong id="progressText">Section 1 of 6</strong>
+          <div class="progress" aria-label="Progress"><span id="progressBar"></span></div>
+        </div>
+
+        <h2 id="quizTitle" style="margin:0">General Interests</h2>
+        <p class="muted" id="quizSubtitle">Tell us how you like to explore.</p>
+
+        <div id="questions" class="grid" aria-live="polite"></div>
+      </div>
+
+      <div class="footer">
+        <div class="row">
+          <button class="btn ghost" id="btnReset" type="button">Reset</button>
+        </div>
+        <div class="row">
+          <button class="btn" id="btnBack" type="button">Back</button>
+          <button class="btn primary" id="btnNext" type="button">Next</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Results Card -->
+    <section class="card hidden" id="resultsCard" role="region" aria-labelledby="resultsTitle">
+      <div class="panel grid">
+        <h2 id="resultsTitle" style="margin:0">Your Top Travel Styles</h2>
+        <p class="muted">Based on your answers, here are up to four styles that best fit you. Use them to plan activities and pick destinations.</p>
+        <div id="results" class="results"></div>
+      </div>
+      <div class="footer">
+        <div class="row">
+          <button class="btn" id="btnDownload" type="button">Download summary</button>
+          <button class="btn ghost" id="btnShare" type="button">Copy shareable link</button>
+        </div>
+        <div class="row">
+          <button class="btn" id="btnEdit" type="button">Edit answers</button>
+          <button class="btn primary" id="btnStartOver" type="button">Start over</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+  // ------------------ Quiz Data ------------------
+  const QUIZ = [
+    {
+      id: 'general', title: 'General Interests', subtitle: 'Tell us how you like to explore.',
+      questions: [
+        { q: 'Do you enjoy sightseeing?', key: 'sightseeing', tags:['general','landmarks'] },
+        { q: 'Do you like visiting popular landmarks?', key: 'popular_landmarks', tags:['landmarks'] },
+        { q: 'Do you prefer hidden or local spots?', key: 'hidden_spots', tags:['offbeat'] },
+        { q: 'Do you enjoy guided tours?', key: 'guided_tours', tags:['guided'] },
+        { q: 'Do you like spontaneous trips?', key: 'spontaneous_general', tags:['spontaneous'] },
+      ]
+    },
+    {
+      id: 'food', title: 'Food & Drink', subtitle: 'Your culinary comfort zone.',
+      questions: [
+        { q: 'Do you enjoy trying local food?', key: 'local_food', tags:['foodie'] },
+        { q: 'Do you like fine dining?', key: 'fine_dining', tags:['luxury','foodie'] },
+        { q: 'Do you enjoy street food?', key: 'street_food', tags:['budget','foodie'] },
+        { q: 'Do you like visiting local cafés?', key: 'cafes', tags:['relax','foodie'] },
+        { q: 'Do you enjoy wine or brewery tours?', key: 'wine_brewery', tags:['leisure','foodie'] },
+        { q: 'Do you like cooking classes abroad?', key: 'cooking_classes', tags:['culture','foodie'] },
+        { q: 'Do you enjoy local markets?', key: 'food_markets', tags:['markets','foodie'] },
+      ]
+    },
+    {
+      id: 'culture', title: 'History & Culture', subtitle: 'Museums, heritage, and the arts.',
+      questions: [
+        { q: 'Do you like visiting museums?', key: 'museums', tags:['culture'] },
+        { q: 'Do you enjoy historical landmarks?', key: 'historical_landmarks', tags:['culture','heritage'] },
+        { q: 'Do you like learning about local history?', key: 'local_history', tags:['culture','learning'] },
+        { q: 'Do you enjoy art galleries?', key: 'art_galleries', tags:['arts'] },
+        { q: 'Do you like architecture?', key: 'architecture', tags:['architecture','culture'] },
+        { q: 'Do you enjoy cultural festivals?', key: 'cultural_festivals', tags:['events','culture'] },
+        { q: 'Do you like exploring heritage sites?', key: 'heritage_sites', tags:['heritage','culture'] },
+        { q: 'Do you enjoy theatre or live performances?', key: 'theatre', tags:['arts','events'] },
+      ]
+    },
+    {
+      id: 'nature', title: 'Nature & Outdoors', subtitle: 'Green spaces and big skies.',
+      questions: [
+        { q: 'Do you like spending time in nature?', key: 'nature_time', tags:['nature'] },
+        { q: 'Do you enjoy hiking?', key: 'hiking', tags:['adventure','nature'] },
+        { q: 'Do you like beaches?', key: 'beaches', tags:['beach','relax'] },
+        { q: 'Do you enjoy mountain views?', key: 'mountains', tags:['scenery','nature'] },
+        { q: 'Do you like national parks?', key: 'national_parks', tags:['nature','scenery'] },
+        { q: 'Do you enjoy scenic drives?', key: 'scenic_drives', tags:['scenery'] },
+        { q: 'Do you like outdoor adventures?', key: 'outdoor_adventures', tags:['adventure'] },
+        { q: 'Do you enjoy photography of landscapes?', key: 'landscape_photography', tags:['scenery','nature'] },
+      ]
+    },
+    {
+      id: 'leisure', title: 'Entertainment & Leisure', subtitle: 'Fun, vibes, and downtime.',
+      questions: [
+        { q: 'Do you like nightlife?', key: 'nightlife', tags:['nightlife'] },
+        { q: 'Do you enjoy live music?', key: 'live_music', tags:['music','events'] },
+        { q: 'Do you like shopping while travelling?', key: 'shopping', tags:['shopping'] },
+        { q: 'Do you enjoy local markets?', key: 'local_markets', tags:['markets'] },
+        { q: 'Do you like spa or wellness activities?', key: 'spa', tags:['wellness','relax'] },
+        { q: 'Do you enjoy relaxing days with no plans?', key: 'no_plans', tags:['relax'] },
+        { q: 'Do you like sports events while abroad?', key: 'sports_events', tags:['sports'] },
+      ]
+    },
+    {
+      id: 'city', title: 'City Vibes', subtitle: 'How you like to move through a place.',
+      questions: [
+        { q: 'Do you like modern cities?', key: 'modern_cities', tags:['modern'] },
+        { q: 'Do you prefer old towns?', key: 'old_towns', tags:['oldtown','heritage'] },
+        { q: 'Do you like exploring by foot?', key: 'by_foot', tags:['walking'] },
+        { q: 'Do you enjoy using public transport?', key: 'public_transport', tags:['transit'] },
+        { q: 'Do you like staying in busy areas?', key: 'busy_areas', tags:['busy'] },
+        { q: 'Do you prefer quiet neighbourhoods?', key: 'quiet_neighbourhoods', tags:['quiet'] },
+      ]
+    },
+    {
+      id: 'style', title: 'Personal Travel Style', subtitle: 'Budget, company, and planning preferences.',
+      questions: [
+        { q: 'Do you like travelling solo?', key: 'solo', tags:['solo'] },
+        { q: 'Do you enjoy travelling in groups?', key: 'group', tags:['group'] },
+        { q: 'Do you like luxury travel?', key: 'luxury', tags:['luxury'] },
+        { q: 'Do you prefer budget travel?', key: 'budget', tags:['budget'] },
+        { q: 'Do you like planning ahead?', key: 'planner', tags:['planner'] },
+        { q: 'Do you enjoy spontaneous trips?', key: 'spontaneous_style', tags:['spontaneous'] },
+        { q: 'Do you like returning to places you’ve already visited?', key: 'returning', tags:['comfort'] },
+      ]
+    },
+  ];
+
+  // Result profiles. Each profile aggregates several tags.
+  const PROFILES = [
+    { id:'Culture Maven', icon:'🏛️', tags:['culture','heritage','arts','architecture','learning','events','oldtown'],
+      blurb:'You love stories, museums, and timeless streets. Build days around exhibits, heritage sites, and local traditions.',
+      ideas:['City museum passes','Guided history walks','UNESCO heritage day trips','Festival weekends'] },
+    { id:'Foodie Explorer', icon:'🍜', tags:['foodie','markets','cafes','luxury'],
+      blurb:'Tastes and aromas lead your itinerary. From markets to Michelin, food is your compass.',
+      ideas:['Market-to-table tours','Street food safaris','Cooking classes','Winery & brewery trails'] },
+    { id:'Nature Seeker', icon:'🌿', tags:['nature','scenery','beach','mountains','national_parks','adventure'],
+      blurb:'Fresh air, big skies, and trail time recharge you. Prioritise parks, coasts, and scenic routes.',
+      ideas:['National park loops','Sunrise/sunset lookouts','Coastal hikes','Stargazing spots'] },
+    { id:'Leisure & Vibes', icon:'🎉', tags:['nightlife','music','shopping','wellness','relax','sports','events'],
+      blurb:'You travel for fun and feel-good moments—great shows, spa days, and lively nights.',
+      ideas:['Live music calendars','Rooftop bars','Thermal spas & hammams','Match-day tickets'] },
+    { id:'City Wanderer', icon:'🚶‍♀️', tags:['walking','transit','modern','busy','quiet'],
+      blurb:'You thrive in urban textures—walkable streets, metro lines, and neighbourhood vibes.',
+      ideas:['Self-guided walks','Transit day passes','Neighbourhood food crawls','Street art hunts'] },
+    { id:'Offbeat Adventurer', icon:'🧭', tags:['offbeat','guided','spontaneous','adventure'],
+      blurb:'You like the path less taken and the odd guided deep-dive. Keep plans flexible for serendipity.',
+      ideas:['Hidden-gems tours','Day-trip roulette','Cave or canyon adventures','Local-led experiences'] },
+    { id:'Style & Comfort', icon:'🧳', tags:['solo','group','luxury','budget','planner','spontaneous','comfort'],
+      blurb:'How you travel matters: solo vs group, luxury vs budget, planner vs spontaneous—blend to fit your mood.',
+      ideas:['Solo-friendly hostels/hotels','Small-group tours','Splurge nights + save days','Buffer-free days'] },
+  ];
+
+  // ------------------ State ------------------
+  const state = {
+    sectionIndex: 0,
+    answers: {}, // key:boolean
+  };
+
+  // Try restore from URL or localStorage
+  ;(function initPersist(){
+    const params = new URLSearchParams(location.search);
+    const encoded = params.get('a');
+    if(encoded){
+      try { Object.assign(state.answers, JSON.parse(atob(decodeURIComponent(encoded)))); } catch{}
+    } else {
+      const stored = localStorage.getItem('explorewise_answers');
+      if(stored){ try { Object.assign(state.answers, JSON.parse(stored)); } catch{} }
+    }
+  })();
+
+  // ------------------ Rendering ------------------
+  const elQuestions = document.getElementById('questions');
+  const elProgressText = document.getElementById('progressText');
+  const elProgressBar = document.getElementById('progressBar');
+  const elQuizTitle = document.getElementById('quizTitle');
+  const elQuizSubtitle = document.getElementById('quizSubtitle');
+  const btnNext = document.getElementById('btnNext');
+  const btnBack = document.getElementById('btnBack');
+  const btnReset = document.getElementById('btnReset');
+
+  const quizCard = document.getElementById('quizCard');
+  const resultsCard = document.getElementById('resultsCard');
+  const elResults = document.getElementById('results');
+  const btnDownload = document.getElementById('btnDownload');
+  const btnShare = document.getElementById('btnShare');
+  const btnEdit = document.getElementById('btnEdit');
+  const btnStartOver = document.getElementById('btnStartOver');
+
+  function renderSection(){
+    const s = QUIZ[state.sectionIndex];
+    elQuizTitle.textContent = s.title;
+    elQuizSubtitle.textContent = s.subtitle;
+
+    const totalSections = QUIZ.length;
+    elProgressText.textContent = `Section ${state.sectionIndex+1} of ${totalSections}`;
+    elProgressBar.style.width = `${((state.sectionIndex)/ (totalSections))*100}%`;
+
+    elQuestions.innerHTML = '';
+
+    s.questions.forEach((item, i)=>{
+      const id = `${s.id}_${i}`;
+      const wrap = document.createElement('div');
+      wrap.className = 'question';
+      wrap.innerHTML = `
+        <h4 id="${id}_label">${item.q}</h4>
+        <div class="options" role="group" aria-labelledby="${id}_label">
+          <button type="button" class="chip" role="radio" aria-checked="false" data-key="${item.key}" data-val="yes">Yes</button>
+          <button type="button" class="chip" role="radio" aria-checked="false" data-key="${item.key}" data-val="no">No</button>
+          <button type="button" class="chip" role="radio" aria-checked="false" data-key="${item.key}" data-val="skip">Skip</button>
+        </div>`;
+      elQuestions.appendChild(wrap);
+    });
+
+    // set existing answers
+    elQuestions.querySelectorAll('.chip').forEach(ch=>{
+      const key = ch.dataset.key, v = ch.dataset.val;
+      const saved = state.answers[key];
+      if(saved === v){ ch.setAttribute('aria-checked','true'); }
+      ch.addEventListener('click', ()=>{
+        // toggle selection within group
+        const group = ch.parentElement.querySelectorAll('.chip[data-key="'+key+'"]');
+        group.forEach(g=>g.setAttribute('aria-checked','false'));
+        ch.setAttribute('aria-checked','true');
+        state.answers[key] = v;
+        persistAnswers();
+        checkAdvanceHint();
+      });
+    });
