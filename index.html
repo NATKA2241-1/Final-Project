@@ -84,41 +84,45 @@
       padding: 0 6px;
     }
 
-    .question {
+    .fieldset-note {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .tick-group {
       display: grid;
-      gap: 10px;
-    }
-
-    .question label {
-      font-weight: 600;
-    }
-
-    .choices {
-      display: flex;
-      flex-wrap: wrap;
       gap: 12px;
     }
 
-    .choice {
-      display: inline-flex;
+    .tick {
+      display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 9px 14px;
-      border-radius: 999px;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 16px;
       border: 1px solid rgba(255, 255, 255, 0.15);
       cursor: pointer;
       user-select: none;
       transition: background 0.2s ease, border-color 0.2s ease;
       background: rgba(255, 255, 255, 0.04);
+      font-weight: 600;
     }
 
-    input[type="radio"] {
+    .tick:hover {
+      border-color: rgba(255, 255, 255, 0.35);
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .tick input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
       accent-color: var(--accent);
     }
 
-    .choice:hover {
-      border-color: rgba(255, 255, 255, 0.35);
-      background: rgba(255, 255, 255, 0.1);
+    .tick span {
+      flex: 1;
     }
 
     button {
@@ -224,419 +228,48 @@
   <main>
     <header>
       <h1>Find Your Travel Style</h1>
-      <p>Answer the questions below to uncover which kinds of trips will make you happiest. At the end, you&rsquo;ll see up to four tailored travel styles that match your answers.</p>
+      <p>Tick the statements below to uncover which kinds of trips will make you happiest. At the end, you&rsquo;ll see up to four tailored travel styles that match your answers.</p>
     </header>
 
     <form id="quiz" novalidate>
       <fieldset>
-        <legend>General Interests</legend>
-        <div class="question">
-          <label>Do you enjoy sightseeing?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you enjoy sightseeing?">
-            <label class="choice"><input type="radio" name="sightseeing" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="sightseeing" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="sightseeing" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you like visiting popular landmarks?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you like visiting popular landmarks?">
-            <label class="choice"><input type="radio" name="landmarks" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="landmarks" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="landmarks" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you prefer hidden or local spots?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you prefer hidden or local spots?">
-            <label class="choice"><input type="radio" name="hidden_gems" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="hidden_gems" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="hidden_gems" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you enjoy guided tours?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you enjoy guided tours?">
-            <label class="choice"><input type="radio" name="guided_tours" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="guided_tours" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="guided_tours" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you like spontaneous trips?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you like spontaneous trips?">
-            <label class="choice"><input type="radio" name="spontaneous_general" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="spontaneous_general" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="spontaneous_general" value="no" />Not really</label>
-          </div>
-        </div>
-      </fieldset>
-
-      <fieldset>
-        <legend>Food &amp; Drink</legend>
-        <div class="question">
-          <label>Do you enjoy trying local food?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you enjoy trying local food?">
-            <label class="choice"><input type="radio" name="local_food" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="local_food" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="local_food" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you like fine dining?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you like fine dining?">
-            <label class="choice"><input type="radio" name="fine_dining" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="fine_dining" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="fine_dining" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you enjoy street food?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you enjoy street food?">
-            <label class="choice"><input type="radio" name="street_food" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="street_food" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="street_food" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you like visiting local cafés?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you like visiting local cafés?">
-            <label class="choice"><input type="radio" name="local_cafes" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="local_cafes" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="local_cafes" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you enjoy wine or brewery tours?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you enjoy wine or brewery tours?">
-            <label class="choice"><input type="radio" name="wine_tours" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="wine_tours" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="wine_tours" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you like cooking classes abroad?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you like cooking classes abroad?">
-            <label class="choice"><input type="radio" name="cooking_classes" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="cooking_classes" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="cooking_classes" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you enjoy local markets?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you enjoy local markets?">
-            <label class="choice"><input type="radio" name="local_markets_food" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="local_markets_food" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="local_markets_food" value="no" />Not really</label>
-          </div>
-        </div>
-      </fieldset>
-
-      <fieldset>
-        <legend>History &amp; Culture</legend>
-        <div class="question">
-          <label>Do you like visiting museums?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you like visiting museums?">
-            <label class="choice"><input type="radio" name="museums" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="museums" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="museums" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you enjoy historical landmarks?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you enjoy historical landmarks?">
-            <label class="choice"><input type="radio" name="historical_landmarks" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="historical_landmarks" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="historical_landmarks" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you like learning about local history?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you like learning about local history?">
-            <label class="choice"><input type="radio" name="local_history" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="local_history" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="local_history" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you enjoy art galleries?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you enjoy art galleries?">
-            <label class="choice"><input type="radio" name="art_galleries" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="art_galleries" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="art_galleries" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you like architecture?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you like architecture?">
-            <label class="choice"><input type="radio" name="architecture" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="architecture" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="architecture" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you enjoy cultural festivals?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you enjoy cultural festivals?">
-            <label class="choice"><input type="radio" name="cultural_festivals" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="cultural_festivals" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="cultural_festivals" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you like exploring heritage sites?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you like exploring heritage sites?">
-            <label class="choice"><input type="radio" name="heritage_sites" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="heritage_sites" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="heritage_sites" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you enjoy theatre or live performances?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you enjoy theatre or live performances?">
-            <label class="choice"><input type="radio" name="theatre" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="theatre" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="theatre" value="no" />Not really</label>
-          </div>
-        </div>
-      </fieldset>
-
-      <fieldset>
-        <legend>Nature &amp; Outdoors</legend>
-        <div class="question">
-          <label>Do you like spending time in nature?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you like spending time in nature?">
-            <label class="choice"><input type="radio" name="nature_time" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="nature_time" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="nature_time" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you enjoy hiking?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you enjoy hiking?">
-            <label class="choice"><input type="radio" name="hiking" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="hiking" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="hiking" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you like beaches?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you like beaches?">
-            <label class="choice"><input type="radio" name="beaches" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="beaches" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="beaches" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you enjoy mountain views?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you enjoy mountain views?">
-            <label class="choice"><input type="radio" name="mountains" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="mountains" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="mountains" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you like national parks?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you like national parks?">
-            <label class="choice"><input type="radio" name="national_parks" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="national_parks" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="national_parks" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you enjoy scenic drives?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you enjoy scenic drives?">
-            <label class="choice"><input type="radio" name="scenic_drives" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="scenic_drives" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="scenic_drives" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you like outdoor adventures?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you like outdoor adventures?">
-            <label class="choice"><input type="radio" name="outdoor_adventures" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="outdoor_adventures" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="outdoor_adventures" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you enjoy photography of landscapes?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you enjoy photography of landscapes?">
-            <label class="choice"><input type="radio" name="landscape_photography" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="landscape_photography" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="landscape_photography" value="no" />Not really</label>
-          </div>
-        </div>
-      </fieldset>
-
-      <fieldset>
         <legend>Entertainment &amp; Leisure</legend>
-        <div class="question">
-          <label>Do you like nightlife?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you like nightlife?">
-            <label class="choice"><input type="radio" name="nightlife" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="nightlife" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="nightlife" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you enjoy live music?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you enjoy live music?">
-            <label class="choice"><input type="radio" name="live_music" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="live_music" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="live_music" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you like shopping while travelling?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you like shopping while travelling?">
-            <label class="choice"><input type="radio" name="shopping" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="shopping" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="shopping" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you enjoy local markets?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you enjoy local markets (leisure)?">
-            <label class="choice"><input type="radio" name="local_markets" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="local_markets" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="local_markets" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you like spa or wellness activities?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you like spa or wellness activities?">
-            <label class="choice"><input type="radio" name="spa" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="spa" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="spa" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you enjoy relaxing days with no plans?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you enjoy relaxing days with no plans?">
-            <label class="choice"><input type="radio" name="no_plans" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="no_plans" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="no_plans" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you like sports events while abroad?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you like sports events while abroad?">
-            <label class="choice"><input type="radio" name="sports_events" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="sports_events" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="sports_events" value="no" />Not really</label>
-          </div>
+        <p class="fieldset-note">Tick every experience you enjoy on a getaway.</p>
+        <div class="tick-group">
+          <label class="tick"><input type="checkbox" name="nightlife" value="yes" /> <span>Do you like nightlife?</span></label>
+          <label class="tick"><input type="checkbox" name="live_music" value="yes" /> <span>Do you enjoy live music?</span></label>
+          <label class="tick"><input type="checkbox" name="shopping" value="yes" /> <span>Do you like shopping while travelling?</span></label>
+          <label class="tick"><input type="checkbox" name="local_markets" value="yes" /> <span>Do you enjoy local markets?</span></label>
+          <label class="tick"><input type="checkbox" name="spa" value="yes" /> <span>Do you like spa or wellness activities?</span></label>
+          <label class="tick"><input type="checkbox" name="no_plans" value="yes" /> <span>Do you enjoy relaxing days with no plans?</span></label>
+          <label class="tick"><input type="checkbox" name="sports_events" value="yes" /> <span>Do you like sports events while abroad?</span></label>
         </div>
       </fieldset>
 
       <fieldset>
         <legend>City Vibes</legend>
-        <div class="question">
-          <label>Do you like modern cities?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you like modern cities?">
-            <label class="choice"><input type="radio" name="modern_cities" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="modern_cities" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="modern_cities" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you prefer old towns?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you prefer old towns?">
-            <label class="choice"><input type="radio" name="old_towns" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="old_towns" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="old_towns" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you like exploring by foot?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you like exploring by foot?">
-            <label class="choice"><input type="radio" name="by_foot" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="by_foot" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="by_foot" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you enjoy using public transport?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you enjoy using public transport?">
-            <label class="choice"><input type="radio" name="public_transport" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="public_transport" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="public_transport" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you like staying in busy areas?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you like staying in busy areas?">
-            <label class="choice"><input type="radio" name="busy_areas" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="busy_areas" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="busy_areas" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you prefer quiet neighbourhoods?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you prefer quiet neighbourhoods?">
-            <label class="choice"><input type="radio" name="quiet_neighbourhoods" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="quiet_neighbourhoods" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="quiet_neighbourhoods" value="no" />Not really</label>
-          </div>
+        <p class="fieldset-note">Choose the city atmospheres and ways of exploring that excite you.</p>
+        <div class="tick-group">
+          <label class="tick"><input type="checkbox" name="modern_cities" value="yes" /> <span>Do you like modern cities?</span></label>
+          <label class="tick"><input type="checkbox" name="old_towns" value="yes" /> <span>Do you prefer old towns?</span></label>
+          <label class="tick"><input type="checkbox" name="by_foot" value="yes" /> <span>Do you like exploring by foot?</span></label>
+          <label class="tick"><input type="checkbox" name="public_transport" value="yes" /> <span>Do you enjoy using public transport?</span></label>
+          <label class="tick"><input type="checkbox" name="busy_areas" value="yes" /> <span>Do you like staying in busy areas?</span></label>
+          <label class="tick"><input type="checkbox" name="quiet_neighbourhoods" value="yes" /> <span>Do you prefer quiet neighbourhoods?</span></label>
         </div>
       </fieldset>
 
       <fieldset>
         <legend>Personal Travel Style</legend>
-        <div class="question">
-          <label>Do you like travelling solo?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you like travelling solo?">
-            <label class="choice"><input type="radio" name="solo" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="solo" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="solo" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you enjoy travelling in groups?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you enjoy travelling in groups?">
-            <label class="choice"><input type="radio" name="group" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="group" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="group" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you like luxury travel?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you like luxury travel?">
-            <label class="choice"><input type="radio" name="luxury" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="luxury" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="luxury" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you prefer budget travel?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you prefer budget travel?">
-            <label class="choice"><input type="radio" name="budget" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="budget" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="budget" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you like planning ahead?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you like planning ahead?">
-            <label class="choice"><input type="radio" name="planner" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="planner" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="planner" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you enjoy spontaneous trips?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you enjoy spontaneous trips (style)?">
-            <label class="choice"><input type="radio" name="spontaneous_style" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="spontaneous_style" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="spontaneous_style" value="no" />Not really</label>
-          </div>
-        </div>
-        <div class="question">
-          <label>Do you like returning to places you&rsquo;ve already visited?</label>
-          <div class="choices" role="radiogroup" aria-label="Do you like returning to places you've already visited?">
-            <label class="choice"><input type="radio" name="returning" value="yes" />Yes</label>
-            <label class="choice"><input type="radio" name="returning" value="maybe" />Sometimes</label>
-            <label class="choice"><input type="radio" name="returning" value="no" />Not really</label>
-          </div>
+        <p class="fieldset-note">Mark the styles that feel true to how you plan and enjoy trips.</p>
+        <div class="tick-group">
+          <label class="tick"><input type="checkbox" name="solo" value="yes" /> <span>Do you like travelling solo?</span></label>
+          <label class="tick"><input type="checkbox" name="group" value="yes" /> <span>Do you enjoy travelling in groups?</span></label>
+          <label class="tick"><input type="checkbox" name="luxury" value="yes" /> <span>Do you like luxury travel?</span></label>
+          <label class="tick"><input type="checkbox" name="budget" value="yes" /> <span>Do you prefer budget travel?</span></label>
+          <label class="tick"><input type="checkbox" name="planner" value="yes" /> <span>Do you like planning ahead?</span></label>
+          <label class="tick"><input type="checkbox" name="spontaneous_style" value="yes" /> <span>Do you enjoy spontaneous trips?</span></label>
+          <label class="tick"><input type="checkbox" name="returning" value="yes" /> <span>Do you like returning to places you’ve already visited?</span></label>
         </div>
       </fieldset>
 
@@ -714,41 +347,13 @@
     ];
 
     const questionWeights = {
-      sightseeing: ['culturalExplorer', 'cityHighlights'],
-      landmarks: ['culturalExplorer', 'cityHighlights'],
-      hidden_gems: ['flexibleCompanion', 'culturalExplorer'],
-      guided_tours: ['culturalExplorer', 'flexibleCompanion'],
-      spontaneous_general: ['flexibleCompanion'],
-      local_food: ['foodieAdventure'],
-      fine_dining: ['foodieAdventure', 'leisureLifestyle'],
-      street_food: ['foodieAdventure'],
-      local_cafes: ['foodieAdventure', 'cityHighlights'],
-      wine_tours: ['foodieAdventure', 'leisureLifestyle'],
-      cooking_classes: ['foodieAdventure', 'culturalExplorer'],
-      local_markets_food: ['foodieAdventure', 'leisureLifestyle'],
-      museums: ['culturalExplorer'],
-      historical_landmarks: ['culturalExplorer'],
-      local_history: ['culturalExplorer'],
-      art_galleries: ['culturalExplorer'],
-      architecture: ['culturalExplorer', 'cityHighlights'],
-      cultural_festivals: ['culturalExplorer', 'leisureLifestyle'],
-      heritage_sites: ['culturalExplorer'],
-      theatre: ['culturalExplorer', 'leisureLifestyle'],
-      nature_time: ['natureGetaway'],
-      hiking: ['natureGetaway'],
-      beaches: ['natureGetaway', 'leisureLifestyle'],
-      mountains: ['natureGetaway'],
-      national_parks: ['natureGetaway'],
-      scenic_drives: ['natureGetaway'],
-      outdoor_adventures: ['natureGetaway', 'flexibleCompanion'],
-      landscape_photography: ['natureGetaway'],
       nightlife: ['leisureLifestyle'],
       live_music: ['leisureLifestyle'],
       shopping: ['leisureLifestyle', 'cityHighlights'],
       local_markets: ['foodieAdventure', 'leisureLifestyle'],
       spa: ['leisureLifestyle'],
       no_plans: ['leisureLifestyle'],
-      sports_events: ['leisureLifestyle'],
+      sports_events: ['leisureLifestyle', 'flexibleCompanion'],
       modern_cities: ['cityHighlights'],
       old_towns: ['cityHighlights', 'culturalExplorer'],
       by_foot: ['cityHighlights'],
@@ -771,8 +376,8 @@
         const tags = questionWeights[question];
         if (!tags) return;
 
-        const weight = value === 'yes' ? 2 : value === 'maybe' ? 1 : 0;
-        if (!weight) return;
+        if (value !== 'yes') return;
+        const weight = 2;
 
         tags.forEach(tag => {
           scores[tag] += weight;
@@ -792,7 +397,7 @@
       resultList.innerHTML = '';
 
       if (!sorted.length) {
-        resultMessage.textContent = 'Answer a few questions so we can recommend your travel style.';
+        resultMessage.textContent = 'Tick a few statements so we can recommend your travel style.';
         return;
       }
 
