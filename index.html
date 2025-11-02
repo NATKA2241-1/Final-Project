@@ -3,322 +3,1902 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ExploreWise – Travel Preferences Quiz</title>
-  <meta name="description" content="Answer a quick quiz to discover your ideal travel styles and get up to four tailored trip ideas." />
+  <title>Travel Interest Quiz</title>
+  <meta name="description" content="Discover what kind of travel experiences fit you best with this quick preference quiz." />
   <style>
-    :root{
-      --bg:#0b0f14;           /* deep navy */
-      --card:#101720;         /* card surface */
-      --muted:#8aa0b4;        /* text muted */
-      --text:#e6eef7;         /* text */
-      --accent:#4fd1c5;       /* teal */
-      --accent-2:#7aa2f7;     /* blue */
-      --danger:#ff6b6b;       /* red */
-      --ok:#5ad769;           /* green */
-      --shadow: 0 10px 30px rgba(0,0,0,.35);
-      --radius: 18px;
+    :root {
+      color-scheme: light dark;
+      --bg: #0e1724;
+      --panel: rgba(19, 28, 43, 0.82);
+      --panel-border: rgba(255, 255, 255, 0.1);
+      --accent: #ffb347;
+      --muted: rgba(255, 255, 255, 0.68);
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0; background: radial-gradient(1200px 800px at 80% -20%, #14202e 0%, #0b0f14 60%) fixed;
-      color:var(--text); font: 16px/1.5 system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,"Helvetica Neue",Arial,"Apple Color Emoji","Segoe UI Emoji";
-      display:flex; align-items:center; justify-content:center; padding:32px;
+
+    * {
+      box-sizing: border-box;
     }
-    .app{width:min(1000px,100%);}
-    header{display:flex; gap:16px; align-items:center; margin-bottom:22px}
-    .logo{width:44px; height:44px; display:grid; place-content:center; background:linear-gradient(135deg,var(--accent),var(--accent-2)); border-radius:12px; box-shadow:var(--shadow); font-weight:800}
-    h1{margin:0; font-size:clamp(22px,4vw,32px)}
-    .muted{color:var(--muted)}
 
-    .card{background:linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02)); border:1px solid rgba(255,255,255,.06); border-radius:var(--radius); box-shadow:var(--shadow)}
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", Roboto, system-ui, -apple-system, sans-serif;
+      background: radial-gradient(900px 900px at top right, rgba(255, 179, 71, 0.35), transparent),
+                  radial-gradient(1000px 1000px at bottom left, rgba(108, 205, 255, 0.22), transparent),
+                  var(--bg);
+      color: #f9fbff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px 48px;
+      position: relative;
+      overflow-x: hidden;
+    }
 
-    .panel{padding:22px}
-    .grid{display:grid; gap:18px}
+    body::before {
+      content: "";
+      position: fixed;
+      inset: -20px;
+      background: url('https://i.postimg.cc/2SvM3d2j/Gemini-Generated-Image-ocgwy6ocgwy6ocgw.png') center / cover no-repeat;
+      filter: blur(5px);
+      transform: scale(1.05);
+      z-index: -2;
+      opacity: 0.9;
+    }
 
-    /* Progress */
-    .progress-wrap{display:flex; align-items:center; gap:12px; margin:14px 0 6px}
-    .progress{height:10px; background:#1a2230; border-radius:999px; overflow:hidden; flex:1}
-    .progress > span{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--accent),var(--accent-2)); transition:width .35s ease}
+    main {
+      width: min(460px, 100%);
+      position: relative;
+      z-index: 0;
+    }
 
-    /* Buttons */
-    .row{display:flex; gap:10px; flex-wrap:wrap}
-    .btn{appearance:none; border:none; background:#1a2230; color:var(--text); padding:12px 16px; border-radius:12px; cursor:pointer; transition:transform .04s ease, background .2s ease, box-shadow .2s ease; font-weight:600}
-    .btn:hover{background:#223047}
-    .btn:active{transform:translateY(1px)}
-    .btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:#04121a; box-shadow:0 6px 20px rgba(79,209,197,.35)}
-    .btn.ghost{background:transparent; border:1px solid rgba(255,255,255,.12)}
-    .btn.disabled{opacity:.5; pointer-events:none}
+    .quiz-card {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 26px;
+      box-shadow: 0 28px 70px rgba(6, 10, 18, 0.6);
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      min-height: 560px;
+    }
 
-    /* Question list */
-    .question{padding:14px 16px; background:#0f1621; border:1px solid rgba(255,255,255,.06); border-radius:14px}
-    .question h4{margin:0 0 8px 0; font-size:16px}
-    .options{display:flex; gap:8px; flex-wrap:wrap}
-    .chip{padding:10px 14px; border-radius:999px; background:#1a2230; border:1px solid rgba(255,255,255,.08); cursor:pointer; user-select:none}
-    .chip[aria-checked="true"]{background:rgba(79,209,197,.18); border-color:var(--accent)}
+    header {
+      padding: 32px clamp(20px, 6vw, 48px) 24px;
+      background: rgba(7, 12, 21, 0.6);
+      border-bottom: 1px solid var(--panel-border);
+      display: grid;
+      gap: 12px;
+    }
 
-    /* Footer nav */
-    .footer{display:flex; justify-content:space-between; align-items:center; padding:16px; border-top:1px solid rgba(255,255,255,.06)}
+    header .super-title {
+      margin: 0 0 6px;
+      font-size: 15px;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
 
-    /* Results */
-    .results{display:grid; gap:16px}
-    .result-card{padding:16px; border:1px solid rgba(255,255,255,.06); border-radius:16px; background:#0e141e}
-    .pill{display:inline-flex; align-items:center; gap:8px; background:rgba(122,162,247,.15); padding:6px 10px; border-radius:999px; border:1px solid rgba(122,162,247,.35)}
+    header h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 38px);
+      letter-spacing: -0.01em;
+    }
 
-    .meta{display:flex; gap:8px; flex-wrap:wrap}
-    .meta .tag{background:#182132; border:1px solid rgba(255,255,255,.06); padding:6px 10px; border-radius:999px}
+    header .tip {
+      font-size: 14px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.06);
+      color: rgba(255, 255, 255, 0.78);
+      margin: 0;
+    }
 
-    .hidden{display:none !important}
+    .panel {
+      display: none;
+      padding: 28px clamp(20px, 6vw, 40px);
+    }
 
-    /* Responsive tweaks */
-    @media (max-width:720px){
-      .panel{padding:16px}
-      .footer{flex-direction:column; gap:10px}
+    .panel.active {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .start-screen {
+      text-align: center;
+      gap: 20px;
+      justify-items: center;
+    }
+
+    .start-screen.active {
+      display: grid;
+      align-content: center;
+      justify-items: center;
+    }
+
+    .start-screen p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    form.panel.active {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .progress {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+    }
+
+    fieldset {
+      margin: 0;
+      padding: 22px clamp(16px, 4vw, 26px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      display: grid;
+      gap: 18px;
+      background: rgba(8, 16, 28, 0.55);
+    }
+
+    legend {
+      font-weight: 600;
+      font-size: 18px;
+      padding: 0 6px;
+    }
+
+    .fieldset-note {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.5;
+    }
+
+    .tick-group {
+      display: grid;
+      gap: 12px;
+    }
+
+    .tick {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.2s ease, border-color 0.2s ease;
+      background: rgba(255, 255, 255, 0.04);
+      font-weight: 600;
+    }
+
+    .tick:hover {
+      border-color: rgba(255, 255, 255, 0.35);
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .tick input[type="checkbox"],
+    .tick input[type="radio"] {
+      width: 20px;
+      height: 20px;
+      accent-color: var(--accent);
+    }
+
+    .tick span {
+      flex: 1;
+    }
+
+    .step {
+      display: none;
+      gap: 22px;
+    }
+
+    .step.active {
+      display: grid;
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 16px;
+      padding: 12px 22px;
+      border-radius: 999px;
+      border: none;
+      color: #060a12;
+      background: linear-gradient(120deg, #ffb347, #ffcc33);
+      box-shadow: 0 14px 30px rgba(255, 179, 71, 0.35);
+      transition: transform 0.15s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .ghost {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: #f9fbff;
+      box-shadow: none;
+    }
+
+    .ghost:hover {
+      background: rgba(255, 255, 255, 0.12);
+      transform: none;
+    }
+
+    .nav-controls {
+      display: flex;
+      gap: 12px;
+      margin-top: auto;
+    }
+
+    .nav-controls button {
+      flex: 1;
+    }
+
+    .nav-controls button:first-child {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: #f9fbff;
+      box-shadow: none;
+    }
+
+    #results {
+      display: none;
+      gap: 22px;
+    }
+
+    #results.active {
+      display: grid;
+    }
+
+    #resultList {
+      display: grid;
+      gap: 18px;
+    }
+
+    .result-card {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px;
+      padding: 20px 22px;
+      background: rgba(12, 20, 32, 0.75);
+      display: grid;
+      gap: 10px;
+    }
+
+    .result-card h3 {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+    }
+
+    .result-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .result-card ul {
+      margin: 0;
+      padding-left: 20px;
+      line-height: 1.5;
+    }
+
+    .results-actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .planner {
+      margin-top: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      padding: 22px clamp(18px, 5vw, 30px);
+      background: rgba(11, 19, 32, 0.72);
+      display: grid;
+      gap: 18px;
+    }
+
+    .planner h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .planner p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .planner form {
+      display: grid;
+      gap: 16px;
+    }
+
+    .planner label {
+      display: grid;
+      gap: 8px;
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .planner input,
+    .planner button,
+    .planner select {
+      font-family: inherit;
+    }
+
+    .planner input[type="text"],
+    .planner input[type="number"],
+    .planner input[type="date"] {
+      padding: 12px 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.05);
+      color: #f9fbff;
+      font-size: 15px;
+    }
+
+    .planner input[type="text"]::placeholder,
+    .planner input[type="number"]::placeholder {
+      color: rgba(255, 255, 255, 0.55);
+    }
+
+    .planner input[type="number"] {
+      -moz-appearance: textfield;
+    }
+
+    .planner input[type="number"]::-webkit-inner-spin-button,
+    .planner input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .planner-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .planner-actions button {
+      flex: 1;
+      min-width: 160px;
+    }
+
+    .planner .planner-length-row {
+      display: grid;
+      gap: 16px;
+    }
+
+    .planner .date-pair {
+      display: grid;
+      gap: 12px;
+    }
+
+    .planner .date-pair label {
+      font-weight: 600;
+      font-size: 15px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .planner .planner-dates {
+      margin: 0;
+      font-weight: 600;
+      color: #f9fbff;
+    }
+
+    @media (min-width: 560px) {
+      .planner .planner-length-row {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        align-items: end;
+      }
+
+      .planner .date-pair {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .planner-output {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 16px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .food-section {
+      margin-top: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      padding: 22px clamp(18px, 5vw, 30px);
+      background: rgba(11, 19, 32, 0.72);
+      display: grid;
+      gap: 16px;
+    }
+
+    .food-section h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .food-section p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .food-question {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .food-question button {
+      flex: 1;
+      min-width: 120px;
+    }
+
+    .food-question button.ghost.active {
+      background: linear-gradient(120deg, #ffb347, #ffcc33);
+      border-color: transparent;
+      color: #060a12;
+      box-shadow: 0 14px 30px rgba(255, 179, 71, 0.35);
+    }
+
+    .food-follow-up {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px;
+      padding: 18px clamp(16px, 5vw, 24px);
+      background: rgba(8, 16, 28, 0.55);
+      display: grid;
+      gap: 14px;
+    }
+
+    .food-follow-up[hidden] {
+      display: none;
+    }
+
+    .food-note {
+      margin: 0;
+      font-size: 15px;
+      color: var(--muted);
+    }
+
+    .food-options {
+      display: grid;
+      gap: 12px;
+    }
+
+    .food-output {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 14px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .food-output .empty-state {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .food-meal {
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 16px;
+      padding: 16px 18px;
+      background: rgba(15, 24, 38, 0.6);
+      display: grid;
+      gap: 10px;
+    }
+
+    .food-meal h3 {
+      margin: 0;
+      font-size: 17px;
+    }
+
+    .food-meal ul {
+      margin: 0;
+      padding-left: 20px;
+      line-height: 1.5;
+    }
+
+    .food-meal li strong {
+      display: block;
+    }
+
+    .food-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .food-actions button {
+      min-width: 180px;
+    }
+
+    .map-section {
+      margin-top: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      padding: 22px clamp(18px, 5vw, 30px);
+      background: rgba(11, 19, 32, 0.72);
+      display: grid;
+      gap: 14px;
+    }
+
+    .map-section h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .map-section p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .map-frame {
+      width: 100%;
+      border: 0;
+      border-radius: 18px;
+      min-height: 280px;
+      background: rgba(8, 16, 28, 0.55);
+    }
+
+    .planner-output .empty-state {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .itinerary-day {
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 16px;
+      padding: 16px 18px;
+      background: rgba(15, 24, 38, 0.6);
+      display: grid;
+      gap: 12px;
+    }
+
+    .itinerary-day h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .itinerary-day ul {
+      margin: 0;
+      padding-left: 20px;
+      line-height: 1.5;
+    }
+
+    .itinerary-day strong {
+      display: block;
+      font-size: 15px;
+    }
+
+    footer {
+      padding: 22px clamp(20px, 6vw, 32px) 28px;
+      background: rgba(7, 12, 21, 0.6);
+      border-top: 1px solid var(--panel-border);
+    }
+
+    footer p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+      text-align: center;
     }
   </style>
 </head>
 <body>
-  <div class="app">
-    <!-- Header -->
-    <header>
-      <div class="logo" aria-hidden="true">🌍</div>
-      <div>
-        <h1>ExploreWise: Travel Preferences Quiz</h1>
-        <div class="muted">Answer a few quick questions. We'll score your interests and suggest up to four travel styles that fit you.</div>
-      </div>
-    </header>
+  <main>
+    <article class="quiz-card">
+      <header>
+        <h2 class="super-title">Your ultimate travel guide starts here</h2>
+        <h1>Find Your Travel Style</h1>
+        <p class="tip">Tip: You don&rsquo;t need to tick every statement, but the more you choose the sharper your matches will be.</p>
+      </header>
 
-    <!-- Quiz Card -->
-    <section class="card" id="quizCard" role="region" aria-labelledby="quizTitle">
-      <div class="panel grid">
-        <div class="progress-wrap" aria-live="polite">
-          <strong id="progressText">Section 1 of 6</strong>
-          <div class="progress" aria-label="Progress"><span id="progressBar"></span></div>
+      <section id="startScreen" class="panel start-screen active" aria-live="polite">
+        <p>Discover which travel styles will light you up. Work through seven quick sections that cover interests, food, culture, the outdoors, entertainment, city energy, and how you love to travel.</p>
+        <button type="button" id="startBtn">Start your travel quiz</button>
+      </section>
+
+      <form id="quiz" class="panel" novalidate>
+        <p class="progress" id="progressLabel">Stage 1 of 7</p>
+
+        <div class="step" data-step="0">
+          <fieldset>
+            <legend>General Interests</legend>
+            <p class="fieldset-note">Tick the statements that sound like you when you&rsquo;re away from home.</p>
+            <div class="tick-group">
+              <label class="tick"><input type="checkbox" name="sightseeing" value="yes" /> <span>Do you enjoy sightseeing?</span></label>
+              <label class="tick"><input type="checkbox" name="popular_landmarks" value="yes" /> <span>Do you like visiting popular landmarks?</span></label>
+              <label class="tick"><input type="checkbox" name="hidden_spots" value="yes" /> <span>Do you prefer hidden or local spots?</span></label>
+              <label class="tick"><input type="checkbox" name="guided_tours" value="yes" /> <span>Do you enjoy guided tours?</span></label>
+              <label class="tick"><input type="checkbox" name="spontaneous_general" value="yes" /> <span>Do you like spontaneous trips?</span></label>
+            </div>
+          </fieldset>
         </div>
 
-        <h2 id="quizTitle" style="margin:0">General Interests</h2>
-        <p class="muted" id="quizSubtitle">Tell us how you like to explore.</p>
+        <div class="step" data-step="1">
+          <fieldset>
+            <legend>Food &amp; Drink</legend>
+            <p class="fieldset-note">Choose every flavour-packed moment you want on your travels.</p>
+            <div class="tick-group">
+              <label class="tick"><input type="checkbox" name="local_food" value="yes" /> <span>Do you enjoy trying local food?</span></label>
+              <label class="tick"><input type="checkbox" name="fine_dining" value="yes" /> <span>Do you like fine dining?</span></label>
+              <label class="tick"><input type="checkbox" name="street_food" value="yes" /> <span>Do you enjoy street food?</span></label>
+              <label class="tick"><input type="checkbox" name="local_cafes" value="yes" /> <span>Do you like visiting local cafés?</span></label>
+              <label class="tick"><input type="checkbox" name="wine_tours" value="yes" /> <span>Do you enjoy wine or brewery tours?</span></label>
+              <label class="tick"><input type="checkbox" name="cooking_classes" value="yes" /> <span>Do you like cooking classes abroad?</span></label>
+              <label class="tick"><input type="checkbox" name="food_markets" value="yes" /> <span>Do you enjoy local markets?</span></label>
+            </div>
+          </fieldset>
+        </div>
 
-        <div id="questions" class="grid" aria-live="polite"></div>
-      </div>
+        <div class="step" data-step="2">
+          <fieldset>
+            <legend>History &amp; Culture</legend>
+            <p class="fieldset-note">Pick the cultural moments that keep your curiosity buzzing.</p>
+            <div class="tick-group">
+              <label class="tick"><input type="checkbox" name="museums" value="yes" /> <span>Do you like visiting museums?</span></label>
+              <label class="tick"><input type="checkbox" name="historical_landmarks" value="yes" /> <span>Do you enjoy historical landmarks?</span></label>
+              <label class="tick"><input type="checkbox" name="local_history" value="yes" /> <span>Do you like learning about local history?</span></label>
+              <label class="tick"><input type="checkbox" name="art_galleries" value="yes" /> <span>Do you enjoy art galleries?</span></label>
+              <label class="tick"><input type="checkbox" name="architecture" value="yes" /> <span>Do you like architecture?</span></label>
+              <label class="tick"><input type="checkbox" name="cultural_festivals" value="yes" /> <span>Do you enjoy cultural festivals?</span></label>
+              <label class="tick"><input type="checkbox" name="heritage_sites" value="yes" /> <span>Do you like exploring heritage sites?</span></label>
+              <label class="tick"><input type="checkbox" name="theatre" value="yes" /> <span>Do you enjoy theatre or live performances?</span></label>
+            </div>
+          </fieldset>
+        </div>
 
-      <div class="footer">
-        <div class="row">
-          <button class="btn ghost" id="btnReset" type="button">Reset</button>
+        <div class="step" data-step="3">
+          <fieldset>
+            <legend>Nature &amp; Outdoors</legend>
+            <p class="fieldset-note">Tell us how you reconnect with the great outdoors on a trip.</p>
+            <div class="tick-group">
+              <label class="tick"><input type="checkbox" name="nature_time" value="yes" /> <span>Do you like spending time in nature?</span></label>
+              <label class="tick"><input type="checkbox" name="hiking" value="yes" /> <span>Do you enjoy hiking?</span></label>
+              <label class="tick"><input type="checkbox" name="beaches" value="yes" /> <span>Do you like beaches?</span></label>
+              <label class="tick"><input type="checkbox" name="mountain_views" value="yes" /> <span>Do you enjoy mountain views?</span></label>
+              <label class="tick"><input type="checkbox" name="national_parks" value="yes" /> <span>Do you like national parks?</span></label>
+              <label class="tick"><input type="checkbox" name="scenic_drives" value="yes" /> <span>Do you enjoy scenic drives?</span></label>
+              <label class="tick"><input type="checkbox" name="outdoor_adventures" value="yes" /> <span>Do you like outdoor adventures?</span></label>
+              <label class="tick"><input type="checkbox" name="landscape_photography" value="yes" /> <span>Do you enjoy photography of landscapes?</span></label>
+            </div>
+          </fieldset>
         </div>
-        <div class="row">
-          <button class="btn" id="btnBack" type="button">Back</button>
-          <button class="btn primary" id="btnNext" type="button">Next</button>
-        </div>
-      </div>
-    </section>
 
-    <!-- Results Card -->
-    <section class="card hidden" id="resultsCard" role="region" aria-labelledby="resultsTitle">
-      <div class="panel grid">
-        <h2 id="resultsTitle" style="margin:0">Your Top Travel Styles</h2>
-        <p class="muted">Based on your answers, here are up to four styles that best fit you. Use them to plan activities and pick destinations.</p>
-        <div id="results" class="results"></div>
-      </div>
-      <div class="footer">
-        <div class="row">
-          <button class="btn" id="btnDownload" type="button">Download summary</button>
-          <button class="btn ghost" id="btnShare" type="button">Copy shareable link</button>
+        <div class="step" data-step="4">
+          <fieldset>
+            <legend>Entertainment &amp; Leisure</legend>
+            <p class="fieldset-note">Tick every experience you love when you&rsquo;re off the clock.</p>
+            <div class="tick-group">
+              <label class="tick"><input type="checkbox" name="nightlife" value="yes" /> <span>Do you like nightlife?</span></label>
+              <label class="tick"><input type="checkbox" name="live_music" value="yes" /> <span>Do you enjoy live music?</span></label>
+              <label class="tick"><input type="checkbox" name="travel_shopping" value="yes" /> <span>Do you like shopping while travelling?</span></label>
+              <label class="tick"><input type="checkbox" name="markets_leisure" value="yes" /> <span>Do you enjoy local markets?</span></label>
+              <label class="tick"><input type="checkbox" name="spa" value="yes" /> <span>Do you like spa or wellness activities?</span></label>
+              <label class="tick"><input type="checkbox" name="relaxing_days" value="yes" /> <span>Do you enjoy relaxing days with no plans?</span></label>
+              <label class="tick"><input type="checkbox" name="sports_events" value="yes" /> <span>Do you like sports events while abroad?</span></label>
+            </div>
+          </fieldset>
         </div>
-        <div class="row">
-          <button class="btn" id="btnEdit" type="button">Edit answers</button>
-          <button class="btn primary" id="btnStartOver" type="button">Start over</button>
+
+        <div class="step" data-step="5">
+          <fieldset>
+            <legend>City Vibes</legend>
+            <p class="fieldset-note">Choose the city atmospheres and ways of exploring that excite you.</p>
+            <div class="tick-group">
+              <label class="tick"><input type="checkbox" name="modern_cities" value="yes" /> <span>Do you like modern cities?</span></label>
+              <label class="tick"><input type="checkbox" name="old_towns" value="yes" /> <span>Do you prefer old towns?</span></label>
+              <label class="tick"><input type="checkbox" name="exploring_by_foot" value="yes" /> <span>Do you like exploring by foot?</span></label>
+              <label class="tick"><input type="checkbox" name="public_transport" value="yes" /> <span>Do you enjoy using public transport?</span></label>
+              <label class="tick"><input type="checkbox" name="busy_areas" value="yes" /> <span>Do you like staying in busy areas?</span></label>
+              <label class="tick"><input type="checkbox" name="quiet_neighbourhoods" value="yes" /> <span>Do you prefer quiet neighbourhoods?</span></label>
+            </div>
+          </fieldset>
         </div>
-      </div>
-    </section>
-  </div>
+
+        <div class="step" data-step="6">
+          <fieldset>
+            <legend>Personal Travel Style</legend>
+            <p class="fieldset-note">Mark the styles that feel true to how you plan and enjoy trips.</p>
+            <div class="tick-group">
+              <label class="tick"><input type="checkbox" name="travelling_solo" value="yes" /> <span>Do you like travelling solo?</span></label>
+              <label class="tick"><input type="checkbox" name="travelling_groups" value="yes" /> <span>Do you enjoy travelling in groups?</span></label>
+              <label class="tick"><input type="checkbox" name="luxury_travel" value="yes" /> <span>Do you like luxury travel?</span></label>
+              <label class="tick"><input type="checkbox" name="budget_travel" value="yes" /> <span>Do you prefer budget travel?</span></label>
+              <label class="tick"><input type="checkbox" name="planning_ahead" value="yes" /> <span>Do you like planning ahead?</span></label>
+              <label class="tick"><input type="checkbox" name="spontaneous_personal" value="yes" /> <span>Do you enjoy spontaneous trips?</span></label>
+              <label class="tick"><input type="checkbox" name="returning_places" value="yes" /> <span>Do you like returning to places you&rsquo;ve already visited?</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="nav-controls">
+          <button type="button" id="prevBtn">Back</button>
+          <button type="button" id="nextBtn">Next</button>
+        </div>
+      </form>
+
+      <section id="results" class="panel" aria-live="polite">
+        <div id="resultMessage"></div>
+        <div id="resultList" class="grid"></div>
+        <div class="results-actions">
+          <button type="button" class="ghost" id="retakeBtn">Adjust my answers</button>
+          <button type="button" id="restartBtn">Start over</button>
+        </div>
+        <section id="plannerSection" class="planner">
+          <h2>Turn your result into a day-by-day planner</h2>
+          <p>Combine your quiz match with trusted highlights to plan a stay backed by glowing traveller reviews.</p>
+          <form id="plannerForm">
+            <label for="destinationInput">
+              Where are you travelling?
+              <input type="text" id="destinationInput" name="destination" placeholder="e.g., Lisbon, Portugal" required />
+            </label>
+            <label for="styleResultInput">
+              Your travel style result
+              <input type="text" id="styleResultInput" name="style" placeholder="Complete the quiz to fill this automatically" required />
+            </label>
+            <div class="planner-length-row">
+              <label for="travelDaysInput">
+                How long are you travelling for (in days)?
+                <input type="number" id="travelDaysInput" name="days" min="1" max="21" placeholder="e.g., 4" required />
+              </label>
+              <div class="date-pair">
+                <label for="tripStartInput">
+                  Trip start date
+                  <input type="date" id="tripStartInput" name="start_date" />
+                </label>
+                <label for="tripEndInput">
+                  Trip end date
+                  <input type="date" id="tripEndInput" name="end_date" />
+                </label>
+              </div>
+            </div>
+            <div class="planner-actions">
+              <button type="submit">Generate my planner</button>
+              <button type="button" class="ghost" id="downloadPlanner" disabled>Download planner</button>
+            </div>
+          </form>
+          <div id="plannerOutput" class="planner-output" aria-live="polite">
+            <p class="empty-state">Fill in the details above to see a day-by-day plan with can&rsquo;t-miss spots, review-backed addresses, and optional date guidance.</p>
+          </div>
+        </section>
+        <section id="foodSection" class="food-section" aria-live="polite">
+          <h2>Do you need food recommendations?</h2>
+          <p>Tap yes to surface review-loved dining stops that match your travel vibe.</p>
+          <div id="foodQuestion" class="food-question">
+            <button type="button" class="ghost" data-response="yes">Yes</button>
+            <button type="button" class="ghost" data-response="no">No</button>
+          </div>
+          <form id="foodForm" class="food-follow-up" hidden>
+            <p class="food-note">Do you want recommendations for:</p>
+            <div class="food-options">
+              <label class="tick">
+                <input type="radio" name="foodCoverage" value="breakfast" required />
+                <span>Breakfast</span>
+              </label>
+              <label class="tick">
+                <input type="radio" name="foodCoverage" value="breakfast_lunch" />
+                <span>Breakfast &amp; lunch</span>
+              </label>
+              <label class="tick">
+                <input type="radio" name="foodCoverage" value="breakfast_dinner" />
+                <span>Breakfast &amp; dinner</span>
+              </label>
+              <label class="tick">
+                <input type="radio" name="foodCoverage" value="breakfast_lunch_dinner" />
+                <span>Breakfast, lunch &amp; dinner</span>
+              </label>
+            </div>
+            <button type="submit">Generate food recommendations</button>
+          </form>
+          <div id="foodOutput" class="food-output" aria-live="polite">
+            <p class="empty-state">We&rsquo;ll queue up food-friendly stops once you let us know if you&rsquo;d like them.</p>
+          </div>
+          <div class="food-actions">
+            <button type="button" class="ghost" id="downloadFood" disabled>Download food list</button>
+          </div>
+        </section>
+        <section id="mapSection" class="map-section" aria-live="polite">
+          <h2>See your highlights on a map</h2>
+          <p id="mapMessage">Generate a planner to plot the recommended spots on Google Maps.</p>
+          <iframe
+            id="mapFrame"
+            class="map-frame"
+            title="Map of recommended places"
+            src=""
+            loading="lazy"
+            allowfullscreen
+          ></iframe>
+        </section>
+      </section>
+
+      <footer>
+        <p>Your answers reveal one of four signature travel styles so you can focus on the experience that suits you most.</p>
+      </footer>
+    </article>
+  </main>
 
   <script>
-  // ------------------ Quiz Data ------------------
-  const QUIZ = [
-    {
-      id: 'general', title: 'General Interests', subtitle: 'Tell us how you like to explore.',
-      questions: [
-        { q: 'Do you enjoy sightseeing?', key: 'sightseeing', tags:['general','landmarks'] },
-        { q: 'Do you like visiting popular landmarks?', key: 'popular_landmarks', tags:['landmarks'] },
-        { q: 'Do you prefer hidden or local spots?', key: 'hidden_spots', tags:['offbeat'] },
-        { q: 'Do you enjoy guided tours?', key: 'guided_tours', tags:['guided'] },
-        { q: 'Do you like spontaneous trips?', key: 'spontaneous_general', tags:['spontaneous'] },
-      ]
-    },
-    {
-      id: 'food', title: 'Food & Drink', subtitle: 'Your culinary comfort zone.',
-      questions: [
-        { q: 'Do you enjoy trying local food?', key: 'local_food', tags:['foodie'] },
-        { q: 'Do you like fine dining?', key: 'fine_dining', tags:['luxury','foodie'] },
-        { q: 'Do you enjoy street food?', key: 'street_food', tags:['budget','foodie'] },
-        { q: 'Do you like visiting local cafés?', key: 'cafes', tags:['relax','foodie'] },
-        { q: 'Do you enjoy wine or brewery tours?', key: 'wine_brewery', tags:['leisure','foodie'] },
-        { q: 'Do you like cooking classes abroad?', key: 'cooking_classes', tags:['culture','foodie'] },
-        { q: 'Do you enjoy local markets?', key: 'food_markets', tags:['markets','foodie'] },
-      ]
-    },
-    {
-      id: 'culture', title: 'History & Culture', subtitle: 'Museums, heritage, and the arts.',
-      questions: [
-        { q: 'Do you like visiting museums?', key: 'museums', tags:['culture'] },
-        { q: 'Do you enjoy historical landmarks?', key: 'historical_landmarks', tags:['culture','heritage'] },
-        { q: 'Do you like learning about local history?', key: 'local_history', tags:['culture','learning'] },
-        { q: 'Do you enjoy art galleries?', key: 'art_galleries', tags:['arts'] },
-        { q: 'Do you like architecture?', key: 'architecture', tags:['architecture','culture'] },
-        { q: 'Do you enjoy cultural festivals?', key: 'cultural_festivals', tags:['events','culture'] },
-        { q: 'Do you like exploring heritage sites?', key: 'heritage_sites', tags:['heritage','culture'] },
-        { q: 'Do you enjoy theatre or live performances?', key: 'theatre', tags:['arts','events'] },
-      ]
-    },
-    {
-      id: 'nature', title: 'Nature & Outdoors', subtitle: 'Green spaces and big skies.',
-      questions: [
-        { q: 'Do you like spending time in nature?', key: 'nature_time', tags:['nature'] },
-        { q: 'Do you enjoy hiking?', key: 'hiking', tags:['adventure','nature'] },
-        { q: 'Do you like beaches?', key: 'beaches', tags:['beach','relax'] },
-        { q: 'Do you enjoy mountain views?', key: 'mountains', tags:['scenery','nature'] },
-        { q: 'Do you like national parks?', key: 'national_parks', tags:['nature','scenery'] },
-        { q: 'Do you enjoy scenic drives?', key: 'scenic_drives', tags:['scenery'] },
-        { q: 'Do you like outdoor adventures?', key: 'outdoor_adventures', tags:['adventure'] },
-        { q: 'Do you enjoy photography of landscapes?', key: 'landscape_photography', tags:['scenery','nature'] },
-      ]
-    },
-    {
-      id: 'leisure', title: 'Entertainment & Leisure', subtitle: 'Fun, vibes, and downtime.',
-      questions: [
-        { q: 'Do you like nightlife?', key: 'nightlife', tags:['nightlife'] },
-        { q: 'Do you enjoy live music?', key: 'live_music', tags:['music','events'] },
-        { q: 'Do you like shopping while travelling?', key: 'shopping', tags:['shopping'] },
-        { q: 'Do you enjoy local markets?', key: 'local_markets', tags:['markets'] },
-        { q: 'Do you like spa or wellness activities?', key: 'spa', tags:['wellness','relax'] },
-        { q: 'Do you enjoy relaxing days with no plans?', key: 'no_plans', tags:['relax'] },
-        { q: 'Do you like sports events while abroad?', key: 'sports_events', tags:['sports'] },
-      ]
-    },
-    {
-      id: 'city', title: 'City Vibes', subtitle: 'How you like to move through a place.',
-      questions: [
-        { q: 'Do you like modern cities?', key: 'modern_cities', tags:['modern'] },
-        { q: 'Do you prefer old towns?', key: 'old_towns', tags:['oldtown','heritage'] },
-        { q: 'Do you like exploring by foot?', key: 'by_foot', tags:['walking'] },
-        { q: 'Do you enjoy using public transport?', key: 'public_transport', tags:['transit'] },
-        { q: 'Do you like staying in busy areas?', key: 'busy_areas', tags:['busy'] },
-        { q: 'Do you prefer quiet neighbourhoods?', key: 'quiet_neighbourhoods', tags:['quiet'] },
-      ]
-    },
-    {
-      id: 'style', title: 'Personal Travel Style', subtitle: 'Budget, company, and planning preferences.',
-      questions: [
-        { q: 'Do you like travelling solo?', key: 'solo', tags:['solo'] },
-        { q: 'Do you enjoy travelling in groups?', key: 'group', tags:['group'] },
-        { q: 'Do you like luxury travel?', key: 'luxury', tags:['luxury'] },
-        { q: 'Do you prefer budget travel?', key: 'budget', tags:['budget'] },
-        { q: 'Do you like planning ahead?', key: 'planner', tags:['planner'] },
-        { q: 'Do you enjoy spontaneous trips?', key: 'spontaneous_style', tags:['spontaneous'] },
-        { q: 'Do you like returning to places you’ve already visited?', key: 'returning', tags:['comfort'] },
-      ]
-    },
-  ];
+    const startScreen = document.getElementById('startScreen');
+    const startBtn = document.getElementById('startBtn');
+    const form = document.getElementById('quiz');
+    const progressLabel = document.getElementById('progressLabel');
+    const steps = Array.from(form.querySelectorAll('.step'));
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const resultsSection = document.getElementById('results');
+    const resultMessage = document.getElementById('resultMessage');
+    const resultList = document.getElementById('resultList');
+    const retakeBtn = document.getElementById('retakeBtn');
+    const restartBtn = document.getElementById('restartBtn');
+    const plannerForm = document.getElementById('plannerForm');
+    const destinationInput = document.getElementById('destinationInput');
+    const styleInput = document.getElementById('styleResultInput');
+    const travelDaysInput = document.getElementById('travelDaysInput');
+    const tripStartInput = document.getElementById('tripStartInput');
+    const tripEndInput = document.getElementById('tripEndInput');
+    const plannerOutput = document.getElementById('plannerOutput');
+    const downloadPlannerBtn = document.getElementById('downloadPlanner');
+    const mapFrame = document.getElementById('mapFrame');
+    const mapMessage = document.getElementById('mapMessage');
+    const foodQuestion = document.getElementById('foodQuestion');
+    const foodForm = document.getElementById('foodForm');
+    const foodOutput = document.getElementById('foodOutput');
+    const downloadFoodBtn = document.getElementById('downloadFood');
 
-  // Result profiles. Each profile aggregates several tags.
-  const PROFILES = [
-    { id:'Culture Maven', icon:'🏛️', tags:['culture','heritage','arts','architecture','learning','events','oldtown'],
-      blurb:'You love stories, museums, and timeless streets. Build days around exhibits, heritage sites, and local traditions.',
-      ideas:['City museum passes','Guided history walks','UNESCO heritage day trips','Festival weekends'] },
-    { id:'Foodie Explorer', icon:'🍜', tags:['foodie','markets','cafes','luxury'],
-      blurb:'Tastes and aromas lead your itinerary. From markets to Michelin, food is your compass.',
-      ideas:['Market-to-table tours','Street food safaris','Cooking classes','Winery & brewery trails'] },
-    { id:'Nature Seeker', icon:'🌿', tags:['nature','scenery','beach','mountains','national_parks','adventure'],
-      blurb:'Fresh air, big skies, and trail time recharge you. Prioritise parks, coasts, and scenic routes.',
-      ideas:['National park loops','Sunrise/sunset lookouts','Coastal hikes','Stargazing spots'] },
-    { id:'Leisure & Vibes', icon:'🎉', tags:['nightlife','music','shopping','wellness','relax','sports','events'],
-      blurb:'You travel for fun and feel-good moments—great shows, spa days, and lively nights.',
-      ideas:['Live music calendars','Rooftop bars','Thermal spas & hammams','Match-day tickets'] },
-    { id:'City Wanderer', icon:'🚶‍♀️', tags:['walking','transit','modern','busy','quiet'],
-      blurb:'You thrive in urban textures—walkable streets, metro lines, and neighbourhood vibes.',
-      ideas:['Self-guided walks','Transit day passes','Neighbourhood food crawls','Street art hunts'] },
-    { id:'Offbeat Adventurer', icon:'🧭', tags:['offbeat','guided','spontaneous','adventure'],
-      blurb:'You like the path less taken and the odd guided deep-dive. Keep plans flexible for serendipity.',
-      ideas:['Hidden-gems tours','Day-trip roulette','Cave or canyon adventures','Local-led experiences'] },
-    { id:'Style & Comfort', icon:'🧳', tags:['solo','group','luxury','budget','planner','spontaneous','comfort'],
-      blurb:'How you travel matters: solo vs group, luxury vs budget, planner vs spontaneous—blend to fit your mood.',
-      ideas:['Solo-friendly hostels/hotels','Small-group tours','Splurge nights + save days','Buffer-free days'] },
-  ];
+    let currentStep = 0;
+    let latestPlannerText = '';
+    let latestFoodText = '';
+    const defaultMapMessage = 'Generate a planner to plot the recommended spots on Google Maps.';
+    const defaultFoodMessage = 'We’ll queue up food-friendly stops once you let us know if you’d like them.';
 
-  // ------------------ State ------------------
-  const state = {
-    sectionIndex: 0,
-    answers: {}, // key:boolean
-  };
+    const profiles = [
+      {
+        id: 'culinaryExplorer',
+        title: 'Culinary Explorer',
+        emoji: '🍽️',
+        description: 'Your adventures revolve around flavour—local bites, market finds, and hands-on foodie fun.',
+        highlights: ['Market-to-table tasting trails', 'Intimate chef-led dining picks', 'Workshops & tours with local makers']
+      },
+      {
+        id: 'culturalConnoisseur',
+        title: 'Cultural Connoisseur',
+        emoji: '🏛️',
+        description: 'Museums, architecture, and guided stories help you connect deeply with every destination.',
+        highlights: ['Curated museum & gallery passes', 'Expert-led heritage walks', 'Historic districts & theatre evenings']
+      },
+      {
+        id: 'natureTrailblazer',
+        title: 'Nature Trailblazer',
+        emoji: '🏞️',
+        description: 'Fresh air fuels your travels—from epic hikes to scenic coastlines and camera-ready views.',
+        highlights: ['Guided hikes & national park routes', 'Coastal hideaways & mountain stays', 'Outdoor gear & photography tips']
+      },
+      {
+        id: 'urbanDynamo',
+        title: 'Urban Dynamo',
+        emoji: '🌆',
+        description: 'You chase energetic cities with nightlife, live culture, and a fast-paced rhythm.',
+        highlights: ['Nightlife & live music spotlights', 'Transit-friendly city itineraries', 'Must-see skyline & shopping stops']
+      }
+    ];
 
-  // Try restore from URL or localStorage
-  ;(function initPersist(){
-    const params = new URLSearchParams(location.search);
-    const encoded = params.get('a');
-    if(encoded){
-      try { Object.assign(state.answers, JSON.parse(atob(decodeURIComponent(encoded)))); } catch{}
-    } else {
-      const stored = localStorage.getItem('explorewise_answers');
-      if(stored){ try { Object.assign(state.answers, JSON.parse(stored)); } catch{} }
+    const questionWeights = {
+      sightseeing: ['culturalConnoisseur', 'urbanDynamo'],
+      popular_landmarks: ['culturalConnoisseur', 'urbanDynamo'],
+      hidden_spots: ['culturalConnoisseur', 'culinaryExplorer', 'natureTrailblazer'],
+      guided_tours: ['culturalConnoisseur'],
+      spontaneous_general: ['urbanDynamo', 'natureTrailblazer'],
+      local_food: ['culinaryExplorer'],
+      fine_dining: ['culinaryExplorer', 'urbanDynamo'],
+      street_food: ['culinaryExplorer', 'urbanDynamo'],
+      local_cafes: ['culinaryExplorer', 'urbanDynamo'],
+      wine_tours: ['culinaryExplorer', 'culturalConnoisseur'],
+      cooking_classes: ['culinaryExplorer', 'culturalConnoisseur'],
+      food_markets: ['culinaryExplorer', 'culturalConnoisseur'],
+      museums: ['culturalConnoisseur'],
+      historical_landmarks: ['culturalConnoisseur'],
+      local_history: ['culturalConnoisseur'],
+      art_galleries: ['culturalConnoisseur', 'urbanDynamo'],
+      architecture: ['culturalConnoisseur', 'urbanDynamo'],
+      cultural_festivals: ['culturalConnoisseur', 'urbanDynamo'],
+      heritage_sites: ['culturalConnoisseur'],
+      theatre: ['culturalConnoisseur', 'urbanDynamo'],
+      nature_time: ['natureTrailblazer'],
+      hiking: ['natureTrailblazer'],
+      beaches: ['natureTrailblazer'],
+      mountain_views: ['natureTrailblazer'],
+      national_parks: ['natureTrailblazer'],
+      scenic_drives: ['natureTrailblazer'],
+      outdoor_adventures: ['natureTrailblazer'],
+      landscape_photography: ['natureTrailblazer'],
+      nightlife: ['urbanDynamo'],
+      live_music: ['urbanDynamo'],
+      travel_shopping: ['urbanDynamo', 'culinaryExplorer'],
+      markets_leisure: ['culinaryExplorer', 'culturalConnoisseur'],
+      spa: ['natureTrailblazer', 'culturalConnoisseur'],
+      relaxing_days: ['natureTrailblazer'],
+      sports_events: ['urbanDynamo'],
+      modern_cities: ['urbanDynamo'],
+      old_towns: ['culturalConnoisseur'],
+      exploring_by_foot: ['culturalConnoisseur', 'urbanDynamo'],
+      public_transport: ['urbanDynamo'],
+      busy_areas: ['urbanDynamo'],
+      quiet_neighbourhoods: ['culturalConnoisseur', 'natureTrailblazer'],
+      travelling_solo: ['natureTrailblazer', 'culturalConnoisseur'],
+      travelling_groups: ['urbanDynamo'],
+      luxury_travel: ['culturalConnoisseur', 'urbanDynamo'],
+      budget_travel: ['natureTrailblazer', 'culinaryExplorer'],
+      planning_ahead: ['culturalConnoisseur'],
+      spontaneous_personal: ['urbanDynamo', 'natureTrailblazer'],
+      returning_places: ['culturalConnoisseur', 'culinaryExplorer']
+    };
+
+    const plannerTemplates = {
+      culinaryExplorer: [
+        {
+          time: 'Morning',
+          title: 'Market welcome tour',
+          location: '{city} Central Market Hall',
+          address: '12 Market Street, Old Town, {city}',
+          description:
+            'Meet a local guide to sample artisanal bites spotlighted across top food blogs and review sites.'
+        },
+        {
+          time: 'Afternoon',
+          title: 'Hands-on regional cooking class',
+          location: 'Kitchen Atelier {city}',
+          address: '48 Riverside Avenue, {city}',
+          description: 'Cook a signature dish with chefs praised for their intimate, review-loved workshops.'
+        },
+        {
+          time: 'Evening',
+          title: 'Wine bar hop with pairings',
+          location: '{city} Old Quarter Wine Row',
+          address: 'Between 5th & 7th Street, {city}',
+          description: 'Sip natural pours and tapas at venues consistently topping local recommendation lists.'
+        },
+        {
+          time: 'Morning',
+          title: 'Neighbourhood café crawl',
+          location: 'Artisan Café Trail, {city}',
+          address: 'Start at 9 Garden Lane, {city}',
+          description: 'Trace barista-favourite cafés featured in city guides and traveller ratings.'
+        },
+        {
+          time: 'Afternoon',
+          title: 'Gourmet food hall tasting passes',
+          location: '{city} Gastronomy Collective',
+          address: '101 Culinary Plaza, {city}',
+          description: 'Pick up tasting tokens curated from crowd-favourite vendors and street food champions.'
+        },
+        {
+          time: 'Evening',
+          title: 'Chef&rsquo;s table finale',
+          location: 'Restaurant {city} Stories',
+          address: '77 Lantern Street, {city}',
+          description: 'Book a chef-led counter praised for storytelling menus and stellar review scores.'
+        }
+      ],
+      culturalConnoisseur: [
+        {
+          time: 'Morning',
+          title: 'Curated museum highlights tour',
+          location: '{city} National Gallery',
+          address: '1 Heritage Avenue, Cultural District, {city}',
+          description: 'Follow an art historian through masterworks most loved in visitor feedback.'
+        },
+        {
+          time: 'Afternoon',
+          title: 'Architecture & hidden stories walk',
+          location: 'Historic Core of {city}',
+          address: 'Meet at Grand Plaza Fountain, {city}',
+          description: 'Trace centuries-old façades with a guide recommended across storytelling podcasts and tours.'
+        },
+        {
+          time: 'Evening',
+          title: 'Theatre night with local troupe',
+          location: '{city} Playhouse',
+          address: '88 Dramatic Lane, {city}',
+          description: 'Secure seats to a production celebrated for authentic performances and rave reviews.'
+        },
+        {
+          time: 'Morning',
+          title: 'Heritage site explorer pass',
+          location: '{city} Citadel & Gardens',
+          address: 'Castle Hill Road, {city}',
+          description: 'Use fast-track entry to storied landmarks endorsed by UNESCO and traveller ratings.'
+        },
+        {
+          time: 'Afternoon',
+          title: 'Gallery & studio open doors',
+          location: 'Artist Quarter, {city}',
+          address: 'Start at 22 Atelier Street, {city}',
+          description: 'Meet resident artists whose spaces feature in design magazines and cultural blogs.'
+        },
+        {
+          time: 'Evening',
+          title: 'Cultural festival or live performance',
+          location: '{city} Cultural Forum',
+          address: '5 Celebration Square, {city}',
+          description: 'Join seasonal events highlighted on regional calendars and five-star travel reviews.'
+        }
+      ],
+      natureTrailblazer: [
+        {
+          time: 'Morning',
+          title: 'Sunrise trail with local ranger',
+          location: '{city} Ridgeway Trailhead',
+          address: 'Trail Gate, Route 7, {city}',
+          description: 'Tackle a beloved hike ranked highly for scenery and wildlife spotting.'
+        },
+        {
+          time: 'Afternoon',
+          title: 'National park scenic drive',
+          location: '{city} Panorama Loop',
+          address: 'Visitor Centre, Valley Road, {city}',
+          description: 'Cruise review-celebrated lookouts with curated photo stops and picnic pointers.'
+        },
+        {
+          time: 'Evening',
+          title: 'Campfire supper under the stars',
+          location: 'Lakeside Camp, {city} Reserve',
+          address: 'Shoreline Spur, {city}',
+          description: 'Unwind with a locally sourced meal and stargazing tips from park naturalists.'
+        },
+        {
+          time: 'Morning',
+          title: 'Coastal or riverside paddle',
+          location: '{city} Watersports Hub',
+          address: 'Pier 3, Harbourfront, {city}',
+          description: 'Kayak routes highlighted for calm waters and photo-ready vistas.'
+        },
+        {
+          time: 'Afternoon',
+          title: 'Wildlife & conservation visit',
+          location: '{city} Nature Centre',
+          address: '18 Evergreen Way, {city}',
+          description: 'Learn from guides applauded in eco-travel reviews for meaningful encounters.'
+        },
+        {
+          time: 'Evening',
+          title: 'Sunset overlook photography session',
+          location: 'Skyline Point, {city}',
+          address: 'Summit Drive, {city}',
+          description: 'Capture the golden hour with techniques pulled from top-rated workshops.'
+        }
+      ],
+      urbanDynamo: [
+        {
+          time: 'Morning',
+          title: 'City highlights cycling tour',
+          location: '{city} Bike Collective',
+          address: '14 Spin Street, {city}',
+          description: 'Pedal through trending districts spotlighted by lifestyle magazines and city blogs.'
+        },
+        {
+          time: 'Afternoon',
+          title: 'Design-forward concept shopping',
+          location: 'Creative Arcade, {city}',
+          address: '200 Skyline Avenue, {city}',
+          description: 'Browse indie boutiques hand-picked from highly rated retail guides.'
+        },
+        {
+          time: 'Evening',
+          title: 'Nightlife hop with live music',
+          location: '{city} Entertainment Quarter',
+          address: 'Neon Alley, {city}',
+          description: 'Queue-free entry to venues trending across streaming playlists and review hubs.'
+        },
+        {
+          time: 'Morning',
+          title: 'Public transport immersion',
+          location: '{city} Transit Discovery Tour',
+          address: 'Metro Hub, Platform B, {city}',
+          description: 'Ride iconic lines recommended for architecture, art, and urban stories.'
+        },
+        {
+          time: 'Afternoon',
+          title: 'Skyline lounge & spa reset',
+          location: 'SkyDeck Wellness, {city}',
+          address: 'Tower 5, 32nd Floor, {city}',
+          description: 'Recharge with skyline views and treatments that earn five-star relaxation reviews.'
+        },
+        {
+          time: 'Evening',
+          title: 'Signature tasting menu & rooftop finale',
+          location: '{city} Rooftop Collective',
+          address: '88 Horizon Road, {city}',
+          description: 'Toast the city lights at hotspots listed among the most-booked tables online.'
+        }
+      ]
+    };
+
+    const foodBases = {
+      culinaryExplorer: {
+        breakfast: [
+          {
+            name: 'Sunrise Market Café',
+            address: '24 Morning Lane, {city}',
+            description: 'Favourite among food bloggers for farm-to-table breakfasts and speciality coffee flights.'
+          },
+          {
+            name: 'Artisan Crust Bakery',
+            address: '68 Stone Oven Alley, {city}',
+            description: 'Top-rated viennoiserie counter praised in traveller reviews for seasonal pastries.'
+          }
+        ],
+        lunch: [
+          {
+            name: 'Harbour Tasting Kitchen',
+            address: '102 Wharfside Boulevard, {city}',
+            description: 'Chef-led lunch plates spotlighted in foodie guides for creative regional flavours.'
+          },
+          {
+            name: 'Mercado Mesa Hall',
+            address: '56 Taster Row, {city}',
+            description: 'Bustling counter-serve venue applauded online for its street-food inspired tastings.'
+          }
+        ],
+        dinner: [
+          {
+            name: 'Lantern & Ladle Chef’s Table',
+            address: '77 Lantern Street, {city}',
+            description: 'Storytelling tasting menu that tops reservation apps for intimate dining.'
+          },
+          {
+            name: 'Cellar Passage Wine Bar',
+            address: '5 Cellar Court, {city}',
+            description: 'Sommelier-led pairings recommended by city wine critics and travellers alike.'
+          }
+        ]
+      },
+      culturalConnoisseur: {
+        breakfast: [
+          {
+            name: 'Gallery Quarter Brunch Club',
+            address: '12 Curator Lane, {city}',
+            description: 'Elegant brunch spot earning five-star reviews for artful plating near the museum district.'
+          },
+          {
+            name: 'Archivist’s Coffeehouse',
+            address: '4 Library Terrace, {city}',
+            description: 'Scholarly café beloved online for quiet mornings and locally roasted beans.'
+          }
+        ],
+        lunch: [
+          {
+            name: 'Heritage Terrace Bistro',
+            address: '88 Monument Avenue, {city}',
+            description: 'Prix-fixe lunches praised on travel forums for regional classics with modern twists.'
+          },
+          {
+            name: 'Atrium Garden Tea Rooms',
+            address: '36 Conservatory Walk, {city}',
+            description: 'Light lunch and tea pairings highlighted in cultural magazines and visitor write-ups.'
+          }
+        ],
+        dinner: [
+          {
+            name: 'Opera House Supper Salon',
+            address: '2 Aria Square, {city}',
+            description: 'Pre-theatre dining celebrated in reviews for refined service and seasonal menus.'
+          },
+          {
+            name: 'Historian’s Table',
+            address: '101 Chronicle Street, {city}',
+            description: 'Story-driven tasting experiences recommended across heritage blogs and review sites.'
+          }
+        ]
+      },
+      natureTrailblazer: {
+        breakfast: [
+          {
+            name: 'Trailhead Fuel House',
+            address: '15 Ridge Road, {city}',
+            description: 'Daybreak smoothies and hearty bowls rated highly by hikers for an energy boost.'
+          },
+          {
+            name: 'Canopy Camp Café',
+            address: '58 Evergreen Spur, {city}',
+            description: 'Outdoor patio praised online for sunrise views and sustainable bites.'
+          }
+        ],
+        lunch: [
+          {
+            name: 'Riverside Picnic Pantry',
+            address: 'Pier 6, Riverfront, {city}',
+            description: 'Grab-and-go lunches spotlighted on eco-travel guides for fresh regional produce.'
+          },
+          {
+            name: 'Summit Snack Lodge',
+            address: '78 Overlook Drive, {city}',
+            description: 'Trail favourite with rave reviews for its warm soups and scenic deck.'
+          }
+        ],
+        dinner: [
+          {
+            name: 'Starlit Grill & Campfire',
+            address: 'Lakeside Loop, {city}',
+            description: 'Open-air grill beloved in camper forums for seasonal fire-cooked plates.'
+          },
+          {
+            name: 'Aurora Ridge Dining Cabin',
+            address: '9 Northern Lights Trail, {city}',
+            description: 'Intimate lodge dinners applauded for locally sourced ingredients and mountain views.'
+          }
+        ]
+      },
+      urbanDynamo: {
+        breakfast: [
+          {
+            name: 'Skyline Espresso Bar',
+            address: '30 Highline Avenue, {city}',
+            description: 'Morning hotspot ranked on city guides for creative espresso tonics and grab-and-go bites.'
+          },
+          {
+            name: 'Neon Diner & Juice Lab',
+            address: '120 Pulse Street, {city}',
+            description: 'Retro-modern diner loved online for brunch playlists and bold breakfast bowls.'
+          }
+        ],
+        lunch: [
+          {
+            name: 'Neon Noodle Lab',
+            address: '45 Electric Lane, {city}',
+            description: 'Fast-casual noodle bar trending in foodie reviews for its street market flavours.'
+          },
+          {
+            name: 'District Taproom Cantina',
+            address: '210 Skyline Plaza, {city}',
+            description: 'Lunch tacos and share plates spotlighted by nightlife bloggers for daytime energy.'
+          }
+        ],
+        dinner: [
+          {
+            name: 'Midnight Tapas Loft',
+            address: '11 Afterglow Terrace, {city}',
+            description: 'Late-night tapas lounge topping review charts for live DJs and inventive bites.'
+          },
+          {
+            name: 'Pulse Rooftop Steakhouse',
+            address: '72 Lumen Tower, {city}',
+            description: 'City-view dining acclaimed for skyline panoramas and signature cocktails.'
+          }
+        ]
+      }
+    };
+
+    const foodCoverageMap = {
+      breakfast: ['breakfast'],
+      breakfast_lunch: ['breakfast', 'lunch'],
+      breakfast_dinner: ['breakfast', 'dinner'],
+      breakfast_lunch_dinner: ['breakfast', 'lunch', 'dinner']
+    };
+
+    const mealLabels = {
+      breakfast: 'Breakfast favourites',
+      lunch: 'Lunch gems',
+      dinner: 'Dinner highlights'
+    };
+
+    const coverageLabels = {
+      breakfast: 'breakfast',
+      breakfast_lunch: 'breakfast and lunch',
+      breakfast_dinner: 'breakfast and dinner',
+      breakfast_lunch_dinner: 'breakfast, lunch, and dinner'
+    };
+
+    function updateProgress() {
+      progressLabel.textContent = `Stage ${currentStep + 1} of ${steps.length}`;
     }
-  })();
 
-  // ------------------ Rendering ------------------
-  const elQuestions = document.getElementById('questions');
-  const elProgressText = document.getElementById('progressText');
-  const elProgressBar = document.getElementById('progressBar');
-  const elQuizTitle = document.getElementById('quizTitle');
-  const elQuizSubtitle = document.getElementById('quizSubtitle');
-  const btnNext = document.getElementById('btnNext');
-  const btnBack = document.getElementById('btnBack');
-  const btnReset = document.getElementById('btnReset');
-
-  const quizCard = document.getElementById('quizCard');
-  const resultsCard = document.getElementById('resultsCard');
-  const elResults = document.getElementById('results');
-  const btnDownload = document.getElementById('btnDownload');
-  const btnShare = document.getElementById('btnShare');
-  const btnEdit = document.getElementById('btnEdit');
-  const btnStartOver = document.getElementById('btnStartOver');
-
-  function renderSection(){
-    const s = QUIZ[state.sectionIndex];
-    elQuizTitle.textContent = s.title;
-    elQuizSubtitle.textContent = s.subtitle;
-
-    const totalSections = QUIZ.length;
-    elProgressText.textContent = `Section ${state.sectionIndex+1} of ${totalSections}`;
-    elProgressBar.style.width = `${((state.sectionIndex)/ (totalSections))*100}%`;
-
-    elQuestions.innerHTML = '';
-
-    s.questions.forEach((item, i)=>{
-      const id = `${s.id}_${i}`;
-      const wrap = document.createElement('div');
-      wrap.className = 'question';
-      wrap.innerHTML = `
-        <h4 id="${id}_label">${item.q}</h4>
-        <div class="options" role="group" aria-labelledby="${id}_label">
-          <button type="button" class="chip" role="radio" aria-checked="false" data-key="${item.key}" data-val="yes">Yes</button>
-          <button type="button" class="chip" role="radio" aria-checked="false" data-key="${item.key}" data-val="no">No</button>
-          <button type="button" class="chip" role="radio" aria-checked="false" data-key="${item.key}" data-val="skip">Skip</button>
-        </div>`;
-      elQuestions.appendChild(wrap);
-    });
-
-    // set existing answers
-    elQuestions.querySelectorAll('.chip').forEach(ch=>{
-      const key = ch.dataset.key, v = ch.dataset.val;
-      const saved = state.answers[key];
-      if(saved === v){ ch.setAttribute('aria-checked','true'); }
-      ch.addEventListener('click', ()=>{
-        // toggle selection within group
-        const group = ch.parentElement.querySelectorAll('.chip[data-key="'+key+'"]');
-        group.forEach(g=>g.setAttribute('aria-checked','false'));
-        ch.setAttribute('aria-checked','true');
-        state.answers[key] = v;
-        persistAnswers();
-        checkAdvanceHint();
+    function showStep(index) {
+      currentStep = index;
+      steps.forEach((step, position) => {
+        step.classList.toggle('active', position === index);
       });
+      prevBtn.disabled = index === 0;
+      nextBtn.textContent = index === steps.length - 1 ? 'Get my results' : 'Next';
+      updateProgress();
+    }
+
+    startBtn.addEventListener('click', () => {
+      startScreen.classList.remove('active');
+      resultsSection.classList.remove('active');
+      form.classList.add('active');
+      showStep(0);
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentStep === steps.length - 1) {
+        form.requestSubmit();
+        return;
+      }
+      showStep(Math.min(steps.length - 1, currentStep + 1));
+    });
+
+    prevBtn.addEventListener('click', () => {
+      if (currentStep === 0) return;
+      showStep(Math.max(0, currentStep - 1));
+    });
+
+    function scoreQuiz(data) {
+      const scores = Object.fromEntries(profiles.map(profile => [profile.id, 0]));
+
+      Object.entries(data).forEach(([question, value]) => {
+        const tags = questionWeights[question];
+        if (!tags || value !== 'yes') return;
+        const weight = 2;
+        tags.forEach(tag => {
+          scores[tag] += weight;
+        });
+      });
+
+      return scores;
+    }
+
+    function buildResults(scores) {
+      const ranked = profiles
+        .map(profile => ({ profile, score: scores[profile.id] || 0 }))
+        .filter(item => item.score > 0)
+        .sort((a, b) => b.score - a.score);
+
+      resultList.innerHTML = '';
+
+      if (!ranked.length) {
+        resultMessage.textContent = 'Tick a few statements in each section so we can pinpoint your single best travel style.';
+        return;
+      }
+
+      const [topMatch] = ranked;
+      resultMessage.textContent = 'Here’s the travel style that matches you best:';
+
+      const card = document.createElement('article');
+      card.className = 'result-card';
+      card.innerHTML = `
+        <h3>${topMatch.profile.emoji} ${topMatch.profile.title}</h3>
+        <p>${topMatch.profile.description}</p>
+        <ul>${topMatch.profile.highlights.map(item => `<li>${item}</li>`).join('')}</ul>
+      `;
+      resultList.appendChild(card);
+
+      styleInput.value = topMatch.profile.title;
+      styleInput.dataset.profileId = topMatch.profile.id;
+      downloadPlannerBtn.disabled = true;
+      latestPlannerText = '';
+      plannerOutput.innerHTML = '<p class="empty-state">Add your destination, travel length, and optional dates to build a personalised plan.</p>';
+      resetMap();
+      resetFoodSection();
+    }
+
+    function formDataToObject(formData) {
+      return Array.from(formData.entries()).reduce((acc, [key, value]) => {
+        acc[key] = value;
+        return acc;
+      }, {});
+    }
+
+    function replaceCityPlaceholders(text, city) {
+      return text.replace(/\{city\}/g, city);
+    }
+
+    function resetMap(message = defaultMapMessage) {
+      if (!mapFrame) return;
+      mapFrame.src = 'about:blank';
+      if (mapMessage) {
+        mapMessage.textContent = message;
+      }
+    }
+
+    function setActiveFoodButton(response) {
+      if (!foodQuestion) return;
+      const buttons = foodQuestion.querySelectorAll('button[data-response]');
+      buttons.forEach(button => {
+        button.classList.toggle('active', button.dataset.response === response);
+      });
+    }
+
+    function resetFoodSection(message = defaultFoodMessage) {
+      if (foodForm) {
+        foodForm.hidden = true;
+        foodForm.reset();
+      }
+
+      if (foodOutput) {
+        foodOutput.innerHTML = `<p class="empty-state">${message}</p>`;
+      }
+
+      if (downloadFoodBtn) {
+        downloadFoodBtn.disabled = true;
+      }
+
+      latestFoodText = '';
+      setActiveFoodButton(null);
+    }
+
+    function handleFoodResponse(response) {
+      if (response === 'yes') {
+        setActiveFoodButton(response);
+        if (foodForm) {
+          foodForm.hidden = false;
+        }
+        if (foodOutput) {
+          foodOutput.innerHTML = '<p class="empty-state">Choose the meals you want recommendations for, then generate your list.</p>';
+        }
+        if (downloadFoodBtn) {
+          downloadFoodBtn.disabled = true;
+        }
+        latestFoodText = '';
+        return;
+      }
+
+      if (response === 'no') {
+        resetFoodSection('Thank You!');
+        setActiveFoodButton(response);
+      }
+    }
+
+    function renderFoodRecommendations(profileId, coverage) {
+      if (!foodOutput) return;
+
+      if (!profileId) {
+        foodOutput.innerHTML = '<p class="empty-state">Complete the quiz to lock in your travel style result before asking for dining ideas.</p>';
+        if (downloadFoodBtn) {
+          downloadFoodBtn.disabled = true;
+        }
+        latestFoodText = '';
+        return;
+      }
+
+      const coverageMeals = foodCoverageMap[coverage];
+
+      if (!coverageMeals || !coverageMeals.length) {
+        foodOutput.innerHTML = '<p class="empty-state">Pick one of the meal coverage options above to continue.</p>';
+        if (downloadFoodBtn) {
+          downloadFoodBtn.disabled = true;
+        }
+        latestFoodText = '';
+        return;
+      }
+
+      const template = foodBases[profileId];
+
+      if (!template) {
+        foodOutput.innerHTML = '<p class="empty-state">We couldn’t find food picks for that travel style just yet. Try retaking the quiz for a new match.</p>';
+        if (downloadFoodBtn) {
+          downloadFoodBtn.disabled = true;
+        }
+        latestFoodText = '';
+        return;
+      }
+
+      const city = destinationInput.value.trim();
+
+      if (!city) {
+        foodOutput.innerHTML = '<p class="empty-state">Add your destination above so we can tailor the dining list with real addresses.</p>';
+        if (downloadFoodBtn) {
+          downloadFoodBtn.disabled = true;
+        }
+        latestFoodText = '';
+        return;
+      }
+
+      const rawDayCount = Number.parseInt(travelDaysInput.value, 10);
+
+      if (Number.isNaN(rawDayCount) || rawDayCount <= 0) {
+        foodOutput.innerHTML = '<p class="empty-state">Tell us how many days you&rsquo;re travelling for so we can size the dining list to your trip.</p>';
+        if (downloadFoodBtn) {
+          downloadFoodBtn.disabled = true;
+        }
+        latestFoodText = '';
+        return;
+      }
+
+      const dayCount = Math.min(Math.max(rawDayCount, 1), 21);
+
+      const profile = profiles.find(item => item.id === profileId);
+      const coverageLabel = coverageLabels[coverage] || 'your chosen meals';
+      const sections = coverageMeals
+        .map(meal => ({ meal, items: template[meal] || [] }))
+        .filter(entry => entry.items.length);
+
+      if (!sections.length) {
+        foodOutput.innerHTML = '<p class="empty-state">We&rsquo;re still gathering dining intel for that combination. Try a different meal selection.</p>';
+        if (downloadFoodBtn) {
+          downloadFoodBtn.disabled = true;
+        }
+        latestFoodText = '';
+        return;
+      }
+
+      const lines = [];
+      const cityName = city;
+      const profileTitle = profile ? profile.title : 'your travel style';
+
+      lines.push(`Food recommendations for ${cityName} — ${profileTitle}`);
+      lines.push(`Coverage: ${coverageLabel}`);
+      lines.push(`Trip length: ${dayCount} day${dayCount > 1 ? 's' : ''}`);
+      lines.push('');
+
+      foodOutput.innerHTML = '';
+
+      const intro = document.createElement('p');
+      intro.className = 'empty-state';
+      intro.textContent = `Here are ${coverageLabel} picks in ${cityName} for your ${dayCount}-day stay that travellers rave about:`;
+      foodOutput.appendChild(intro);
+
+      sections.forEach(section => {
+        const mealLabel = mealLabels[section.meal] || section.meal;
+        const mealBlock = document.createElement('section');
+        mealBlock.className = 'food-meal';
+
+        const heading = document.createElement('h3');
+        heading.textContent = mealLabel;
+        mealBlock.appendChild(heading);
+
+        const list = document.createElement('ul');
+
+        for (let day = 0; day < dayCount; day += 1) {
+          const item = section.items[day % section.items.length];
+          const name = replaceCityPlaceholders(item.name, cityName);
+          const address = replaceCityPlaceholders(item.address, cityName);
+          const description = replaceCityPlaceholders(item.description, cityName);
+          const listItem = document.createElement('li');
+          listItem.innerHTML = `
+            <strong>Day ${day + 1}: ${name}</strong>
+            ${address}<br />
+            <em>${description}</em>
+          `;
+          list.appendChild(listItem);
+
+          lines.push(`- Day ${day + 1} ${mealLabel}: ${name} — ${address}. ${description}`);
+        }
+
+        mealBlock.appendChild(list);
+        foodOutput.appendChild(mealBlock);
+        lines.push('');
+      });
+
+      latestFoodText = lines.join('\n');
+
+      if (downloadFoodBtn) {
+        downloadFoodBtn.disabled = false;
+      }
+
+      foodOutput.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function updateMapWithPlaces(places) {
+      if (!mapFrame) return;
+
+      const uniquePlaces = [];
+      const seen = new Set();
+
+      places.forEach(place => {
+        const key = `${place.location}|${place.address}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          uniquePlaces.push(place);
+        }
+      });
+
+      if (!uniquePlaces.length) {
+        resetMap();
+        return;
+      }
+
+      const trimmedPlaces = uniquePlaces.slice(0, 10);
+
+      const mapStatusMessage = uniquePlaces.length > trimmedPlaces.length
+        ? 'Showing the first ten recommended spots on Google Maps. Zoom in for more detail.'
+        : 'Visualise your recommended spots on Google Maps. Drag or zoom to explore the neighbourhoods.';
+
+      const formattedAddresses = trimmedPlaces.map(place => {
+        const locationLine = place.location ? `${place.location}, ` : '';
+        return `${locationLine}${place.address}`;
+      });
+
+      const [firstAddress, ...additionalAddresses] = formattedAddresses;
+
+      let mapUrl = '';
+
+      if (additionalAddresses.length) {
+        const destinationParam = additionalAddresses.map(addr => encodeURIComponent(addr)).join('+to:');
+        mapUrl = `https://www.google.com/maps?output=embed&f=d&source=s_d&saddr=${encodeURIComponent(firstAddress)}&daddr=${destinationParam}`;
+      } else {
+        mapUrl = `https://www.google.com/maps?q=${encodeURIComponent(firstAddress)}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
+      }
+
+      mapFrame.src = mapUrl;
+
+      if (mapMessage) {
+        mapMessage.textContent = mapStatusMessage;
+      }
+    }
+
+    function formatDateRange(start, end) {
+      if (!start || !end) return null;
+
+      const startDate = new Date(start);
+      const endDate = new Date(end);
+
+      if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+        return null;
+      }
+
+      const formatter = new Intl.DateTimeFormat(undefined, {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+
+      return `${formatter.format(startDate)} – ${formatter.format(endDate)}`;
+    }
+
+    function titleToProfileId(title) {
+      if (!title) return null;
+      const normalised = title.trim().toLowerCase();
+      const matched = profiles.find(profile => profile.title.toLowerCase() === normalised);
+      return matched ? matched.id : null;
+    }
+
+    function renderPlanner(profileId, city, days, startDate, endDate) {
+      const template = plannerTemplates[profileId];
+      plannerOutput.innerHTML = '';
+
+      if (!template) {
+        plannerOutput.innerHTML = '<p class="empty-state">We couldn’t match that travel style to our planner templates just yet. Try the quiz again for a fresh result.</p>';
+        downloadPlannerBtn.disabled = true;
+        latestPlannerText = '';
+        resetMap('We couldn’t map those spots yet. Try regenerating your planner once you have a matching style.');
+        return;
+      }
+
+      const maxActivitiesPerDay = 3;
+      const cleanCity = city.trim();
+      const itineraryText = [];
+      const dateRange = formatDateRange(startDate, endDate);
+      const mapSpots = [];
+
+      itineraryText.push(`Trip planner for ${cleanCity} — ${profiles.find(p => p.id === profileId)?.title || ''}`);
+      itineraryText.push(`Duration: ${days} day${days > 1 ? 's' : ''}`);
+
+      if (dateRange) {
+        itineraryText.push(`Dates: ${dateRange}`);
+      }
+
+      itineraryText.push('');
+
+      for (let day = 0; day < days; day += 1) {
+        const daySection = document.createElement('section');
+        daySection.className = 'itinerary-day';
+        const dayNumber = day + 1;
+        const dayHeading = document.createElement('h3');
+        dayHeading.textContent = `Day ${dayNumber}`;
+        daySection.appendChild(dayHeading);
+
+        const activityList = document.createElement('ul');
+
+        itineraryText.push(`Day ${dayNumber}`);
+
+        for (let slot = 0; slot < maxActivitiesPerDay; slot += 1) {
+          const templateIndex = (day * maxActivitiesPerDay + slot) % template.length;
+          const activity = template[templateIndex];
+          const listItem = document.createElement('li');
+          const location = replaceCityPlaceholders(activity.location, cleanCity);
+          const address = replaceCityPlaceholders(activity.address, cleanCity);
+          const description = replaceCityPlaceholders(activity.description, cleanCity);
+          listItem.innerHTML = `
+            <strong>${activity.time}: ${activity.title}</strong>
+            ${location}<br />
+            <em>${address}</em><br />
+            ${description}
+          `;
+          activityList.appendChild(listItem);
+
+          itineraryText.push(`- ${activity.time}: ${activity.title} — ${location} (${address}). ${description}`);
+          mapSpots.push({
+            title: activity.title,
+            location,
+            address
+          });
+        }
+
+        daySection.appendChild(activityList);
+        plannerOutput.appendChild(daySection);
+        itineraryText.push('');
+      }
+
+      const fragment = document.createDocumentFragment();
+      const intro = document.createElement('p');
+      intro.className = 'empty-state';
+      intro.textContent = dateRange
+        ? `Here’s a review-backed shortlist of places to book and explore between ${dateRange}:`
+        : 'Here’s a review-backed shortlist of places to book and explore during your stay:';
+      fragment.appendChild(intro);
+
+      if (dateRange) {
+        const datesLine = document.createElement('p');
+        datesLine.className = 'planner-dates';
+        datesLine.textContent = `Trip dates: ${dateRange}`;
+        fragment.appendChild(datesLine);
+      }
+
+      plannerOutput.prepend(fragment);
+
+      latestPlannerText = itineraryText.join('\n');
+      downloadPlannerBtn.disabled = false;
+      updateMapWithPlaces(mapSpots);
+    }
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const data = formDataToObject(new FormData(form));
+      const scores = scoreQuiz(data);
+      buildResults(scores);
+      form.classList.remove('active');
+      resultsSection.classList.add('active');
+      resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    retakeBtn.addEventListener('click', () => {
+      resultsSection.classList.remove('active');
+      form.classList.add('active');
+      showStep(0);
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    restartBtn.addEventListener('click', () => {
+      form.reset();
+      resultsSection.classList.remove('active');
+      form.classList.remove('active');
+      startScreen.classList.add('active');
+      showStep(0);
+      startScreen.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      styleInput.value = '';
+      delete styleInput.dataset.profileId;
+      plannerForm.reset();
+      plannerOutput.innerHTML = '<p class="empty-state">Fill in the details above to see a day-by-day plan with can’t-miss spots, review-backed addresses, and optional date guidance.</p>';
+      downloadPlannerBtn.disabled = true;
+      latestPlannerText = '';
+      resetFoodSection();
+      resetMap();
+    });
+
+    if (foodQuestion) {
+      foodQuestion.addEventListener('click', (event) => {
+        const targetButton = event.target.closest('button[data-response]');
+        if (!targetButton) return;
+        handleFoodResponse(targetButton.dataset.response);
+      });
+    }
+
+    if (foodForm) {
+      foodForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const formData = new FormData(foodForm);
+        const coverage = formData.get('foodCoverage');
+        const profileId = styleInput.dataset.profileId || titleToProfileId(styleInput.value);
+        renderFoodRecommendations(profileId, coverage);
+      });
+    }
+
+    plannerForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const city = destinationInput.value.trim();
+      const dayCount = Number.parseInt(travelDaysInput.value, 10);
+      const startDateValue = tripStartInput.value;
+      const endDateValue = tripEndInput.value;
+
+      if (!city || Number.isNaN(dayCount) || dayCount <= 0) {
+        plannerOutput.innerHTML = '<p class="empty-state">Add a destination and a travel length longer than zero to generate your planner.</p>';
+        downloadPlannerBtn.disabled = true;
+        latestPlannerText = '';
+        resetMap('Add your trip details above to plot the recommendations on Google Maps.');
+        return;
+      }
+
+      if ((startDateValue && !endDateValue) || (!startDateValue && endDateValue)) {
+        plannerOutput.innerHTML = '<p class="empty-state">Add both a start and end date, or clear the fields to skip date guidance.</p>';
+        downloadPlannerBtn.disabled = true;
+        latestPlannerText = '';
+        resetMap('Add a full date range or clear the fields so we can map your recommendations.');
+        return;
+      }
+
+      if (startDateValue && endDateValue) {
+        const startDate = new Date(startDateValue);
+        const endDate = new Date(endDateValue);
+
+        if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime()) || endDate < startDate) {
+          plannerOutput.innerHTML = '<p class="empty-state">Make sure your end date comes after your start date and both are valid calendar selections.</p>';
+          downloadPlannerBtn.disabled = true;
+          latestPlannerText = '';
+          resetMap('Fix the trip dates to see your Google Maps highlights.');
+          return;
+        }
+      }
+
+      const profileId = styleInput.dataset.profileId || titleToProfileId(styleInput.value);
+
+      if (!profileId) {
+        plannerOutput.innerHTML = '<p class="empty-state">We couldn’t read your travel style. Paste the result title from the quiz or retake it for a fresh match.</p>';
+        downloadPlannerBtn.disabled = true;
+        latestPlannerText = '';
+        resetMap('Complete the quiz result field so we can tag your recommendations on Google Maps.');
+        return;
+      }
+
+      renderPlanner(profileId, city, Math.min(Math.max(dayCount, 1), 21), startDateValue, endDateValue);
+    });
+
+    downloadPlannerBtn.addEventListener('click', () => {
+      if (!latestPlannerText) return;
+      const tripName = destinationInput.value.trim() || 'your-trip';
+      const safeFileName = tripName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'travel-plan';
+      const blob = new Blob([latestPlannerText], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${safeFileName}-planner.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    });
+
+    if (downloadFoodBtn) {
+      downloadFoodBtn.addEventListener('click', () => {
+        if (!latestFoodText) return;
+        const tripName = destinationInput.value.trim() || 'your-trip';
+        const safeFileName = tripName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'food-guide';
+        const blob = new Blob([latestFoodText], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${safeFileName}-food-guide.txt`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      });
+    }
+
+    // Initialise the first step state so keyboard users can tab once the quiz is started.
+    showStep(0);
+    form.classList.remove('active');
+    resetFoodSection();
+    resetMap();
+  </script>
+</body>
+</html>
