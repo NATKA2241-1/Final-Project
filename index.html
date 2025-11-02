@@ -34,6 +34,27 @@
     }
 
     main {
+      width: min(460px, 100%);
+    }
+
+    .quiz-card {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 26px;
+      box-shadow: 0 28px 70px rgba(6, 10, 18, 0.6);
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+      min-height: 560px;
+    }
+
+    header {
+      padding: 32px clamp(20px, 6vw, 48px) 24px;
+      background: rgba(7, 12, 21, 0.6);
+      border-bottom: 1px solid var(--panel-border);
+      display: grid;
+      gap: 12px;
       width: min(960px, 100%);
       background: var(--panel);
       border: 1px solid var(--panel-border);
@@ -58,6 +79,62 @@
     }
 
     header h1 {
+      margin: 0;
+      font-size: clamp(28px, 4vw, 38px);
+      letter-spacing: -0.01em;
+    }
+
+    header .tip {
+      font-size: 14px;
+      padding: 10px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.06);
+      color: rgba(255, 255, 255, 0.78);
+      margin: 0;
+    }
+
+    .panel {
+      display: none;
+      padding: 28px clamp(20px, 6vw, 40px);
+    }
+
+    .panel.active {
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+
+    .start-screen {
+      text-align: center;
+      gap: 20px;
+      justify-items: center;
+    }
+
+    .start-screen.active {
+      display: grid;
+      align-content: center;
+      justify-items: center;
+    }
+
+    .start-screen p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    form.panel.active {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+    }
+
+    .progress {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
       margin: 0 0 12px;
       font-size: clamp(28px, 4vw, 40px);
       letter-spacing: -0.01em;
@@ -133,6 +210,15 @@
       flex: 1;
     }
 
+    .step {
+      display: none;
+      gap: 22px;
+    }
+
+    .step.active {
+      display: grid;
+    }
+
     button {
       cursor: pointer;
       font-weight: 600;
@@ -154,6 +240,42 @@
       transform: translateY(1px);
     }
 
+    button:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .ghost {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: #f9fbff;
+      box-shadow: none;
+    }
+
+    .ghost:hover {
+      background: rgba(255, 255, 255, 0.12);
+      transform: none;
+    }
+
+    .nav-controls {
+      display: flex;
+      gap: 12px;
+      margin-top: auto;
+    }
+
+    .nav-controls button {
+      flex: 1;
+    }
+
+    .nav-controls button:first-child {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: #f9fbff;
+      box-shadow: none;
+    }
+
+    #results {
     footer {
       display: flex;
       justify-content: space-between;
@@ -181,6 +303,7 @@
     #resultList {
       display: grid;
       gap: 18px;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     }
 
@@ -213,12 +336,25 @@
       line-height: 1.5;
     }
 
+    .results-actions {
     .actions {
       display: flex;
       gap: 14px;
       flex-wrap: wrap;
     }
 
+    footer {
+      padding: 22px clamp(20px, 6vw, 32px) 28px;
+      background: rgba(7, 12, 21, 0.6);
+      border-top: 1px solid var(--panel-border);
+    }
+
+    footer p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.5;
+      text-align: center;
     .ghost {
       background: transparent;
       border: 1px solid rgba(255, 255, 255, 0.35);
@@ -240,6 +376,97 @@
 </head>
 <body>
   <main>
+    <article class="quiz-card">
+      <header>
+        <h2 class="super-title">Your ultimate travel guide starts here</h2>
+        <h1>Find Your Travel Style</h1>
+        <p class="tip">Tip: You don&rsquo;t need to tick every statement, but the more you choose the sharper your matches will be.</p>
+      </header>
+
+      <section id="startScreen" class="panel start-screen active" aria-live="polite">
+        <p>Discover which travel styles will light you up. We&rsquo;ll walk through three quick sections covering the activities, city vibes, and planning style you love.</p>
+        <button type="button" id="startBtn">Start your travel quiz</button>
+      </section>
+
+      <form id="quiz" class="panel" novalidate>
+        <p class="progress" id="progressLabel">Step 1 of 3</p>
+
+        <div class="step" data-step="0">
+          <fieldset>
+            <legend>Entertainment &amp; Leisure</legend>
+            <p class="fieldset-note">Tick every experience you enjoy on a getaway.</p>
+            <div class="tick-group">
+              <label class="tick"><input type="checkbox" name="nightlife" value="yes" /> <span>Do you like nightlife?</span></label>
+              <label class="tick"><input type="checkbox" name="live_music" value="yes" /> <span>Do you enjoy live music?</span></label>
+              <label class="tick"><input type="checkbox" name="shopping" value="yes" /> <span>Do you like shopping while travelling?</span></label>
+              <label class="tick"><input type="checkbox" name="local_markets" value="yes" /> <span>Do you enjoy local markets?</span></label>
+              <label class="tick"><input type="checkbox" name="spa" value="yes" /> <span>Do you like spa or wellness activities?</span></label>
+              <label class="tick"><input type="checkbox" name="no_plans" value="yes" /> <span>Do you enjoy relaxing days with no plans?</span></label>
+              <label class="tick"><input type="checkbox" name="sports_events" value="yes" /> <span>Do you like sports events while abroad?</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="step" data-step="1">
+          <fieldset>
+            <legend>City Vibes</legend>
+            <p class="fieldset-note">Choose the city atmospheres and ways of exploring that excite you.</p>
+            <div class="tick-group">
+              <label class="tick"><input type="checkbox" name="modern_cities" value="yes" /> <span>Do you like modern cities?</span></label>
+              <label class="tick"><input type="checkbox" name="old_towns" value="yes" /> <span>Do you prefer old towns?</span></label>
+              <label class="tick"><input type="checkbox" name="by_foot" value="yes" /> <span>Do you like exploring by foot?</span></label>
+              <label class="tick"><input type="checkbox" name="public_transport" value="yes" /> <span>Do you enjoy using public transport?</span></label>
+              <label class="tick"><input type="checkbox" name="busy_areas" value="yes" /> <span>Do you like staying in busy areas?</span></label>
+              <label class="tick"><input type="checkbox" name="quiet_neighbourhoods" value="yes" /> <span>Do you prefer quiet neighbourhoods?</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="step" data-step="2">
+          <fieldset>
+            <legend>Personal Travel Style</legend>
+            <p class="fieldset-note">Mark the styles that feel true to how you plan and enjoy trips.</p>
+            <div class="tick-group">
+              <label class="tick"><input type="checkbox" name="solo" value="yes" /> <span>Do you like travelling solo?</span></label>
+              <label class="tick"><input type="checkbox" name="group" value="yes" /> <span>Do you enjoy travelling in groups?</span></label>
+              <label class="tick"><input type="checkbox" name="luxury" value="yes" /> <span>Do you like luxury travel?</span></label>
+              <label class="tick"><input type="checkbox" name="budget" value="yes" /> <span>Do you prefer budget travel?</span></label>
+              <label class="tick"><input type="checkbox" name="planner" value="yes" /> <span>Do you like planning ahead?</span></label>
+              <label class="tick"><input type="checkbox" name="spontaneous_style" value="yes" /> <span>Do you enjoy spontaneous trips?</span></label>
+              <label class="tick"><input type="checkbox" name="returning" value="yes" /> <span>Do you like returning to places you&rsquo;ve already visited?</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="nav-controls">
+          <button type="button" id="prevBtn">Back</button>
+          <button type="button" id="nextBtn">Next</button>
+        </div>
+      </form>
+
+      <section id="results" class="panel" aria-live="polite">
+        <div id="resultMessage"></div>
+        <div id="resultList" class="grid"></div>
+        <div class="results-actions">
+          <button type="button" class="ghost" id="retakeBtn">Adjust my answers</button>
+          <button type="button" id="restartBtn">Start over</button>
+        </div>
+      </section>
+
+      <footer>
+        <p>We only show the four best matches so you can focus on the experiences that matter most.</p>
+      </footer>
+    </article>
+  </main>
+
+  <script>
+    const startScreen = document.getElementById('startScreen');
+    const startBtn = document.getElementById('startBtn');
+    const form = document.getElementById('quiz');
+    const progressLabel = document.getElementById('progressLabel');
+    const steps = Array.from(form.querySelectorAll('.step'));
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
     <header>
       <h2 class="super-title">Your ultimate travel guide starts here</h2>
       <h1>Find Your Travel Style</h1>
@@ -315,6 +542,9 @@
     const resultMessage = document.getElementById('resultMessage');
     const resultList = document.getElementById('resultList');
     const retakeBtn = document.getElementById('retakeBtn');
+    const restartBtn = document.getElementById('restartBtn');
+
+    let currentStep = 0;
 
     const profiles = [
       {
@@ -412,6 +642,84 @@
       returning: ['marketExplorer', 'independentPlanner']
     };
 
+    function updateProgress() {
+      progressLabel.textContent = `Step ${currentStep + 1} of ${steps.length}`;
+    }
+
+    function showStep(index) {
+      currentStep = index;
+      steps.forEach((step, position) => {
+        step.classList.toggle('active', position === index);
+      });
+      prevBtn.disabled = index === 0;
+      nextBtn.textContent = index === steps.length - 1 ? 'See my travel matches' : 'Next';
+      updateProgress();
+    }
+
+    startBtn.addEventListener('click', () => {
+      startScreen.classList.remove('active');
+      resultsSection.classList.remove('active');
+      form.classList.add('active');
+      showStep(0);
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentStep === steps.length - 1) {
+        form.requestSubmit();
+        return;
+      }
+      showStep(Math.min(steps.length - 1, currentStep + 1));
+    });
+
+    prevBtn.addEventListener('click', () => {
+      if (currentStep === 0) return;
+      showStep(Math.max(0, currentStep - 1));
+    });
+
+    function scoreQuiz(data) {
+      const scores = Object.fromEntries(profiles.map(profile => [profile.id, 0]));
+
+      Object.entries(data).forEach(([question, value]) => {
+        const tags = questionWeights[question];
+        if (!tags || value !== 'yes') return;
+        const weight = 2;
+        tags.forEach(tag => {
+          scores[tag] += weight;
+        });
+      });
+
+      return scores;
+    }
+
+    function buildResults(scores) {
+      const sorted = profiles
+        .map(profile => ({ profile, score: scores[profile.id] || 0 }))
+        .filter(item => item.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 4);
+
+      resultList.innerHTML = '';
+
+      if (!sorted.length) {
+        resultMessage.textContent = 'Tick a few statements in each section so we can recommend up to four travel styles for you.';
+        return;
+      }
+
+      resultMessage.textContent = sorted.length === 1
+        ? 'This travel style fits you best:'
+        : `Your top ${sorted.length} travel styles:`;
+
+      sorted.forEach(({ profile }) => {
+        const card = document.createElement('article');
+        card.className = 'result-card';
+        card.innerHTML = `
+          <h3>${profile.emoji} ${profile.title}</h3>
+          <p>${profile.description}</p>
+          <ul>${profile.highlights.map(item => `<li>${item}</li>`).join('')}</ul>
+        `;
+        resultList.appendChild(card);
+      });
     function scoreQuiz(data) {
       const scores = Object.fromEntries(profiles.map(profile => [profile.id, 0]));
 
@@ -472,10 +780,30 @@
       const data = formDataToObject(new FormData(form));
       const scores = scoreQuiz(data);
       buildResults(scores);
+      form.classList.remove('active');
       resultsSection.classList.add('active');
       resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
 
+    retakeBtn.addEventListener('click', () => {
+      resultsSection.classList.remove('active');
+      form.classList.add('active');
+      showStep(0);
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    restartBtn.addEventListener('click', () => {
+      form.reset();
+      resultsSection.classList.remove('active');
+      form.classList.remove('active');
+      startScreen.classList.add('active');
+      showStep(0);
+      startScreen.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    // Initialise the first step state so keyboard users can tab once the quiz is started.
+    showStep(0);
+    form.classList.remove('active');
     function clearForm() {
       form.reset();
       resultMessage.textContent = '';
