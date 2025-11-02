@@ -412,6 +412,35 @@
       gap: 16px;
     }
 
+    .map-section {
+      margin-top: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      padding: 22px clamp(18px, 5vw, 30px);
+      background: rgba(11, 19, 32, 0.72);
+      display: grid;
+      gap: 14px;
+    }
+
+    .map-section h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .map-section p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .map-frame {
+      width: 100%;
+      border: 0;
+      border-radius: 18px;
+      min-height: 280px;
+      background: rgba(8, 16, 28, 0.55);
+    }
+
     .planner-output .empty-state {
       margin: 0;
       color: var(--muted);
@@ -635,6 +664,18 @@
             <p class="empty-state">Fill in the details above to see a day-by-day plan with can&rsquo;t-miss spots, review-backed addresses, and optional date guidance.</p>
           </div>
         </section>
+        <section id="mapSection" class="map-section" aria-live="polite">
+          <h2>See your highlights on a map</h2>
+          <p id="mapMessage">Generate a planner to plot the recommended spots on Google Maps.</p>
+          <iframe
+            id="mapFrame"
+            class="map-frame"
+            title="Map of recommended places"
+            src=""
+            loading="lazy"
+            allowfullscreen
+          ></iframe>
+        </section>
       </section>
 
       <footer>
@@ -664,9 +705,12 @@
     const tripEndInput = document.getElementById('tripEndInput');
     const plannerOutput = document.getElementById('plannerOutput');
     const downloadPlannerBtn = document.getElementById('downloadPlanner');
+    const mapFrame = document.getElementById('mapFrame');
+    const mapMessage = document.getElementById('mapMessage');
 
     let currentStep = 0;
     let latestPlannerText = '';
+    const defaultMapMessage = 'Generate a planner to plot the recommended spots on Google Maps.';
 
     const profiles = [
       {
@@ -1010,6 +1054,7 @@
       downloadPlannerBtn.disabled = true;
       latestPlannerText = '';
       plannerOutput.innerHTML = '<p class="empty-state">Add your destination, travel length, and optional dates to build a personalised plan.</p>';
+      resetMap();
     }
 
     function formDataToObject(formData) {
@@ -1021,6 +1066,62 @@
 
     function replaceCityPlaceholders(text, city) {
       return text.replace(/\{city\}/g, city);
+    }
+
+    function resetMap(message = defaultMapMessage) {
+      if (!mapFrame) return;
+      mapFrame.src = 'about:blank';
+      if (mapMessage) {
+        mapMessage.textContent = message;
+      }
+    }
+
+    function updateMapWithPlaces(places) {
+      if (!mapFrame) return;
+
+      const uniquePlaces = [];
+      const seen = new Set();
+
+      places.forEach(place => {
+        const key = `${place.location}|${place.address}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          uniquePlaces.push(place);
+        }
+      });
+
+      if (!uniquePlaces.length) {
+        resetMap();
+        return;
+      }
+
+      const trimmedPlaces = uniquePlaces.slice(0, 10);
+
+      const mapStatusMessage = uniquePlaces.length > trimmedPlaces.length
+        ? 'Showing the first ten recommended spots on Google Maps. Zoom in for more detail.'
+        : 'Visualise your recommended spots on Google Maps. Drag or zoom to explore the neighbourhoods.';
+
+      const formattedAddresses = trimmedPlaces.map(place => {
+        const locationLine = place.location ? `${place.location}, ` : '';
+        return `${locationLine}${place.address}`;
+      });
+
+      const [firstAddress, ...additionalAddresses] = formattedAddresses;
+
+      let mapUrl = '';
+
+      if (additionalAddresses.length) {
+        const destinationParam = additionalAddresses.map(addr => encodeURIComponent(addr)).join('+to:');
+        mapUrl = `https://www.google.com/maps?output=embed&f=d&source=s_d&saddr=${encodeURIComponent(firstAddress)}&daddr=${destinationParam}`;
+      } else {
+        mapUrl = `https://www.google.com/maps?q=${encodeURIComponent(firstAddress)}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
+      }
+
+      mapFrame.src = mapUrl;
+
+      if (mapMessage) {
+        mapMessage.textContent = mapStatusMessage;
+      }
     }
 
     function formatDateRange(start, end) {
@@ -1057,6 +1158,7 @@
         plannerOutput.innerHTML = '<p class="empty-state">We couldn’t match that travel style to our planner templates just yet. Try the quiz again for a fresh result.</p>';
         downloadPlannerBtn.disabled = true;
         latestPlannerText = '';
+        resetMap('We couldn’t map those spots yet. Try regenerating your planner once you have a matching style.');
         return;
       }
 
@@ -1064,6 +1166,7 @@
       const cleanCity = city.trim();
       const itineraryText = [];
       const dateRange = formatDateRange(startDate, endDate);
+      const mapSpots = [];
 
       itineraryText.push(`Trip planner for ${cleanCity} — ${profiles.find(p => p.id === profileId)?.title || ''}`);
       itineraryText.push(`Duration: ${days} day${days > 1 ? 's' : ''}`);
@@ -1102,6 +1205,11 @@
           activityList.appendChild(listItem);
 
           itineraryText.push(`- ${activity.time}: ${activity.title} — ${location} (${address}). ${description}`);
+          mapSpots.push({
+            title: activity.title,
+            location,
+            address
+          });
         }
 
         daySection.appendChild(activityList);
@@ -1128,6 +1236,7 @@
 
       latestPlannerText = itineraryText.join('\n');
       downloadPlannerBtn.disabled = false;
+      updateMapWithPlaces(mapSpots);
     }
 
     form.addEventListener('submit', (event) => {
@@ -1161,6 +1270,7 @@
       plannerOutput.innerHTML = '<p class="empty-state">Fill in the details above to see a day-by-day plan with can’t-miss spots, review-backed addresses, and optional date guidance.</p>';
       downloadPlannerBtn.disabled = true;
       latestPlannerText = '';
+      resetMap();
     });
 
     plannerForm.addEventListener('submit', (event) => {
@@ -1174,6 +1284,7 @@
         plannerOutput.innerHTML = '<p class="empty-state">Add a destination and a travel length longer than zero to generate your planner.</p>';
         downloadPlannerBtn.disabled = true;
         latestPlannerText = '';
+        resetMap('Add your trip details above to plot the recommendations on Google Maps.');
         return;
       }
 
@@ -1181,6 +1292,7 @@
         plannerOutput.innerHTML = '<p class="empty-state">Add both a start and end date, or clear the fields to skip date guidance.</p>';
         downloadPlannerBtn.disabled = true;
         latestPlannerText = '';
+        resetMap('Add a full date range or clear the fields so we can map your recommendations.');
         return;
       }
 
@@ -1192,6 +1304,7 @@
           plannerOutput.innerHTML = '<p class="empty-state">Make sure your end date comes after your start date and both are valid calendar selections.</p>';
           downloadPlannerBtn.disabled = true;
           latestPlannerText = '';
+          resetMap('Fix the trip dates to see your Google Maps highlights.');
           return;
         }
       }
@@ -1202,6 +1315,7 @@
         plannerOutput.innerHTML = '<p class="empty-state">We couldn’t read your travel style. Paste the result title from the quiz or retake it for a fresh match.</p>';
         downloadPlannerBtn.disabled = true;
         latestPlannerText = '';
+        resetMap('Complete the quiz result field so we can tag your recommendations on Google Maps.');
         return;
       }
 
@@ -1226,6 +1340,7 @@
     // Initialise the first step state so keyboard users can tab once the quiz is started.
     showStep(0);
     form.classList.remove('active');
+    resetMap();
   </script>
 </body>
 </html>
