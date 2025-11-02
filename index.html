@@ -309,70 +309,98 @@
 
     const profiles = [
       {
-        id: 'culturalExplorer',
-        title: 'Cultural Explorer',
-        emoji: '🏛️',
-        description: 'Immerse yourself in history, architecture, galleries, and the stories behind each destination.',
-        highlights: ['Museum passes & guided walks', 'Heritage neighbourhood strolls', 'Festival and theatre weekends']
+        id: 'nightlifeInsider',
+        title: 'Nightlife Insider',
+        emoji: '🌃',
+        description: 'Your evenings are all about buzzworthy bars, live sets, and the biggest games in town.',
+        highlights: ['Guest-list nightlife & rooftop spots', 'Live music calendars & venue guides', 'Tickets to matches and arena events']
       },
       {
-        id: 'foodieAdventure',
-        title: 'Foodie Adventure',
-        emoji: '🍲',
-        description: 'Taste the city one bite at a time with markets, cooking classes, and unforgettable dining rooms.',
-        highlights: ['Street food hops & local cafés', 'Winery or brewery trails', 'Chef-led cooking workshops']
+        id: 'marketExplorer',
+        title: 'Market Explorer',
+        emoji: '🛍️',
+        description: 'You wander markets and boutiques to uncover locally made keepsakes and foodie finds.',
+        highlights: ['Neighbourhood market maps', 'Boutique shopping trails', 'Hands-on tastings with local producers']
       },
       {
-        id: 'natureGetaway',
-        title: 'Nature Getaway',
-        emoji: '🌄',
-        description: 'Trade city noise for scenic outlooks, mountain air, beaches, and national parks.',
-        highlights: ['National park loops', 'Sunrise hikes & scenic drives', 'Photography-friendly lookouts']
+        id: 'wellnessWeekender',
+        title: 'Wellness Weekender',
+        emoji: '🧖',
+        description: 'Retreat-style stays, spa rituals, and guilt-free downtime keep you refreshed on every getaway.',
+        highlights: ['Spa passes & thermal baths', 'Slow brunch and chill-day itineraries', 'Quiet quarters & restorative stays']
       },
       {
-        id: 'leisureLifestyle',
-        title: 'Leisure & Lifestyle',
-        emoji: '🎉',
-        description: 'Balance spa time with nightlife, markets, and live events for a feel-good escape.',
-        highlights: ['Rooftop bars & music venues', 'Wellness days and hammams', 'Match-day or show tickets']
-      },
-      {
-        id: 'cityHighlights',
-        title: 'City Highlights',
+        id: 'urbanAdventurer',
+        title: 'Urban Adventurer',
         emoji: '🚇',
-        description: 'Navigate vibrant neighbourhoods, efficient transit, and a mix of modern skylines and old towns.',
-        highlights: ['Public transit passes', 'Self-guided walking maps', 'Contrasting old-town & modern tours']
+        description: 'You thrive in fast-paced districts, hopping between skyline views, art hubs, and buzzing streets.',
+        highlights: ['Transit-ready travel cards', 'Self-guided walking adventures', 'Skyline lookouts & rooftop lounges']
       },
       {
-        id: 'flexibleCompanion',
-        title: 'Flexible Companion',
+        id: 'heritageWanderer',
+        title: 'Heritage Wanderer',
+        emoji: '🏘️',
+        description: 'Historic alleys, artisan quarters, and story-rich guided strolls make a city click for you.',
+        highlights: ['Old-town walking tours', 'Craft market & gallery loops', 'Peaceful stays in character neighbourhoods']
+      },
+      {
+        id: 'socialConnector',
+        title: 'Social Connector',
+        emoji: '🤝',
+        description: 'Trips feel best when shared—group outings, fan experiences, and communal dinners light you up.',
+        highlights: ['Group nightlife & food tours', 'Fan sections and festival passes', 'Shared-table dining reservations']
+      },
+      {
+        id: 'independentPlanner',
+        title: 'Independent Planner',
         emoji: '🧭',
-        description: 'You design trips around the right company, budget, and level of planning—mix and match as you go.',
-        highlights: ['Solo-friendly stays & group tours', 'Budget-luxury balance itineraries', 'Spontaneous day add-ons']
+        description: 'You mix solo moments with a smart plan so every day balances freedom and sure-thing highlights.',
+        highlights: ['Customisable day-by-day planners', 'Solo-friendly stays & meetups', 'Return-visit upgrade suggestions']
+      },
+      {
+        id: 'spontaneousNomad',
+        title: 'Spontaneous Nomad',
+        emoji: '🎒',
+        description: 'Last-minute ideas, open schedules, and flexible budgets keep your adventures exciting.',
+        highlights: ['Pop-up event alerts', 'Flexible booking picks', 'Local tips for same-day plans']
+      },
+      {
+        id: 'luxVoyager',
+        title: 'Luxe Voyager',
+        emoji: '💎',
+        description: 'High-touch stays, premium lounges, and polished nights out define your getaway vibe.',
+        highlights: ['Designer hotel & suite shortlists', 'Private wellness and dining bookings', 'Exclusive nightlife recommendations']
+      },
+      {
+        id: 'budgetBackpacker',
+        title: 'Budget Backpacker',
+        emoji: '💼',
+        description: 'You stretch every dollar with smart transit, walkable hubs, and affordable cultural thrills.',
+        highlights: ['Transit hacks & passes', 'Street-food and market circuits', 'Wallet-friendly hostel & stay ideas']
       }
     ];
 
     const questionWeights = {
-      nightlife: ['leisureLifestyle'],
-      live_music: ['leisureLifestyle'],
-      shopping: ['leisureLifestyle', 'cityHighlights'],
-      local_markets: ['foodieAdventure', 'leisureLifestyle'],
-      spa: ['leisureLifestyle'],
-      no_plans: ['leisureLifestyle'],
-      sports_events: ['leisureLifestyle', 'flexibleCompanion'],
-      modern_cities: ['cityHighlights'],
-      old_towns: ['cityHighlights', 'culturalExplorer'],
-      by_foot: ['cityHighlights'],
-      public_transport: ['cityHighlights'],
-      busy_areas: ['cityHighlights'],
-      quiet_neighbourhoods: ['cityHighlights'],
-      solo: ['flexibleCompanion'],
-      group: ['flexibleCompanion'],
-      luxury: ['flexibleCompanion', 'leisureLifestyle'],
-      budget: ['flexibleCompanion'],
-      planner: ['flexibleCompanion'],
-      spontaneous_style: ['flexibleCompanion'],
-      returning: ['flexibleCompanion']
+      nightlife: ['nightlifeInsider', 'socialConnector', 'luxVoyager'],
+      live_music: ['nightlifeInsider', 'socialConnector'],
+      shopping: ['marketExplorer', 'urbanAdventurer', 'luxVoyager'],
+      local_markets: ['marketExplorer', 'heritageWanderer', 'budgetBackpacker'],
+      spa: ['wellnessWeekender', 'luxVoyager'],
+      no_plans: ['wellnessWeekender', 'spontaneousNomad'],
+      sports_events: ['nightlifeInsider', 'socialConnector', 'spontaneousNomad'],
+      modern_cities: ['urbanAdventurer', 'luxVoyager'],
+      old_towns: ['heritageWanderer'],
+      by_foot: ['urbanAdventurer', 'heritageWanderer', 'budgetBackpacker'],
+      public_transport: ['urbanAdventurer', 'budgetBackpacker'],
+      busy_areas: ['urbanAdventurer', 'nightlifeInsider'],
+      quiet_neighbourhoods: ['heritageWanderer', 'wellnessWeekender'],
+      solo: ['independentPlanner', 'spontaneousNomad'],
+      group: ['socialConnector'],
+      luxury: ['luxVoyager'],
+      budget: ['budgetBackpacker', 'spontaneousNomad'],
+      planner: ['independentPlanner'],
+      spontaneous_style: ['spontaneousNomad'],
+      returning: ['marketExplorer', 'independentPlanner']
     };
 
     function scoreQuiz(data) {
@@ -411,12 +439,11 @@
         ? 'This travel style fits you best:'
         : `Your top ${sorted.length} travel styles:`;
 
-      sorted.forEach(({ profile, score }) => {
+      sorted.forEach(({ profile }) => {
         const card = document.createElement('article');
         card.className = 'result-card';
         card.innerHTML = `
           <h3>${profile.emoji} ${profile.title}</h3>
-          <p>Score: ${score}</p>
           <p>${profile.description}</p>
           <ul>${profile.highlights.map(item => `<li>${item}</li>`).join('')}</ul>
         `;
