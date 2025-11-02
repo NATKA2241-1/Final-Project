@@ -1512,6 +1512,19 @@
         return;
       }
 
+      const rawDayCount = Number.parseInt(travelDaysInput.value, 10);
+
+      if (Number.isNaN(rawDayCount) || rawDayCount <= 0) {
+        foodOutput.innerHTML = '<p class="empty-state">Tell us how many days you&rsquo;re travelling for so we can size the dining list to your trip.</p>';
+        if (downloadFoodBtn) {
+          downloadFoodBtn.disabled = true;
+        }
+        latestFoodText = '';
+        return;
+      }
+
+      const dayCount = Math.min(Math.max(rawDayCount, 1), 21);
+
       const profile = profiles.find(item => item.id === profileId);
       const coverageLabel = coverageLabels[coverage] || 'your chosen meals';
       const sections = coverageMeals
@@ -1533,13 +1546,14 @@
 
       lines.push(`Food recommendations for ${cityName} — ${profileTitle}`);
       lines.push(`Coverage: ${coverageLabel}`);
+      lines.push(`Trip length: ${dayCount} day${dayCount > 1 ? 's' : ''}`);
       lines.push('');
 
       foodOutput.innerHTML = '';
 
       const intro = document.createElement('p');
       intro.className = 'empty-state';
-      intro.textContent = `Here are ${coverageLabel} picks in ${cityName} that travellers rave about:`;
+      intro.textContent = `Here are ${coverageLabel} picks in ${cityName} for your ${dayCount}-day stay that travellers rave about:`;
       foodOutput.appendChild(intro);
 
       sections.forEach(section => {
@@ -1553,20 +1567,21 @@
 
         const list = document.createElement('ul');
 
-        section.items.forEach(item => {
+        for (let day = 0; day < dayCount; day += 1) {
+          const item = section.items[day % section.items.length];
           const name = replaceCityPlaceholders(item.name, cityName);
           const address = replaceCityPlaceholders(item.address, cityName);
           const description = replaceCityPlaceholders(item.description, cityName);
           const listItem = document.createElement('li');
           listItem.innerHTML = `
-            <strong>${name}</strong>
+            <strong>Day ${day + 1}: ${name}</strong>
             ${address}<br />
             <em>${description}</em>
           `;
           list.appendChild(listItem);
 
-          lines.push(`- ${mealLabel}: ${name} — ${address}. ${description}`);
-        });
+          lines.push(`- Day ${day + 1} ${mealLabel}: ${name} — ${address}. ${description}`);
+        }
 
         mealBlock.appendChild(list);
         foodOutput.appendChild(mealBlock);
