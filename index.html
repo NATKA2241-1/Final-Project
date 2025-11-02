@@ -403,6 +403,27 @@
               <label class="tick"><input type="checkbox" name="spa" value="yes" /> <span>Do you like spa or wellness activities?</span></label>
               <label class="tick"><input type="checkbox" name="no_plans" value="yes" /> <span>Do you enjoy relaxing days with no plans?</span></label>
               <label class="tick"><input type="checkbox" name="sports_events" value="yes" /> <span>Do you like sports events while abroad?</span></label>
+
+      <section id="startScreen" class="panel start-screen active" aria-live="polite">
+        <p>Discover which travel styles will light you up. We&rsquo;ll walk through three quick sections covering the activities, city vibes, and planning style you love.</p>
+        <button type="button" id="startBtn">Start your travel quiz</button>
+      </section>
+
+      <form id="quiz" class="panel" novalidate>
+        <p class="progress" id="progressLabel">Step 1 of 3</p>
+
+        <div class="step" data-step="0">
+          <fieldset>
+            <legend>Entertainment &amp; Leisure</legend>
+            <p class="fieldset-note">Tick every experience you enjoy on a getaway.</p>
+            <div class="tick-group">
+              <label class="tick"><input type="checkbox" name="nightlife" value="yes" /> <span>Do you like nightlife?</span></label>
+              <label class="tick"><input type="checkbox" name="live_music" value="yes" /> <span>Do you enjoy live music?</span></label>
+              <label class="tick"><input type="checkbox" name="shopping" value="yes" /> <span>Do you like shopping while travelling?</span></label>
+              <label class="tick"><input type="checkbox" name="local_markets" value="yes" /> <span>Do you enjoy local markets?</span></label>
+              <label class="tick"><input type="checkbox" name="spa" value="yes" /> <span>Do you like spa or wellness activities?</span></label>
+              <label class="tick"><input type="checkbox" name="no_plans" value="yes" /> <span>Do you enjoy relaxing days with no plans?</span></label>
+              <label class="tick"><input type="checkbox" name="sports_events" value="yes" /> <span>Do you like sports events while abroad?</span></label>
             </div>
           </fieldset>
         </div>
@@ -438,6 +459,66 @@
           </fieldset>
         </div>
 
+        <div class="step" data-step="1">
+          <fieldset>
+            <legend>City Vibes</legend>
+            <p class="fieldset-note">Choose the city atmospheres and ways of exploring that excite you.</p>
+            <div class="tick-group">
+              <label class="tick"><input type="checkbox" name="modern_cities" value="yes" /> <span>Do you like modern cities?</span></label>
+              <label class="tick"><input type="checkbox" name="old_towns" value="yes" /> <span>Do you prefer old towns?</span></label>
+              <label class="tick"><input type="checkbox" name="by_foot" value="yes" /> <span>Do you like exploring by foot?</span></label>
+              <label class="tick"><input type="checkbox" name="public_transport" value="yes" /> <span>Do you enjoy using public transport?</span></label>
+              <label class="tick"><input type="checkbox" name="busy_areas" value="yes" /> <span>Do you like staying in busy areas?</span></label>
+              <label class="tick"><input type="checkbox" name="quiet_neighbourhoods" value="yes" /> <span>Do you prefer quiet neighbourhoods?</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="step" data-step="2">
+          <fieldset>
+            <legend>Personal Travel Style</legend>
+            <p class="fieldset-note">Mark the styles that feel true to how you plan and enjoy trips.</p>
+            <div class="tick-group">
+              <label class="tick"><input type="checkbox" name="solo" value="yes" /> <span>Do you like travelling solo?</span></label>
+              <label class="tick"><input type="checkbox" name="group" value="yes" /> <span>Do you enjoy travelling in groups?</span></label>
+              <label class="tick"><input type="checkbox" name="luxury" value="yes" /> <span>Do you like luxury travel?</span></label>
+              <label class="tick"><input type="checkbox" name="budget" value="yes" /> <span>Do you prefer budget travel?</span></label>
+              <label class="tick"><input type="checkbox" name="planner" value="yes" /> <span>Do you like planning ahead?</span></label>
+              <label class="tick"><input type="checkbox" name="spontaneous_style" value="yes" /> <span>Do you enjoy spontaneous trips?</span></label>
+              <label class="tick"><input type="checkbox" name="returning" value="yes" /> <span>Do you like returning to places you&rsquo;ve already visited?</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="nav-controls">
+          <button type="button" id="prevBtn">Back</button>
+          <button type="button" id="nextBtn">Next</button>
+        </div>
+      </form>
+
+      <section id="results" class="panel" aria-live="polite">
+        <div id="resultMessage"></div>
+        <div id="resultList" class="grid"></div>
+        <div class="results-actions">
+          <button type="button" class="ghost" id="retakeBtn">Adjust my answers</button>
+          <button type="button" id="restartBtn">Start over</button>
+        </div>
+      </section>
+
+      <footer>
+        <p>We share the single best-matching travel style so you can focus on the experience that suits you most.</p>
+      </footer>
+    </article>
+  </main>
+
+  <script>
+    const startScreen = document.getElementById('startScreen');
+    const startBtn = document.getElementById('startBtn');
+    const form = document.getElementById('quiz');
+    const progressLabel = document.getElementById('progressLabel');
+    const steps = Array.from(form.querySelectorAll('.step'));
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
         <div class="nav-controls">
           <button type="button" id="prevBtn">Back</button>
           <button type="button" id="nextBtn">Next</button>
@@ -677,6 +758,21 @@
       showStep(Math.max(0, currentStep - 1));
     });
 
+    });
+
+    nextBtn.addEventListener('click', () => {
+      if (currentStep === steps.length - 1) {
+        form.requestSubmit();
+        return;
+      }
+      showStep(Math.min(steps.length - 1, currentStep + 1));
+    });
+
+    prevBtn.addEventListener('click', () => {
+      if (currentStep === 0) return;
+      showStep(Math.max(0, currentStep - 1));
+    });
+
     function scoreQuiz(data) {
       const scores = Object.fromEntries(profiles.map(profile => [profile.id, 0]));
 
@@ -739,6 +835,29 @@
     }
 
     function buildResults(scores) {
+      const ranked = profiles
+        .map(profile => ({ profile, score: scores[profile.id] || 0 }))
+        .filter(item => item.score > 0)
+        .sort((a, b) => b.score - a.score);
+
+      resultList.innerHTML = '';
+
+      if (!ranked.length) {
+        resultMessage.textContent = 'Tick a few statements in each section so we can pinpoint your single best travel style.';
+        return;
+      }
+
+      const [topMatch] = ranked;
+      resultMessage.textContent = 'This travel style fits you best:';
+
+      const card = document.createElement('article');
+      card.className = 'result-card';
+      card.innerHTML = `
+        <h3>${topMatch.profile.emoji} ${topMatch.profile.title}</h3>
+        <p>${topMatch.profile.description}</p>
+        <ul>${topMatch.profile.highlights.map(item => `<li>${item}</li>`).join('')}</ul>
+      `;
+      resultList.appendChild(card);
       const sorted = profiles
         .map(profile => ({ profile, score: scores[profile.id] || 0 }))
         .filter(item => item.score > 0)
