@@ -135,22 +135,6 @@
       font-size: 14px;
       text-transform: uppercase;
       letter-spacing: 0.12em;
-      margin: 0 0 12px;
-      font-size: clamp(28px, 4vw, 40px);
-      letter-spacing: -0.01em;
-    }
-
-    header p {
-      margin: 0;
-      color: var(--muted);
-      max-width: 680px;
-      line-height: 1.6;
-    }
-
-    form {
-      padding: clamp(20px, 5vw, 48px);
-      display: grid;
-      gap: 32px;
     }
 
     fieldset {
@@ -276,22 +260,6 @@
     }
 
     #results {
-    footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 16px;
-      border-top: 1px solid var(--panel-border);
-    }
-
-    footer p {
-      margin: 0;
-      color: var(--muted);
-      font-size: 15px;
-    }
-
-    #results {
-      padding: 0 clamp(20px, 5vw, 48px) clamp(24px, 5vw, 48px);
       display: none;
       gap: 22px;
     }
@@ -303,8 +271,6 @@
     #resultList {
       display: grid;
       gap: 18px;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     }
 
     .result-card {
@@ -337,7 +303,6 @@
     }
 
     .results-actions {
-    .actions {
       display: flex;
       gap: 14px;
       flex-wrap: wrap;
@@ -355,22 +320,6 @@
       font-size: 14px;
       line-height: 1.5;
       text-align: center;
-    .ghost {
-      background: transparent;
-      border: 1px solid rgba(255, 255, 255, 0.35);
-      color: #f9fbff;
-      box-shadow: none;
-    }
-
-    .ghost:hover {
-      background: rgba(255, 255, 255, 0.12);
-    }
-
-    @media (max-width: 720px) {
-      footer {
-        flex-direction: column;
-        align-items: flex-start;
-      }
     }
   </style>
 </head>
@@ -384,58 +333,101 @@
       </header>
 
       <section id="startScreen" class="panel start-screen active" aria-live="polite">
-        <p>Discover which travel styles will light you up. We&rsquo;ll walk through three quick sections covering the activities, city vibes, and planning style you love.</p>
+        <p>Discover which travel styles will light you up. Work through seven quick sections that cover interests, food, culture, the outdoors, entertainment, city energy, and how you love to travel.</p>
         <button type="button" id="startBtn">Start your travel quiz</button>
       </section>
 
       <form id="quiz" class="panel" novalidate>
-        <p class="progress" id="progressLabel">Step 1 of 3</p>
+        <p class="progress" id="progressLabel">Stage 1 of 7</p>
 
         <div class="step" data-step="0">
           <fieldset>
-            <legend>Entertainment &amp; Leisure</legend>
-            <p class="fieldset-note">Tick every experience you enjoy on a getaway.</p>
+            <legend>General Interests</legend>
+            <p class="fieldset-note">Tick the statements that sound like you when you&rsquo;re away from home.</p>
             <div class="tick-group">
-              <label class="tick"><input type="checkbox" name="nightlife" value="yes" /> <span>Do you like nightlife?</span></label>
-              <label class="tick"><input type="checkbox" name="live_music" value="yes" /> <span>Do you enjoy live music?</span></label>
-              <label class="tick"><input type="checkbox" name="shopping" value="yes" /> <span>Do you like shopping while travelling?</span></label>
-              <label class="tick"><input type="checkbox" name="local_markets" value="yes" /> <span>Do you enjoy local markets?</span></label>
-              <label class="tick"><input type="checkbox" name="spa" value="yes" /> <span>Do you like spa or wellness activities?</span></label>
-              <label class="tick"><input type="checkbox" name="no_plans" value="yes" /> <span>Do you enjoy relaxing days with no plans?</span></label>
-              <label class="tick"><input type="checkbox" name="sports_events" value="yes" /> <span>Do you like sports events while abroad?</span></label>
-
-      <section id="startScreen" class="panel start-screen active" aria-live="polite">
-        <p>Discover which travel styles will light you up. We&rsquo;ll walk through three quick sections covering the activities, city vibes, and planning style you love.</p>
-        <button type="button" id="startBtn">Start your travel quiz</button>
-      </section>
-
-      <form id="quiz" class="panel" novalidate>
-        <p class="progress" id="progressLabel">Step 1 of 3</p>
-
-        <div class="step" data-step="0">
-          <fieldset>
-            <legend>Entertainment &amp; Leisure</legend>
-            <p class="fieldset-note">Tick every experience you enjoy on a getaway.</p>
-            <div class="tick-group">
-              <label class="tick"><input type="checkbox" name="nightlife" value="yes" /> <span>Do you like nightlife?</span></label>
-              <label class="tick"><input type="checkbox" name="live_music" value="yes" /> <span>Do you enjoy live music?</span></label>
-              <label class="tick"><input type="checkbox" name="shopping" value="yes" /> <span>Do you like shopping while travelling?</span></label>
-              <label class="tick"><input type="checkbox" name="local_markets" value="yes" /> <span>Do you enjoy local markets?</span></label>
-              <label class="tick"><input type="checkbox" name="spa" value="yes" /> <span>Do you like spa or wellness activities?</span></label>
-              <label class="tick"><input type="checkbox" name="no_plans" value="yes" /> <span>Do you enjoy relaxing days with no plans?</span></label>
-              <label class="tick"><input type="checkbox" name="sports_events" value="yes" /> <span>Do you like sports events while abroad?</span></label>
+              <label class="tick"><input type="checkbox" name="sightseeing" value="yes" /> <span>Do you enjoy sightseeing?</span></label>
+              <label class="tick"><input type="checkbox" name="popular_landmarks" value="yes" /> <span>Do you like visiting popular landmarks?</span></label>
+              <label class="tick"><input type="checkbox" name="hidden_spots" value="yes" /> <span>Do you prefer hidden or local spots?</span></label>
+              <label class="tick"><input type="checkbox" name="guided_tours" value="yes" /> <span>Do you enjoy guided tours?</span></label>
+              <label class="tick"><input type="checkbox" name="spontaneous_general" value="yes" /> <span>Do you like spontaneous trips?</span></label>
             </div>
           </fieldset>
         </div>
 
         <div class="step" data-step="1">
           <fieldset>
+            <legend>Food &amp; Drink</legend>
+            <p class="fieldset-note">Choose every flavour-packed moment you want on your travels.</p>
+            <div class="tick-group">
+              <label class="tick"><input type="checkbox" name="local_food" value="yes" /> <span>Do you enjoy trying local food?</span></label>
+              <label class="tick"><input type="checkbox" name="fine_dining" value="yes" /> <span>Do you like fine dining?</span></label>
+              <label class="tick"><input type="checkbox" name="street_food" value="yes" /> <span>Do you enjoy street food?</span></label>
+              <label class="tick"><input type="checkbox" name="local_cafes" value="yes" /> <span>Do you like visiting local cafés?</span></label>
+              <label class="tick"><input type="checkbox" name="wine_tours" value="yes" /> <span>Do you enjoy wine or brewery tours?</span></label>
+              <label class="tick"><input type="checkbox" name="cooking_classes" value="yes" /> <span>Do you like cooking classes abroad?</span></label>
+              <label class="tick"><input type="checkbox" name="food_markets" value="yes" /> <span>Do you enjoy local markets?</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="step" data-step="2">
+          <fieldset>
+            <legend>History &amp; Culture</legend>
+            <p class="fieldset-note">Pick the cultural moments that keep your curiosity buzzing.</p>
+            <div class="tick-group">
+              <label class="tick"><input type="checkbox" name="museums" value="yes" /> <span>Do you like visiting museums?</span></label>
+              <label class="tick"><input type="checkbox" name="historical_landmarks" value="yes" /> <span>Do you enjoy historical landmarks?</span></label>
+              <label class="tick"><input type="checkbox" name="local_history" value="yes" /> <span>Do you like learning about local history?</span></label>
+              <label class="tick"><input type="checkbox" name="art_galleries" value="yes" /> <span>Do you enjoy art galleries?</span></label>
+              <label class="tick"><input type="checkbox" name="architecture" value="yes" /> <span>Do you like architecture?</span></label>
+              <label class="tick"><input type="checkbox" name="cultural_festivals" value="yes" /> <span>Do you enjoy cultural festivals?</span></label>
+              <label class="tick"><input type="checkbox" name="heritage_sites" value="yes" /> <span>Do you like exploring heritage sites?</span></label>
+              <label class="tick"><input type="checkbox" name="theatre" value="yes" /> <span>Do you enjoy theatre or live performances?</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="step" data-step="3">
+          <fieldset>
+            <legend>Nature &amp; Outdoors</legend>
+            <p class="fieldset-note">Tell us how you reconnect with the great outdoors on a trip.</p>
+            <div class="tick-group">
+              <label class="tick"><input type="checkbox" name="nature_time" value="yes" /> <span>Do you like spending time in nature?</span></label>
+              <label class="tick"><input type="checkbox" name="hiking" value="yes" /> <span>Do you enjoy hiking?</span></label>
+              <label class="tick"><input type="checkbox" name="beaches" value="yes" /> <span>Do you like beaches?</span></label>
+              <label class="tick"><input type="checkbox" name="mountain_views" value="yes" /> <span>Do you enjoy mountain views?</span></label>
+              <label class="tick"><input type="checkbox" name="national_parks" value="yes" /> <span>Do you like national parks?</span></label>
+              <label class="tick"><input type="checkbox" name="scenic_drives" value="yes" /> <span>Do you enjoy scenic drives?</span></label>
+              <label class="tick"><input type="checkbox" name="outdoor_adventures" value="yes" /> <span>Do you like outdoor adventures?</span></label>
+              <label class="tick"><input type="checkbox" name="landscape_photography" value="yes" /> <span>Do you enjoy photography of landscapes?</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="step" data-step="4">
+          <fieldset>
+            <legend>Entertainment &amp; Leisure</legend>
+            <p class="fieldset-note">Tick every experience you love when you&rsquo;re off the clock.</p>
+            <div class="tick-group">
+              <label class="tick"><input type="checkbox" name="nightlife" value="yes" /> <span>Do you like nightlife?</span></label>
+              <label class="tick"><input type="checkbox" name="live_music" value="yes" /> <span>Do you enjoy live music?</span></label>
+              <label class="tick"><input type="checkbox" name="travel_shopping" value="yes" /> <span>Do you like shopping while travelling?</span></label>
+              <label class="tick"><input type="checkbox" name="markets_leisure" value="yes" /> <span>Do you enjoy local markets?</span></label>
+              <label class="tick"><input type="checkbox" name="spa" value="yes" /> <span>Do you like spa or wellness activities?</span></label>
+              <label class="tick"><input type="checkbox" name="relaxing_days" value="yes" /> <span>Do you enjoy relaxing days with no plans?</span></label>
+              <label class="tick"><input type="checkbox" name="sports_events" value="yes" /> <span>Do you like sports events while abroad?</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <div class="step" data-step="5">
+          <fieldset>
             <legend>City Vibes</legend>
             <p class="fieldset-note">Choose the city atmospheres and ways of exploring that excite you.</p>
             <div class="tick-group">
               <label class="tick"><input type="checkbox" name="modern_cities" value="yes" /> <span>Do you like modern cities?</span></label>
               <label class="tick"><input type="checkbox" name="old_towns" value="yes" /> <span>Do you prefer old towns?</span></label>
-              <label class="tick"><input type="checkbox" name="by_foot" value="yes" /> <span>Do you like exploring by foot?</span></label>
+              <label class="tick"><input type="checkbox" name="exploring_by_foot" value="yes" /> <span>Do you like exploring by foot?</span></label>
               <label class="tick"><input type="checkbox" name="public_transport" value="yes" /> <span>Do you enjoy using public transport?</span></label>
               <label class="tick"><input type="checkbox" name="busy_areas" value="yes" /> <span>Do you like staying in busy areas?</span></label>
               <label class="tick"><input type="checkbox" name="quiet_neighbourhoods" value="yes" /> <span>Do you prefer quiet neighbourhoods?</span></label>
@@ -443,49 +435,18 @@
           </fieldset>
         </div>
 
-        <div class="step" data-step="2">
+        <div class="step" data-step="6">
           <fieldset>
             <legend>Personal Travel Style</legend>
             <p class="fieldset-note">Mark the styles that feel true to how you plan and enjoy trips.</p>
             <div class="tick-group">
-              <label class="tick"><input type="checkbox" name="solo" value="yes" /> <span>Do you like travelling solo?</span></label>
-              <label class="tick"><input type="checkbox" name="group" value="yes" /> <span>Do you enjoy travelling in groups?</span></label>
-              <label class="tick"><input type="checkbox" name="luxury" value="yes" /> <span>Do you like luxury travel?</span></label>
-              <label class="tick"><input type="checkbox" name="budget" value="yes" /> <span>Do you prefer budget travel?</span></label>
-              <label class="tick"><input type="checkbox" name="planner" value="yes" /> <span>Do you like planning ahead?</span></label>
-              <label class="tick"><input type="checkbox" name="spontaneous_style" value="yes" /> <span>Do you enjoy spontaneous trips?</span></label>
-              <label class="tick"><input type="checkbox" name="returning" value="yes" /> <span>Do you like returning to places you&rsquo;ve already visited?</span></label>
-            </div>
-          </fieldset>
-        </div>
-
-        <div class="step" data-step="1">
-          <fieldset>
-            <legend>City Vibes</legend>
-            <p class="fieldset-note">Choose the city atmospheres and ways of exploring that excite you.</p>
-            <div class="tick-group">
-              <label class="tick"><input type="checkbox" name="modern_cities" value="yes" /> <span>Do you like modern cities?</span></label>
-              <label class="tick"><input type="checkbox" name="old_towns" value="yes" /> <span>Do you prefer old towns?</span></label>
-              <label class="tick"><input type="checkbox" name="by_foot" value="yes" /> <span>Do you like exploring by foot?</span></label>
-              <label class="tick"><input type="checkbox" name="public_transport" value="yes" /> <span>Do you enjoy using public transport?</span></label>
-              <label class="tick"><input type="checkbox" name="busy_areas" value="yes" /> <span>Do you like staying in busy areas?</span></label>
-              <label class="tick"><input type="checkbox" name="quiet_neighbourhoods" value="yes" /> <span>Do you prefer quiet neighbourhoods?</span></label>
-            </div>
-          </fieldset>
-        </div>
-
-        <div class="step" data-step="2">
-          <fieldset>
-            <legend>Personal Travel Style</legend>
-            <p class="fieldset-note">Mark the styles that feel true to how you plan and enjoy trips.</p>
-            <div class="tick-group">
-              <label class="tick"><input type="checkbox" name="solo" value="yes" /> <span>Do you like travelling solo?</span></label>
-              <label class="tick"><input type="checkbox" name="group" value="yes" /> <span>Do you enjoy travelling in groups?</span></label>
-              <label class="tick"><input type="checkbox" name="luxury" value="yes" /> <span>Do you like luxury travel?</span></label>
-              <label class="tick"><input type="checkbox" name="budget" value="yes" /> <span>Do you prefer budget travel?</span></label>
-              <label class="tick"><input type="checkbox" name="planner" value="yes" /> <span>Do you like planning ahead?</span></label>
-              <label class="tick"><input type="checkbox" name="spontaneous_style" value="yes" /> <span>Do you enjoy spontaneous trips?</span></label>
-              <label class="tick"><input type="checkbox" name="returning" value="yes" /> <span>Do you like returning to places you&rsquo;ve already visited?</span></label>
+              <label class="tick"><input type="checkbox" name="travelling_solo" value="yes" /> <span>Do you like travelling solo?</span></label>
+              <label class="tick"><input type="checkbox" name="travelling_groups" value="yes" /> <span>Do you enjoy travelling in groups?</span></label>
+              <label class="tick"><input type="checkbox" name="luxury_travel" value="yes" /> <span>Do you like luxury travel?</span></label>
+              <label class="tick"><input type="checkbox" name="budget_travel" value="yes" /> <span>Do you prefer budget travel?</span></label>
+              <label class="tick"><input type="checkbox" name="planning_ahead" value="yes" /> <span>Do you like planning ahead?</span></label>
+              <label class="tick"><input type="checkbox" name="spontaneous_personal" value="yes" /> <span>Do you enjoy spontaneous trips?</span></label>
+              <label class="tick"><input type="checkbox" name="returning_places" value="yes" /> <span>Do you like returning to places you&rsquo;ve already visited?</span></label>
             </div>
           </fieldset>
         </div>
@@ -506,7 +467,7 @@
       </section>
 
       <footer>
-        <p>We share the single best-matching travel style so you can focus on the experience that suits you most.</p>
+        <p>Your answers reveal one of four signature travel styles so you can focus on the experience that suits you most.</p>
       </footer>
     </article>
   </main>
@@ -519,106 +480,6 @@
     const steps = Array.from(form.querySelectorAll('.step'));
     const prevBtn = document.getElementById('prevBtn');
     const nextBtn = document.getElementById('nextBtn');
-        <div class="nav-controls">
-          <button type="button" id="prevBtn">Back</button>
-          <button type="button" id="nextBtn">Next</button>
-        </div>
-      </form>
-
-      <section id="results" class="panel" aria-live="polite">
-        <div id="resultMessage"></div>
-        <div id="resultList" class="grid"></div>
-        <div class="results-actions">
-          <button type="button" class="ghost" id="retakeBtn">Adjust my answers</button>
-          <button type="button" id="restartBtn">Start over</button>
-        </div>
-      </section>
-
-      <footer>
-        <p>We only show the four best matches so you can focus on the experiences that matter most.</p>
-      </footer>
-    </article>
-  </main>
-
-  <script>
-    const startScreen = document.getElementById('startScreen');
-    const startBtn = document.getElementById('startBtn');
-    const form = document.getElementById('quiz');
-    const progressLabel = document.getElementById('progressLabel');
-    const steps = Array.from(form.querySelectorAll('.step'));
-    const prevBtn = document.getElementById('prevBtn');
-    const nextBtn = document.getElementById('nextBtn');
-    <header>
-      <h2 class="super-title">Your ultimate travel guide starts here</h2>
-      <h1>Find Your Travel Style</h1>
-      <p>Tick the statements below to uncover which kinds of trips will make you happiest. At the end, you&rsquo;ll see up to four tailored travel styles that match your answers.</p>
-    </header>
-
-    <form id="quiz" novalidate>
-      <fieldset>
-        <legend>Entertainment &amp; Leisure</legend>
-        <p class="fieldset-note">Tick every experience you enjoy on a getaway.</p>
-        <div class="tick-group">
-          <label class="tick"><input type="checkbox" name="nightlife" value="yes" /> <span>Do you like nightlife?</span></label>
-          <label class="tick"><input type="checkbox" name="live_music" value="yes" /> <span>Do you enjoy live music?</span></label>
-          <label class="tick"><input type="checkbox" name="shopping" value="yes" /> <span>Do you like shopping while travelling?</span></label>
-          <label class="tick"><input type="checkbox" name="local_markets" value="yes" /> <span>Do you enjoy local markets?</span></label>
-          <label class="tick"><input type="checkbox" name="spa" value="yes" /> <span>Do you like spa or wellness activities?</span></label>
-          <label class="tick"><input type="checkbox" name="no_plans" value="yes" /> <span>Do you enjoy relaxing days with no plans?</span></label>
-          <label class="tick"><input type="checkbox" name="sports_events" value="yes" /> <span>Do you like sports events while abroad?</span></label>
-        </div>
-      </fieldset>
-
-      <fieldset>
-        <legend>City Vibes</legend>
-        <p class="fieldset-note">Choose the city atmospheres and ways of exploring that excite you.</p>
-        <div class="tick-group">
-          <label class="tick"><input type="checkbox" name="modern_cities" value="yes" /> <span>Do you like modern cities?</span></label>
-          <label class="tick"><input type="checkbox" name="old_towns" value="yes" /> <span>Do you prefer old towns?</span></label>
-          <label class="tick"><input type="checkbox" name="by_foot" value="yes" /> <span>Do you like exploring by foot?</span></label>
-          <label class="tick"><input type="checkbox" name="public_transport" value="yes" /> <span>Do you enjoy using public transport?</span></label>
-          <label class="tick"><input type="checkbox" name="busy_areas" value="yes" /> <span>Do you like staying in busy areas?</span></label>
-          <label class="tick"><input type="checkbox" name="quiet_neighbourhoods" value="yes" /> <span>Do you prefer quiet neighbourhoods?</span></label>
-        </div>
-      </fieldset>
-
-      <fieldset>
-        <legend>Personal Travel Style</legend>
-        <p class="fieldset-note">Mark the styles that feel true to how you plan and enjoy trips.</p>
-        <div class="tick-group">
-          <label class="tick"><input type="checkbox" name="solo" value="yes" /> <span>Do you like travelling solo?</span></label>
-          <label class="tick"><input type="checkbox" name="group" value="yes" /> <span>Do you enjoy travelling in groups?</span></label>
-          <label class="tick"><input type="checkbox" name="luxury" value="yes" /> <span>Do you like luxury travel?</span></label>
-          <label class="tick"><input type="checkbox" name="budget" value="yes" /> <span>Do you prefer budget travel?</span></label>
-          <label class="tick"><input type="checkbox" name="planner" value="yes" /> <span>Do you like planning ahead?</span></label>
-          <label class="tick"><input type="checkbox" name="spontaneous_style" value="yes" /> <span>Do you enjoy spontaneous trips?</span></label>
-          <label class="tick"><input type="checkbox" name="returning" value="yes" /> <span>Do you like returning to places you’ve already visited?</span></label>
-        </div>
-      </fieldset>
-
-      <div class="actions">
-        <button type="submit">Show my travel matches</button>
-        <button type="button" class="ghost" id="resetBtn">Clear answers</button>
-      </div>
-    </form>
-
-    <section id="results" aria-live="polite">
-      <div id="resultMessage"></div>
-      <div id="resultList" class="grid"></div>
-      <div class="actions" style="margin-top:12px;">
-        <button type="button" id="retakeBtn">Adjust my answers</button>
-      </div>
-    </section>
-
-    <footer>
-      <p>Tip: You don&rsquo;t need to answer every question, but more answers help us personalise the travel styles.</p>
-      <p>We only show the four best matches so you can focus on the experiences that matter most.</p>
-    </footer>
-  </main>
-
-  <script>
-    const form = document.getElementById('quiz');
-    const resetBtn = document.getElementById('resetBtn');
     const resultsSection = document.getElementById('results');
     const resultMessage = document.getElementById('resultMessage');
     const resultList = document.getElementById('resultList');
@@ -629,102 +490,88 @@
 
     const profiles = [
       {
-        id: 'nightlifeInsider',
-        title: 'Nightlife Insider',
-        emoji: '🌃',
-        description: 'Your evenings are all about buzzworthy bars, live sets, and the biggest games in town.',
-        highlights: ['Guest-list nightlife & rooftop spots', 'Live music calendars & venue guides', 'Tickets to matches and arena events']
+        id: 'culinaryExplorer',
+        title: 'Culinary Explorer',
+        emoji: '🍽️',
+        description: 'Your adventures revolve around flavour—local bites, market finds, and hands-on foodie fun.',
+        highlights: ['Market-to-table tasting trails', 'Intimate chef-led dining picks', 'Workshops & tours with local makers']
       },
       {
-        id: 'marketExplorer',
-        title: 'Market Explorer',
-        emoji: '🛍️',
-        description: 'You wander markets and boutiques to uncover locally made keepsakes and foodie finds.',
-        highlights: ['Neighbourhood market maps', 'Boutique shopping trails', 'Hands-on tastings with local producers']
+        id: 'culturalConnoisseur',
+        title: 'Cultural Connoisseur',
+        emoji: '🏛️',
+        description: 'Museums, architecture, and guided stories help you connect deeply with every destination.',
+        highlights: ['Curated museum & gallery passes', 'Expert-led heritage walks', 'Historic districts & theatre evenings']
       },
       {
-        id: 'wellnessWeekender',
-        title: 'Wellness Weekender',
-        emoji: '🧖',
-        description: 'Retreat-style stays, spa rituals, and guilt-free downtime keep you refreshed on every getaway.',
-        highlights: ['Spa passes & thermal baths', 'Slow brunch and chill-day itineraries', 'Quiet quarters & restorative stays']
+        id: 'natureTrailblazer',
+        title: 'Nature Trailblazer',
+        emoji: '🏞️',
+        description: 'Fresh air fuels your travels—from epic hikes to scenic coastlines and camera-ready views.',
+        highlights: ['Guided hikes & national park routes', 'Coastal hideaways & mountain stays', 'Outdoor gear & photography tips']
       },
       {
-        id: 'urbanAdventurer',
-        title: 'Urban Adventurer',
-        emoji: '🚇',
-        description: 'You thrive in fast-paced districts, hopping between skyline views, art hubs, and buzzing streets.',
-        highlights: ['Transit-ready travel cards', 'Self-guided walking adventures', 'Skyline lookouts & rooftop lounges']
-      },
-      {
-        id: 'heritageWanderer',
-        title: 'Heritage Wanderer',
-        emoji: '🏘️',
-        description: 'Historic alleys, artisan quarters, and story-rich guided strolls make a city click for you.',
-        highlights: ['Old-town walking tours', 'Craft market & gallery loops', 'Peaceful stays in character neighbourhoods']
-      },
-      {
-        id: 'socialConnector',
-        title: 'Social Connector',
-        emoji: '🤝',
-        description: 'Trips feel best when shared—group outings, fan experiences, and communal dinners light you up.',
-        highlights: ['Group nightlife & food tours', 'Fan sections and festival passes', 'Shared-table dining reservations']
-      },
-      {
-        id: 'independentPlanner',
-        title: 'Independent Planner',
-        emoji: '🧭',
-        description: 'You mix solo moments with a smart plan so every day balances freedom and sure-thing highlights.',
-        highlights: ['Customisable day-by-day planners', 'Solo-friendly stays & meetups', 'Return-visit upgrade suggestions']
-      },
-      {
-        id: 'spontaneousNomad',
-        title: 'Spontaneous Nomad',
-        emoji: '🎒',
-        description: 'Last-minute ideas, open schedules, and flexible budgets keep your adventures exciting.',
-        highlights: ['Pop-up event alerts', 'Flexible booking picks', 'Local tips for same-day plans']
-      },
-      {
-        id: 'luxVoyager',
-        title: 'Luxe Voyager',
-        emoji: '💎',
-        description: 'High-touch stays, premium lounges, and polished nights out define your getaway vibe.',
-        highlights: ['Designer hotel & suite shortlists', 'Private wellness and dining bookings', 'Exclusive nightlife recommendations']
-      },
-      {
-        id: 'budgetBackpacker',
-        title: 'Budget Backpacker',
-        emoji: '💼',
-        description: 'You stretch every dollar with smart transit, walkable hubs, and affordable cultural thrills.',
-        highlights: ['Transit hacks & passes', 'Street-food and market circuits', 'Wallet-friendly hostel & stay ideas']
+        id: 'urbanDynamo',
+        title: 'Urban Dynamo',
+        emoji: '🌆',
+        description: 'You chase energetic cities with nightlife, live culture, and a fast-paced rhythm.',
+        highlights: ['Nightlife & live music spotlights', 'Transit-friendly city itineraries', 'Must-see skyline & shopping stops']
       }
     ];
 
     const questionWeights = {
-      nightlife: ['nightlifeInsider', 'socialConnector', 'luxVoyager'],
-      live_music: ['nightlifeInsider', 'socialConnector'],
-      shopping: ['marketExplorer', 'urbanAdventurer', 'luxVoyager'],
-      local_markets: ['marketExplorer', 'heritageWanderer', 'budgetBackpacker'],
-      spa: ['wellnessWeekender', 'luxVoyager'],
-      no_plans: ['wellnessWeekender', 'spontaneousNomad'],
-      sports_events: ['nightlifeInsider', 'socialConnector', 'spontaneousNomad'],
-      modern_cities: ['urbanAdventurer', 'luxVoyager'],
-      old_towns: ['heritageWanderer'],
-      by_foot: ['urbanAdventurer', 'heritageWanderer', 'budgetBackpacker'],
-      public_transport: ['urbanAdventurer', 'budgetBackpacker'],
-      busy_areas: ['urbanAdventurer', 'nightlifeInsider'],
-      quiet_neighbourhoods: ['heritageWanderer', 'wellnessWeekender'],
-      solo: ['independentPlanner', 'spontaneousNomad'],
-      group: ['socialConnector'],
-      luxury: ['luxVoyager'],
-      budget: ['budgetBackpacker', 'spontaneousNomad'],
-      planner: ['independentPlanner'],
-      spontaneous_style: ['spontaneousNomad'],
-      returning: ['marketExplorer', 'independentPlanner']
+      sightseeing: ['culturalConnoisseur', 'urbanDynamo'],
+      popular_landmarks: ['culturalConnoisseur', 'urbanDynamo'],
+      hidden_spots: ['culturalConnoisseur', 'culinaryExplorer', 'natureTrailblazer'],
+      guided_tours: ['culturalConnoisseur'],
+      spontaneous_general: ['urbanDynamo', 'natureTrailblazer'],
+      local_food: ['culinaryExplorer'],
+      fine_dining: ['culinaryExplorer', 'urbanDynamo'],
+      street_food: ['culinaryExplorer', 'urbanDynamo'],
+      local_cafes: ['culinaryExplorer', 'urbanDynamo'],
+      wine_tours: ['culinaryExplorer', 'culturalConnoisseur'],
+      cooking_classes: ['culinaryExplorer', 'culturalConnoisseur'],
+      food_markets: ['culinaryExplorer', 'culturalConnoisseur'],
+      museums: ['culturalConnoisseur'],
+      historical_landmarks: ['culturalConnoisseur'],
+      local_history: ['culturalConnoisseur'],
+      art_galleries: ['culturalConnoisseur', 'urbanDynamo'],
+      architecture: ['culturalConnoisseur', 'urbanDynamo'],
+      cultural_festivals: ['culturalConnoisseur', 'urbanDynamo'],
+      heritage_sites: ['culturalConnoisseur'],
+      theatre: ['culturalConnoisseur', 'urbanDynamo'],
+      nature_time: ['natureTrailblazer'],
+      hiking: ['natureTrailblazer'],
+      beaches: ['natureTrailblazer'],
+      mountain_views: ['natureTrailblazer'],
+      national_parks: ['natureTrailblazer'],
+      scenic_drives: ['natureTrailblazer'],
+      outdoor_adventures: ['natureTrailblazer'],
+      landscape_photography: ['natureTrailblazer'],
+      nightlife: ['urbanDynamo'],
+      live_music: ['urbanDynamo'],
+      travel_shopping: ['urbanDynamo', 'culinaryExplorer'],
+      markets_leisure: ['culinaryExplorer', 'culturalConnoisseur'],
+      spa: ['natureTrailblazer', 'culturalConnoisseur'],
+      relaxing_days: ['natureTrailblazer'],
+      sports_events: ['urbanDynamo'],
+      modern_cities: ['urbanDynamo'],
+      old_towns: ['culturalConnoisseur'],
+      exploring_by_foot: ['culturalConnoisseur', 'urbanDynamo'],
+      public_transport: ['urbanDynamo'],
+      busy_areas: ['urbanDynamo'],
+      quiet_neighbourhoods: ['culturalConnoisseur', 'natureTrailblazer'],
+      travelling_solo: ['natureTrailblazer', 'culturalConnoisseur'],
+      travelling_groups: ['urbanDynamo'],
+      luxury_travel: ['culturalConnoisseur', 'urbanDynamo'],
+      budget_travel: ['natureTrailblazer', 'culinaryExplorer'],
+      planning_ahead: ['culturalConnoisseur'],
+      spontaneous_personal: ['urbanDynamo', 'natureTrailblazer'],
+      returning_places: ['culturalConnoisseur', 'culinaryExplorer']
     };
 
     function updateProgress() {
-      progressLabel.textContent = `Step ${currentStep + 1} of ${steps.length}`;
+      progressLabel.textContent = `Stage ${currentStep + 1} of ${steps.length}`;
     }
 
     function showStep(index) {
@@ -733,7 +580,7 @@
         step.classList.toggle('active', position === index);
       });
       prevBtn.disabled = index === 0;
-      nextBtn.textContent = index === steps.length - 1 ? 'See my travel matches' : 'Next';
+      nextBtn.textContent = index === steps.length - 1 ? 'Get my results' : 'Next';
       updateProgress();
     }
 
@@ -743,21 +590,6 @@
       form.classList.add('active');
       showStep(0);
       form.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    });
-
-    nextBtn.addEventListener('click', () => {
-      if (currentStep === steps.length - 1) {
-        form.requestSubmit();
-        return;
-      }
-      showStep(Math.min(steps.length - 1, currentStep + 1));
-    });
-
-    prevBtn.addEventListener('click', () => {
-      if (currentStep === 0) return;
-      showStep(Math.max(0, currentStep - 1));
-    });
-
     });
 
     nextBtn.addEventListener('click', () => {
@@ -789,52 +621,6 @@
     }
 
     function buildResults(scores) {
-      const sorted = profiles
-        .map(profile => ({ profile, score: scores[profile.id] || 0 }))
-        .filter(item => item.score > 0)
-        .sort((a, b) => b.score - a.score)
-        .slice(0, 4);
-
-      resultList.innerHTML = '';
-
-      if (!sorted.length) {
-        resultMessage.textContent = 'Tick a few statements in each section so we can recommend up to four travel styles for you.';
-        return;
-      }
-
-      resultMessage.textContent = sorted.length === 1
-        ? 'This travel style fits you best:'
-        : `Your top ${sorted.length} travel styles:`;
-
-      sorted.forEach(({ profile }) => {
-        const card = document.createElement('article');
-        card.className = 'result-card';
-        card.innerHTML = `
-          <h3>${profile.emoji} ${profile.title}</h3>
-          <p>${profile.description}</p>
-          <ul>${profile.highlights.map(item => `<li>${item}</li>`).join('')}</ul>
-        `;
-        resultList.appendChild(card);
-      });
-    function scoreQuiz(data) {
-      const scores = Object.fromEntries(profiles.map(profile => [profile.id, 0]));
-
-      Object.entries(data).forEach(([question, value]) => {
-        const tags = questionWeights[question];
-        if (!tags) return;
-
-        if (value !== 'yes') return;
-        const weight = 2;
-
-        tags.forEach(tag => {
-          scores[tag] += weight;
-        });
-      });
-
-      return scores;
-    }
-
-    function buildResults(scores) {
       const ranked = profiles
         .map(profile => ({ profile, score: scores[profile.id] || 0 }))
         .filter(item => item.score > 0)
@@ -848,7 +634,7 @@
       }
 
       const [topMatch] = ranked;
-      resultMessage.textContent = 'This travel style fits you best:';
+      resultMessage.textContent = 'Here’s the travel style that matches you best:';
 
       const card = document.createElement('article');
       card.className = 'result-card';
@@ -858,33 +644,6 @@
         <ul>${topMatch.profile.highlights.map(item => `<li>${item}</li>`).join('')}</ul>
       `;
       resultList.appendChild(card);
-      const sorted = profiles
-        .map(profile => ({ profile, score: scores[profile.id] || 0 }))
-        .filter(item => item.score > 0)
-        .sort((a, b) => b.score - a.score)
-        .slice(0, 4);
-
-      resultList.innerHTML = '';
-
-      if (!sorted.length) {
-        resultMessage.textContent = 'Tick a few statements in each section so we can recommend up to four travel styles for you.';
-        return;
-      }
-
-      resultMessage.textContent = sorted.length === 1
-        ? 'This travel style fits you best:'
-        : `Your top ${sorted.length} travel styles:`;
-
-      sorted.forEach(({ profile }) => {
-        const card = document.createElement('article');
-        card.className = 'result-card';
-        card.innerHTML = `
-          <h3>${profile.emoji} ${profile.title}</h3>
-          <p>${profile.description}</p>
-          <ul>${profile.highlights.map(item => `<li>${item}</li>`).join('')}</ul>
-        `;
-        resultList.appendChild(card);
-      });
     }
 
     function formDataToObject(formData) {
@@ -923,18 +682,6 @@
     // Initialise the first step state so keyboard users can tab once the quiz is started.
     showStep(0);
     form.classList.remove('active');
-    function clearForm() {
-      form.reset();
-      resultMessage.textContent = '';
-      resultList.innerHTML = '';
-      resultsSection.classList.remove('active');
-    }
-
-    resetBtn.addEventListener('click', clearForm);
-    retakeBtn.addEventListener('click', () => {
-      resultsSection.classList.remove('active');
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    });
   </script>
 </body>
 </html>
