@@ -170,6 +170,12 @@
       display: grid;
     }
 
+    #resultList {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    }
+
     .result-card {
       border: 1px solid rgba(255, 255, 255, 0.12);
       border-radius: 18px;
@@ -397,12 +403,12 @@
       resultList.innerHTML = '';
 
       if (!sorted.length) {
-        resultMessage.textContent = 'Tick a few statements so we can recommend your travel style.';
+        resultMessage.textContent = 'Tick a few statements in each section so we can recommend up to four travel styles for you.';
         return;
       }
 
       resultMessage.textContent = sorted.length === 1
-        ? 'This style fits you best:'
+        ? 'This travel style fits you best:'
         : `Your top ${sorted.length} travel styles:`;
 
       sorted.forEach(({ profile, score }) => {
