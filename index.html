@@ -486,6 +486,45 @@
       color: var(--muted);
     }
 
+    .food-days {
+      display: grid;
+      gap: 6px;
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .food-days span {
+      font-weight: 400;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .food-days input[type="number"] {
+      padding: 12px 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.05);
+      color: #f9fbff;
+      font-size: 15px;
+      font-family: inherit;
+      -moz-appearance: textfield;
+    }
+
+    .food-days input[type="number"]::-webkit-inner-spin-button,
+    .food-days input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .food-days input[type="number"]::placeholder {
+      color: rgba(255, 255, 255, 0.55);
+    }
+
+    .food-days input[type="number"]:focus {
+      outline: 2px solid rgba(255, 179, 71, 0.45);
+      outline-offset: 2px;
+    }
+
     .food-options {
       display: grid;
       gap: 12px;
@@ -797,6 +836,10 @@
             <button type="button" class="ghost" data-response="no">No</button>
           </div>
           <form id="foodForm" class="food-follow-up" hidden>
+            <label for="foodDaysInput" class="food-days">
+              How many days do you want the food recommendations for? <span>(in days)</span>
+              <input type="number" id="foodDaysInput" name="foodDays" min="1" max="21" placeholder="e.g., 3" />
+            </label>
             <p class="food-note">Do you want recommendations for:</p>
             <div class="food-options">
               <label class="tick">
@@ -870,6 +913,7 @@
     const mapMessage = document.getElementById('mapMessage');
     const foodQuestion = document.getElementById('foodQuestion');
     const foodForm = document.getElementById('foodForm');
+    const foodDaysInput = document.getElementById('foodDaysInput');
     const foodOutput = document.getElementById('foodOutput');
     const downloadFoodBtn = document.getElementById('downloadFood');
 
@@ -1431,6 +1475,9 @@
       if (foodForm) {
         foodForm.hidden = true;
         foodForm.reset();
+        if (foodDaysInput) {
+          foodDaysInput.value = '';
+        }
       }
 
       if (foodOutput) {
@@ -1450,6 +1497,9 @@
         setActiveFoodButton(response);
         if (foodForm) {
           foodForm.hidden = false;
+          if (foodDaysInput && !foodDaysInput.value && travelDaysInput && travelDaysInput.value) {
+            foodDaysInput.value = travelDaysInput.value;
+          }
         }
         if (foodOutput) {
           foodOutput.innerHTML = '<p class="empty-state">Choose the meals you want recommendations for, then generate your list.</p>';
@@ -1512,14 +1562,17 @@
         return;
       }
 
-      const rawDayCount = Number.parseInt(travelDaysInput.value, 10);
+      const rawDayCount = foodDaysInput ? Number.parseInt(foodDaysInput.value, 10) : NaN;
 
       if (Number.isNaN(rawDayCount) || rawDayCount <= 0) {
-        foodOutput.innerHTML = '<p class="empty-state">Tell us how many days you&rsquo;re travelling for so we can size the dining list to your trip.</p>';
+        foodOutput.innerHTML = '<p class="empty-state">Tell us how many days you want food recommendations for so we can size the dining list.</p>';
         if (downloadFoodBtn) {
           downloadFoodBtn.disabled = true;
         }
         latestFoodText = '';
+        if (foodDaysInput) {
+          foodDaysInput.focus();
+        }
         return;
       }
 
@@ -1546,14 +1599,14 @@
 
       lines.push(`Food recommendations for ${cityName} — ${profileTitle}`);
       lines.push(`Coverage: ${coverageLabel}`);
-      lines.push(`Trip length: ${dayCount} day${dayCount > 1 ? 's' : ''}`);
+      lines.push(`Food plan length: ${dayCount} day${dayCount > 1 ? 's' : ''}`);
       lines.push('');
 
       foodOutput.innerHTML = '';
 
       const intro = document.createElement('p');
       intro.className = 'empty-state';
-      intro.textContent = `Here are ${coverageLabel} picks in ${cityName} for your ${dayCount}-day stay that travellers rave about:`;
+      intro.textContent = `Here are ${coverageLabel} picks in ${cityName} for your ${dayCount}-day food plan that travellers rave about:`;
       foodOutput.appendChild(intro);
 
       sections.forEach(section => {
@@ -1846,6 +1899,13 @@
           latestPlannerText = '';
           resetMap('Fix the trip dates to see your Google Maps highlights.');
           return;
+        }
+      }
+
+      if (foodDaysInput) {
+        const existingFoodDays = Number.parseInt(foodDaysInput.value, 10);
+        if (!foodDaysInput.value || Number.isNaN(existingFoodDays) || existingFoodDays <= 0) {
+          foodDaysInput.value = Math.min(Math.max(dayCount, 1), 21);
         }
       }
 
