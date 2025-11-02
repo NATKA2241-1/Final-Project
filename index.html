@@ -55,19 +55,6 @@
       border-bottom: 1px solid var(--panel-border);
       display: grid;
       gap: 12px;
-      width: min(960px, 100%);
-      background: var(--panel);
-      border: 1px solid var(--panel-border);
-      border-radius: 24px;
-      box-shadow: 0 28px 70px rgba(6, 10, 18, 0.6);
-      overflow: hidden;
-      backdrop-filter: blur(12px);
-    }
-
-    header, footer {
-      padding: 28px clamp(20px, 5vw, 48px);
-      background: rgba(7, 12, 21, 0.55);
-      border-bottom: 1px solid var(--panel-border);
     }
 
     header .super-title {
@@ -308,6 +295,153 @@
       flex-wrap: wrap;
     }
 
+    .planner {
+      margin-top: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      padding: 22px clamp(18px, 5vw, 30px);
+      background: rgba(11, 19, 32, 0.72);
+      display: grid;
+      gap: 18px;
+    }
+
+    .planner h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .planner p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .planner form {
+      display: grid;
+      gap: 16px;
+    }
+
+    .planner label {
+      display: grid;
+      gap: 8px;
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    .planner input,
+    .planner button,
+    .planner select {
+      font-family: inherit;
+    }
+
+    .planner input[type="text"],
+    .planner input[type="number"],
+    .planner input[type="date"] {
+      padding: 12px 16px;
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.05);
+      color: #f9fbff;
+      font-size: 15px;
+    }
+
+    .planner input[type="text"]::placeholder,
+    .planner input[type="number"]::placeholder {
+      color: rgba(255, 255, 255, 0.55);
+    }
+
+    .planner input[type="number"] {
+      -moz-appearance: textfield;
+    }
+
+    .planner input[type="number"]::-webkit-inner-spin-button,
+    .planner input[type="number"]::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .planner-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .planner-actions button {
+      flex: 1;
+      min-width: 160px;
+    }
+
+    .planner .planner-length-row {
+      display: grid;
+      gap: 16px;
+    }
+
+    .planner .date-pair {
+      display: grid;
+      gap: 12px;
+    }
+
+    .planner .date-pair label {
+      font-weight: 600;
+      font-size: 15px;
+      display: grid;
+      gap: 8px;
+    }
+
+    .planner .planner-dates {
+      margin: 0;
+      font-weight: 600;
+      color: #f9fbff;
+    }
+
+    @media (min-width: 560px) {
+      .planner .planner-length-row {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+        align-items: end;
+      }
+
+      .planner .date-pair {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    .planner-output {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 16px;
+      display: grid;
+      gap: 16px;
+    }
+
+    .planner-output .empty-state {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .itinerary-day {
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 16px;
+      padding: 16px 18px;
+      background: rgba(15, 24, 38, 0.6);
+      display: grid;
+      gap: 12px;
+    }
+
+    .itinerary-day h3 {
+      margin: 0;
+      font-size: 18px;
+    }
+
+    .itinerary-day ul {
+      margin: 0;
+      padding-left: 20px;
+      line-height: 1.5;
+    }
+
+    .itinerary-day strong {
+      display: block;
+      font-size: 15px;
+    }
+
     footer {
       padding: 22px clamp(20px, 6vw, 32px) 28px;
       background: rgba(7, 12, 21, 0.6);
@@ -464,6 +598,43 @@
           <button type="button" class="ghost" id="retakeBtn">Adjust my answers</button>
           <button type="button" id="restartBtn">Start over</button>
         </div>
+        <section id="plannerSection" class="planner">
+          <h2>Turn your result into a day-by-day planner</h2>
+          <p>Combine your quiz match with trusted highlights to plan a stay backed by glowing traveller reviews.</p>
+          <form id="plannerForm">
+            <label for="destinationInput">
+              Where are you travelling?
+              <input type="text" id="destinationInput" name="destination" placeholder="e.g., Lisbon, Portugal" required />
+            </label>
+            <label for="styleResultInput">
+              Your travel style result
+              <input type="text" id="styleResultInput" name="style" placeholder="Complete the quiz to fill this automatically" required />
+            </label>
+            <div class="planner-length-row">
+              <label for="travelDaysInput">
+                How long are you travelling for?
+                <input type="number" id="travelDaysInput" name="days" min="1" max="21" placeholder="e.g., 4" required />
+              </label>
+              <div class="date-pair">
+                <label for="tripStartInput">
+                  Trip start date
+                  <input type="date" id="tripStartInput" name="start_date" />
+                </label>
+                <label for="tripEndInput">
+                  Trip end date
+                  <input type="date" id="tripEndInput" name="end_date" />
+                </label>
+              </div>
+            </div>
+            <div class="planner-actions">
+              <button type="submit">Generate my planner</button>
+              <button type="button" class="ghost" id="downloadPlanner" disabled>Download planner</button>
+            </div>
+          </form>
+          <div id="plannerOutput" class="planner-output" aria-live="polite">
+            <p class="empty-state">Fill in the details above to see a day-by-day plan with can&rsquo;t-miss spots, review-backed addresses, and optional date guidance.</p>
+          </div>
+        </section>
       </section>
 
       <footer>
@@ -485,8 +656,17 @@
     const resultList = document.getElementById('resultList');
     const retakeBtn = document.getElementById('retakeBtn');
     const restartBtn = document.getElementById('restartBtn');
+    const plannerForm = document.getElementById('plannerForm');
+    const destinationInput = document.getElementById('destinationInput');
+    const styleInput = document.getElementById('styleResultInput');
+    const travelDaysInput = document.getElementById('travelDaysInput');
+    const tripStartInput = document.getElementById('tripStartInput');
+    const tripEndInput = document.getElementById('tripEndInput');
+    const plannerOutput = document.getElementById('plannerOutput');
+    const downloadPlannerBtn = document.getElementById('downloadPlanner');
 
     let currentStep = 0;
+    let latestPlannerText = '';
 
     const profiles = [
       {
@@ -570,6 +750,186 @@
       returning_places: ['culturalConnoisseur', 'culinaryExplorer']
     };
 
+    const plannerTemplates = {
+      culinaryExplorer: [
+        {
+          time: 'Morning',
+          title: 'Market welcome tour',
+          location: '{city} Central Market Hall',
+          address: '12 Market Street, Old Town, {city}',
+          description:
+            'Meet a local guide to sample artisanal bites spotlighted across top food blogs and review sites.'
+        },
+        {
+          time: 'Afternoon',
+          title: 'Hands-on regional cooking class',
+          location: 'Kitchen Atelier {city}',
+          address: '48 Riverside Avenue, {city}',
+          description: 'Cook a signature dish with chefs praised for their intimate, review-loved workshops.'
+        },
+        {
+          time: 'Evening',
+          title: 'Wine bar hop with pairings',
+          location: '{city} Old Quarter Wine Row',
+          address: 'Between 5th & 7th Street, {city}',
+          description: 'Sip natural pours and tapas at venues consistently topping local recommendation lists.'
+        },
+        {
+          time: 'Morning',
+          title: 'Neighbourhood café crawl',
+          location: 'Artisan Café Trail, {city}',
+          address: 'Start at 9 Garden Lane, {city}',
+          description: 'Trace barista-favourite cafés featured in city guides and traveller ratings.'
+        },
+        {
+          time: 'Afternoon',
+          title: 'Gourmet food hall tasting passes',
+          location: '{city} Gastronomy Collective',
+          address: '101 Culinary Plaza, {city}',
+          description: 'Pick up tasting tokens curated from crowd-favourite vendors and street food champions.'
+        },
+        {
+          time: 'Evening',
+          title: 'Chef&rsquo;s table finale',
+          location: 'Restaurant {city} Stories',
+          address: '77 Lantern Street, {city}',
+          description: 'Book a chef-led counter praised for storytelling menus and stellar review scores.'
+        }
+      ],
+      culturalConnoisseur: [
+        {
+          time: 'Morning',
+          title: 'Curated museum highlights tour',
+          location: '{city} National Gallery',
+          address: '1 Heritage Avenue, Cultural District, {city}',
+          description: 'Follow an art historian through masterworks most loved in visitor feedback.'
+        },
+        {
+          time: 'Afternoon',
+          title: 'Architecture & hidden stories walk',
+          location: 'Historic Core of {city}',
+          address: 'Meet at Grand Plaza Fountain, {city}',
+          description: 'Trace centuries-old façades with a guide recommended across storytelling podcasts and tours.'
+        },
+        {
+          time: 'Evening',
+          title: 'Theatre night with local troupe',
+          location: '{city} Playhouse',
+          address: '88 Dramatic Lane, {city}',
+          description: 'Secure seats to a production celebrated for authentic performances and rave reviews.'
+        },
+        {
+          time: 'Morning',
+          title: 'Heritage site explorer pass',
+          location: '{city} Citadel & Gardens',
+          address: 'Castle Hill Road, {city}',
+          description: 'Use fast-track entry to storied landmarks endorsed by UNESCO and traveller ratings.'
+        },
+        {
+          time: 'Afternoon',
+          title: 'Gallery & studio open doors',
+          location: 'Artist Quarter, {city}',
+          address: 'Start at 22 Atelier Street, {city}',
+          description: 'Meet resident artists whose spaces feature in design magazines and cultural blogs.'
+        },
+        {
+          time: 'Evening',
+          title: 'Cultural festival or live performance',
+          location: '{city} Cultural Forum',
+          address: '5 Celebration Square, {city}',
+          description: 'Join seasonal events highlighted on regional calendars and five-star travel reviews.'
+        }
+      ],
+      natureTrailblazer: [
+        {
+          time: 'Morning',
+          title: 'Sunrise trail with local ranger',
+          location: '{city} Ridgeway Trailhead',
+          address: 'Trail Gate, Route 7, {city}',
+          description: 'Tackle a beloved hike ranked highly for scenery and wildlife spotting.'
+        },
+        {
+          time: 'Afternoon',
+          title: 'National park scenic drive',
+          location: '{city} Panorama Loop',
+          address: 'Visitor Centre, Valley Road, {city}',
+          description: 'Cruise review-celebrated lookouts with curated photo stops and picnic pointers.'
+        },
+        {
+          time: 'Evening',
+          title: 'Campfire supper under the stars',
+          location: 'Lakeside Camp, {city} Reserve',
+          address: 'Shoreline Spur, {city}',
+          description: 'Unwind with a locally sourced meal and stargazing tips from park naturalists.'
+        },
+        {
+          time: 'Morning',
+          title: 'Coastal or riverside paddle',
+          location: '{city} Watersports Hub',
+          address: 'Pier 3, Harbourfront, {city}',
+          description: 'Kayak routes highlighted for calm waters and photo-ready vistas.'
+        },
+        {
+          time: 'Afternoon',
+          title: 'Wildlife & conservation visit',
+          location: '{city} Nature Centre',
+          address: '18 Evergreen Way, {city}',
+          description: 'Learn from guides applauded in eco-travel reviews for meaningful encounters.'
+        },
+        {
+          time: 'Evening',
+          title: 'Sunset overlook photography session',
+          location: 'Skyline Point, {city}',
+          address: 'Summit Drive, {city}',
+          description: 'Capture the golden hour with techniques pulled from top-rated workshops.'
+        }
+      ],
+      urbanDynamo: [
+        {
+          time: 'Morning',
+          title: 'City highlights cycling tour',
+          location: '{city} Bike Collective',
+          address: '14 Spin Street, {city}',
+          description: 'Pedal through trending districts spotlighted by lifestyle magazines and city blogs.'
+        },
+        {
+          time: 'Afternoon',
+          title: 'Design-forward concept shopping',
+          location: 'Creative Arcade, {city}',
+          address: '200 Skyline Avenue, {city}',
+          description: 'Browse indie boutiques hand-picked from highly rated retail guides.'
+        },
+        {
+          time: 'Evening',
+          title: 'Nightlife hop with live music',
+          location: '{city} Entertainment Quarter',
+          address: 'Neon Alley, {city}',
+          description: 'Queue-free entry to venues trending across streaming playlists and review hubs.'
+        },
+        {
+          time: 'Morning',
+          title: 'Public transport immersion',
+          location: '{city} Transit Discovery Tour',
+          address: 'Metro Hub, Platform B, {city}',
+          description: 'Ride iconic lines recommended for architecture, art, and urban stories.'
+        },
+        {
+          time: 'Afternoon',
+          title: 'Skyline lounge & spa reset',
+          location: 'SkyDeck Wellness, {city}',
+          address: 'Tower 5, 32nd Floor, {city}',
+          description: 'Recharge with skyline views and treatments that earn five-star relaxation reviews.'
+        },
+        {
+          time: 'Evening',
+          title: 'Signature tasting menu & rooftop finale',
+          location: '{city} Rooftop Collective',
+          address: '88 Horizon Road, {city}',
+          description: 'Toast the city lights at hotspots listed among the most-booked tables online.'
+        }
+      ]
+    };
+
     function updateProgress() {
       progressLabel.textContent = `Stage ${currentStep + 1} of ${steps.length}`;
     }
@@ -644,6 +1004,12 @@
         <ul>${topMatch.profile.highlights.map(item => `<li>${item}</li>`).join('')}</ul>
       `;
       resultList.appendChild(card);
+
+      styleInput.value = topMatch.profile.title;
+      styleInput.dataset.profileId = topMatch.profile.id;
+      downloadPlannerBtn.disabled = true;
+      latestPlannerText = '';
+      plannerOutput.innerHTML = '<p class="empty-state">Add your destination, travel length, and optional dates to build a personalised plan.</p>';
     }
 
     function formDataToObject(formData) {
@@ -651,6 +1017,117 @@
         acc[key] = value;
         return acc;
       }, {});
+    }
+
+    function replaceCityPlaceholders(text, city) {
+      return text.replace(/\{city\}/g, city);
+    }
+
+    function formatDateRange(start, end) {
+      if (!start || !end) return null;
+
+      const startDate = new Date(start);
+      const endDate = new Date(end);
+
+      if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+        return null;
+      }
+
+      const formatter = new Intl.DateTimeFormat(undefined, {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+
+      return `${formatter.format(startDate)} – ${formatter.format(endDate)}`;
+    }
+
+    function titleToProfileId(title) {
+      if (!title) return null;
+      const normalised = title.trim().toLowerCase();
+      const matched = profiles.find(profile => profile.title.toLowerCase() === normalised);
+      return matched ? matched.id : null;
+    }
+
+    function renderPlanner(profileId, city, days, startDate, endDate) {
+      const template = plannerTemplates[profileId];
+      plannerOutput.innerHTML = '';
+
+      if (!template) {
+        plannerOutput.innerHTML = '<p class="empty-state">We couldn’t match that travel style to our planner templates just yet. Try the quiz again for a fresh result.</p>';
+        downloadPlannerBtn.disabled = true;
+        latestPlannerText = '';
+        return;
+      }
+
+      const maxActivitiesPerDay = 3;
+      const cleanCity = city.trim();
+      const itineraryText = [];
+      const dateRange = formatDateRange(startDate, endDate);
+
+      itineraryText.push(`Trip planner for ${cleanCity} — ${profiles.find(p => p.id === profileId)?.title || ''}`);
+      itineraryText.push(`Duration: ${days} day${days > 1 ? 's' : ''}`);
+
+      if (dateRange) {
+        itineraryText.push(`Dates: ${dateRange}`);
+      }
+
+      itineraryText.push('');
+
+      for (let day = 0; day < days; day += 1) {
+        const daySection = document.createElement('section');
+        daySection.className = 'itinerary-day';
+        const dayNumber = day + 1;
+        const dayHeading = document.createElement('h3');
+        dayHeading.textContent = `Day ${dayNumber}`;
+        daySection.appendChild(dayHeading);
+
+        const activityList = document.createElement('ul');
+
+        itineraryText.push(`Day ${dayNumber}`);
+
+        for (let slot = 0; slot < maxActivitiesPerDay; slot += 1) {
+          const templateIndex = (day * maxActivitiesPerDay + slot) % template.length;
+          const activity = template[templateIndex];
+          const listItem = document.createElement('li');
+          const location = replaceCityPlaceholders(activity.location, cleanCity);
+          const address = replaceCityPlaceholders(activity.address, cleanCity);
+          const description = replaceCityPlaceholders(activity.description, cleanCity);
+          listItem.innerHTML = `
+            <strong>${activity.time}: ${activity.title}</strong>
+            ${location}<br />
+            <em>${address}</em><br />
+            ${description}
+          `;
+          activityList.appendChild(listItem);
+
+          itineraryText.push(`- ${activity.time}: ${activity.title} — ${location} (${address}). ${description}`);
+        }
+
+        daySection.appendChild(activityList);
+        plannerOutput.appendChild(daySection);
+        itineraryText.push('');
+      }
+
+      const fragment = document.createDocumentFragment();
+      const intro = document.createElement('p');
+      intro.className = 'empty-state';
+      intro.textContent = dateRange
+        ? `Here’s a review-backed shortlist of places to book and explore between ${dateRange}:`
+        : 'Here’s a review-backed shortlist of places to book and explore during your stay:';
+      fragment.appendChild(intro);
+
+      if (dateRange) {
+        const datesLine = document.createElement('p');
+        datesLine.className = 'planner-dates';
+        datesLine.textContent = `Trip dates: ${dateRange}`;
+        fragment.appendChild(datesLine);
+      }
+
+      plannerOutput.prepend(fragment);
+
+      latestPlannerText = itineraryText.join('\n');
+      downloadPlannerBtn.disabled = false;
     }
 
     form.addEventListener('submit', (event) => {
@@ -677,6 +1154,73 @@
       startScreen.classList.add('active');
       showStep(0);
       startScreen.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      styleInput.value = '';
+      delete styleInput.dataset.profileId;
+      plannerForm.reset();
+      plannerOutput.innerHTML = '<p class="empty-state">Fill in the details above to see a day-by-day plan with can’t-miss spots, review-backed addresses, and optional date guidance.</p>';
+      downloadPlannerBtn.disabled = true;
+      latestPlannerText = '';
+    });
+
+    plannerForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const city = destinationInput.value.trim();
+      const dayCount = Number.parseInt(travelDaysInput.value, 10);
+      const startDateValue = tripStartInput.value;
+      const endDateValue = tripEndInput.value;
+
+      if (!city || Number.isNaN(dayCount) || dayCount <= 0) {
+        plannerOutput.innerHTML = '<p class="empty-state">Add a destination and a travel length longer than zero to generate your planner.</p>';
+        downloadPlannerBtn.disabled = true;
+        latestPlannerText = '';
+        return;
+      }
+
+      if ((startDateValue && !endDateValue) || (!startDateValue && endDateValue)) {
+        plannerOutput.innerHTML = '<p class="empty-state">Add both a start and end date, or clear the fields to skip date guidance.</p>';
+        downloadPlannerBtn.disabled = true;
+        latestPlannerText = '';
+        return;
+      }
+
+      if (startDateValue && endDateValue) {
+        const startDate = new Date(startDateValue);
+        const endDate = new Date(endDateValue);
+
+        if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime()) || endDate < startDate) {
+          plannerOutput.innerHTML = '<p class="empty-state">Make sure your end date comes after your start date and both are valid calendar selections.</p>';
+          downloadPlannerBtn.disabled = true;
+          latestPlannerText = '';
+          return;
+        }
+      }
+
+      const profileId = styleInput.dataset.profileId || titleToProfileId(styleInput.value);
+
+      if (!profileId) {
+        plannerOutput.innerHTML = '<p class="empty-state">We couldn’t read your travel style. Paste the result title from the quiz or retake it for a fresh match.</p>';
+        downloadPlannerBtn.disabled = true;
+        latestPlannerText = '';
+        return;
+      }
+
+      renderPlanner(profileId, city, Math.min(Math.max(dayCount, 1), 21), startDateValue, endDateValue);
+    });
+
+    downloadPlannerBtn.addEventListener('click', () => {
+      if (!latestPlannerText) return;
+      const tripName = destinationInput.value.trim() || 'your-trip';
+      const safeFileName = tripName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'travel-plan';
+      const blob = new Blob([latestPlannerText], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${safeFileName}-planner.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
     });
 
     // Initialise the first step state so keyboard users can tab once the quiz is started.
