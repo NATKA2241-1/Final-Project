@@ -3,482 +3,844 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ExploreWise – Travel Preferences Quiz</title>
-  <meta name="description" content="Answer a quick quiz to discover your ideal travel styles and get up to four tailored trip ideas." />
+  <title>Travel Interest Quiz</title>
+  <meta name="description" content="Discover what kind of travel experiences fit you best with this quick preference quiz." />
   <style>
-    :root{
-      --bg:#0b0f14;
-      --card:#101720;
-      --muted:#8aa0b4;
-      --text:#e6eef7;
-      --accent:#4fd1c5;
-      --accent-2:#7aa2f7;
-      --danger:#ff6b6b;
-      --ok:#5ad769;
-      --shadow: 0 12px 34px rgba(0,0,0,.35);
-      --radius: 18px;
+    :root {
+      color-scheme: light dark;
+      --bg: #0e1724;
+      --panel: rgba(19, 28, 43, 0.82);
+      --panel-border: rgba(255, 255, 255, 0.1);
+      --accent: #ffb347;
+      --muted: rgba(255, 255, 255, 0.68);
     }
-    *{box-sizing:border-box}
-    html,body{height:100%}
-    body{
-      margin:0;
-      background: radial-gradient(1200px 800px at 80% -20%, #14202e 0%, #0b0f14 60%) fixed;
-      color:var(--text);
-      font: 16px/1.5 "Segoe UI",Roboto,system-ui,-apple-system,Ubuntu,Cantarell,"Noto Sans","Helvetica Neue",Arial;
-      display:flex; align-items:center; justify-content:center;
-      padding:32px;
+
+    * {
+      box-sizing: border-box;
     }
-    a{color:inherit}
-    .app{width:min(1040px,100%);}
-    header{display:flex; gap:16px; align-items:center; margin-bottom:22px}
-    .logo{width:48px; height:48px; display:grid; place-content:center; background:linear-gradient(135deg,var(--accent),var(--accent-2)); border-radius:14px; box-shadow:var(--shadow); font-size:26px}
-    h1{margin:0; font-size:clamp(22px,4vw,34px); letter-spacing:-0.01em}
-    .muted{color:var(--muted)}
 
-    .card{background:linear-gradient(180deg, rgba(255,255,255,0.045), rgba(255,255,255,0.02)); border:1px solid rgba(255,255,255,.06); border-radius:var(--radius); box-shadow:var(--shadow); overflow:hidden}
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", Roboto, system-ui, -apple-system, sans-serif;
+      background: radial-gradient(900px 900px at top right, rgba(255, 179, 71, 0.35), transparent),
+                  radial-gradient(1000px 1000px at bottom left, rgba(108, 205, 255, 0.22), transparent),
+                  var(--bg);
+      color: #f9fbff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 32px 16px 48px;
+    }
 
-    .panel{padding:24px}
-    .grid{display:grid; gap:18px}
+    main {
+      width: min(960px, 100%);
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 24px;
+      box-shadow: 0 28px 70px rgba(6, 10, 18, 0.6);
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+    }
 
-    .progress-wrap{display:flex; align-items:center; gap:12px; margin:4px 0 10px}
-    .progress{height:10px; background:#1a2230; border-radius:999px; overflow:hidden; flex:1}
-    .progress > span{display:block; height:100%; width:0; background:linear-gradient(90deg,var(--accent),var(--accent-2)); transition:width .3s ease}
+    header, footer {
+      padding: 28px clamp(20px, 5vw, 48px);
+      background: rgba(7, 12, 21, 0.55);
+      border-bottom: 1px solid var(--panel-border);
+    }
 
-    .row{display:flex; gap:10px; flex-wrap:wrap}
-    .btn{appearance:none; border:none; background:#1a2230; color:var(--text); padding:12px 18px; border-radius:12px; cursor:pointer; transition:transform .05s ease, background .2s ease, box-shadow .2s ease; font-weight:600}
-    .btn:hover{background:#223047}
-    .btn:active{transform:translateY(1px)}
-    .btn.primary{background:linear-gradient(135deg,var(--accent),var(--accent-2)); color:#04121a; box-shadow:0 8px 24px rgba(79,209,197,.35)}
-    .btn.ghost{background:transparent; border:1px solid rgba(255,255,255,.12)}
-    .btn.disabled{opacity:.45; pointer-events:none}
+    header h1 {
+      margin: 0 0 12px;
+      font-size: clamp(28px, 4vw, 40px);
+      letter-spacing: -0.01em;
+    }
 
-    .question{padding:16px 18px; background:#0f1621; border:1px solid rgba(255,255,255,.06); border-radius:16px}
-    .question h4{margin:0 0 10px 0; font-size:16px}
-    .options{display:flex; gap:8px; flex-wrap:wrap}
-    .chip{padding:10px 14px; border-radius:999px; background:#1a2230; border:1px solid rgba(255,255,255,.08); cursor:pointer; user-select:none; transition:all .15s ease}
-    .chip:hover{background:#24324b}
-    .chip[aria-checked="true"]{background:rgba(79,209,197,.18); border-color:var(--accent); color:var(--accent)}
+    header p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 680px;
+      line-height: 1.6;
+    }
 
-    .footer{display:flex; justify-content:space-between; align-items:center; padding:18px 24px; border-top:1px solid rgba(255,255,255,.06); background:rgba(8,12,19,.65); backdrop-filter:blur(6px)}
+    form {
+      padding: clamp(20px, 5vw, 48px);
+      display: grid;
+      gap: 32px;
+    }
 
-    .hint{font-size:14px; color:var(--muted)}
+    fieldset {
+      margin: 0;
+      padding: 22px clamp(16px, 4vw, 26px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 20px;
+      display: grid;
+      gap: 18px;
+      background: rgba(8, 16, 28, 0.55);
+    }
 
-    .hidden{display:none !important}
+    legend {
+      font-weight: 600;
+      font-size: 18px;
+      padding: 0 6px;
+    }
 
-    .results{display:grid; gap:16px}
-    .result-card{padding:18px; border:1px solid rgba(255,255,255,.07); border-radius:16px; background:#0f1520; display:grid; gap:12px}
-    .pill{display:inline-flex; align-items:center; gap:8px; background:rgba(122,162,247,.14); padding:6px 11px; border-radius:999px; border:1px solid rgba(122,162,247,.32); color:#aecdff; font-weight:600}
-    .meta{display:flex; gap:8px; flex-wrap:wrap}
-    .meta .tag{background:#182132; border:1px solid rgba(255,255,255,.05); padding:6px 10px; border-radius:999px; font-size:14px}
-    ol{margin:0; padding-left:20px}
+    .question {
+      display: grid;
+      gap: 10px;
+    }
 
-    @media (max-width:720px){
-      body{padding:20px}
-      .panel{padding:18px}
-      .footer{flex-direction:column; align-items:flex-start; gap:12px}
-      header{flex-direction:column; align-items:flex-start}
+    .question label {
+      font-weight: 600;
+    }
+
+    .choices {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .choice {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.2s ease, border-color 0.2s ease;
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    input[type="radio"] {
+      accent-color: var(--accent);
+    }
+
+    .choice:hover {
+      border-color: rgba(255, 255, 255, 0.35);
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 16px;
+      padding: 12px 22px;
+      border-radius: 999px;
+      border: none;
+      color: #060a12;
+      background: linear-gradient(120deg, #ffb347, #ffcc33);
+      box-shadow: 0 14px 30px rgba(255, 179, 71, 0.35);
+      transition: transform 0.15s ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    button:active {
+      transform: translateY(1px);
+    }
+
+    footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      border-top: 1px solid var(--panel-border);
+    }
+
+    footer p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    #results {
+      padding: 0 clamp(20px, 5vw, 48px) clamp(24px, 5vw, 48px);
+      display: none;
+      gap: 22px;
+    }
+
+    #results.active {
+      display: grid;
+    }
+
+    .result-card {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px;
+      padding: 20px 22px;
+      background: rgba(12, 20, 32, 0.75);
+      display: grid;
+      gap: 10px;
+    }
+
+    .result-card h3 {
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 20px;
+    }
+
+    .result-card p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .result-card ul {
+      margin: 0;
+      padding-left: 20px;
+      line-height: 1.5;
+    }
+
+    .actions {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .ghost {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      color: #f9fbff;
+      box-shadow: none;
+    }
+
+    .ghost:hover {
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    @media (max-width: 720px) {
+      footer {
+        flex-direction: column;
+        align-items: flex-start;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="app">
+  <main>
     <header>
-      <div class="logo" aria-hidden="true">🌍</div>
-      <div>
-        <h1>ExploreWise: Travel Preferences Quiz</h1>
-        <p class="muted">Answer a few quick questions. We'll score your interests and suggest up to four travel styles that fit you best.</p>
-      </div>
+      <h1>Find Your Travel Style</h1>
+      <p>Answer the questions below to uncover which kinds of trips will make you happiest. At the end, you&rsquo;ll see up to four tailored travel styles that match your answers.</p>
     </header>
 
-    <section class="card" id="quizCard" role="region" aria-labelledby="quizTitle">
-      <div class="panel grid">
-        <div class="progress-wrap" aria-live="polite">
-          <strong id="progressText">Section 1 of 7</strong>
-          <div class="progress" aria-label="Progress"><span id="progressBar"></span></div>
+    <form id="quiz" novalidate>
+      <fieldset>
+        <legend>General Interests</legend>
+        <div class="question">
+          <label>Do you enjoy sightseeing?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you enjoy sightseeing?">
+            <label class="choice"><input type="radio" name="sightseeing" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="sightseeing" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="sightseeing" value="no" />Not really</label>
+          </div>
         </div>
+        <div class="question">
+          <label>Do you like visiting popular landmarks?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you like visiting popular landmarks?">
+            <label class="choice"><input type="radio" name="landmarks" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="landmarks" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="landmarks" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you prefer hidden or local spots?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you prefer hidden or local spots?">
+            <label class="choice"><input type="radio" name="hidden_gems" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="hidden_gems" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="hidden_gems" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you enjoy guided tours?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you enjoy guided tours?">
+            <label class="choice"><input type="radio" name="guided_tours" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="guided_tours" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="guided_tours" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you like spontaneous trips?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you like spontaneous trips?">
+            <label class="choice"><input type="radio" name="spontaneous_general" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="spontaneous_general" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="spontaneous_general" value="no" />Not really</label>
+          </div>
+        </div>
+      </fieldset>
 
-        <h2 id="quizTitle" style="margin:0">General Interests</h2>
-        <p class="muted" id="quizSubtitle">Tell us how you like to explore.</p>
+      <fieldset>
+        <legend>Food &amp; Drink</legend>
+        <div class="question">
+          <label>Do you enjoy trying local food?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you enjoy trying local food?">
+            <label class="choice"><input type="radio" name="local_food" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="local_food" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="local_food" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you like fine dining?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you like fine dining?">
+            <label class="choice"><input type="radio" name="fine_dining" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="fine_dining" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="fine_dining" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you enjoy street food?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you enjoy street food?">
+            <label class="choice"><input type="radio" name="street_food" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="street_food" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="street_food" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you like visiting local cafés?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you like visiting local cafés?">
+            <label class="choice"><input type="radio" name="local_cafes" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="local_cafes" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="local_cafes" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you enjoy wine or brewery tours?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you enjoy wine or brewery tours?">
+            <label class="choice"><input type="radio" name="wine_tours" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="wine_tours" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="wine_tours" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you like cooking classes abroad?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you like cooking classes abroad?">
+            <label class="choice"><input type="radio" name="cooking_classes" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="cooking_classes" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="cooking_classes" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you enjoy local markets?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you enjoy local markets?">
+            <label class="choice"><input type="radio" name="local_markets_food" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="local_markets_food" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="local_markets_food" value="no" />Not really</label>
+          </div>
+        </div>
+      </fieldset>
 
-        <div id="questions" class="grid" aria-live="polite"></div>
-        <p class="hint" id="advanceHint"></p>
+      <fieldset>
+        <legend>History &amp; Culture</legend>
+        <div class="question">
+          <label>Do you like visiting museums?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you like visiting museums?">
+            <label class="choice"><input type="radio" name="museums" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="museums" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="museums" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you enjoy historical landmarks?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you enjoy historical landmarks?">
+            <label class="choice"><input type="radio" name="historical_landmarks" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="historical_landmarks" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="historical_landmarks" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you like learning about local history?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you like learning about local history?">
+            <label class="choice"><input type="radio" name="local_history" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="local_history" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="local_history" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you enjoy art galleries?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you enjoy art galleries?">
+            <label class="choice"><input type="radio" name="art_galleries" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="art_galleries" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="art_galleries" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you like architecture?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you like architecture?">
+            <label class="choice"><input type="radio" name="architecture" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="architecture" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="architecture" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you enjoy cultural festivals?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you enjoy cultural festivals?">
+            <label class="choice"><input type="radio" name="cultural_festivals" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="cultural_festivals" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="cultural_festivals" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you like exploring heritage sites?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you like exploring heritage sites?">
+            <label class="choice"><input type="radio" name="heritage_sites" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="heritage_sites" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="heritage_sites" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you enjoy theatre or live performances?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you enjoy theatre or live performances?">
+            <label class="choice"><input type="radio" name="theatre" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="theatre" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="theatre" value="no" />Not really</label>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Nature &amp; Outdoors</legend>
+        <div class="question">
+          <label>Do you like spending time in nature?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you like spending time in nature?">
+            <label class="choice"><input type="radio" name="nature_time" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="nature_time" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="nature_time" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you enjoy hiking?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you enjoy hiking?">
+            <label class="choice"><input type="radio" name="hiking" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="hiking" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="hiking" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you like beaches?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you like beaches?">
+            <label class="choice"><input type="radio" name="beaches" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="beaches" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="beaches" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you enjoy mountain views?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you enjoy mountain views?">
+            <label class="choice"><input type="radio" name="mountains" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="mountains" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="mountains" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you like national parks?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you like national parks?">
+            <label class="choice"><input type="radio" name="national_parks" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="national_parks" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="national_parks" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you enjoy scenic drives?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you enjoy scenic drives?">
+            <label class="choice"><input type="radio" name="scenic_drives" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="scenic_drives" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="scenic_drives" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you like outdoor adventures?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you like outdoor adventures?">
+            <label class="choice"><input type="radio" name="outdoor_adventures" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="outdoor_adventures" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="outdoor_adventures" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you enjoy photography of landscapes?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you enjoy photography of landscapes?">
+            <label class="choice"><input type="radio" name="landscape_photography" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="landscape_photography" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="landscape_photography" value="no" />Not really</label>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Entertainment &amp; Leisure</legend>
+        <div class="question">
+          <label>Do you like nightlife?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you like nightlife?">
+            <label class="choice"><input type="radio" name="nightlife" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="nightlife" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="nightlife" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you enjoy live music?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you enjoy live music?">
+            <label class="choice"><input type="radio" name="live_music" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="live_music" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="live_music" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you like shopping while travelling?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you like shopping while travelling?">
+            <label class="choice"><input type="radio" name="shopping" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="shopping" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="shopping" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you enjoy local markets?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you enjoy local markets (leisure)?">
+            <label class="choice"><input type="radio" name="local_markets" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="local_markets" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="local_markets" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you like spa or wellness activities?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you like spa or wellness activities?">
+            <label class="choice"><input type="radio" name="spa" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="spa" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="spa" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you enjoy relaxing days with no plans?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you enjoy relaxing days with no plans?">
+            <label class="choice"><input type="radio" name="no_plans" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="no_plans" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="no_plans" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you like sports events while abroad?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you like sports events while abroad?">
+            <label class="choice"><input type="radio" name="sports_events" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="sports_events" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="sports_events" value="no" />Not really</label>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>City Vibes</legend>
+        <div class="question">
+          <label>Do you like modern cities?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you like modern cities?">
+            <label class="choice"><input type="radio" name="modern_cities" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="modern_cities" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="modern_cities" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you prefer old towns?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you prefer old towns?">
+            <label class="choice"><input type="radio" name="old_towns" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="old_towns" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="old_towns" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you like exploring by foot?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you like exploring by foot?">
+            <label class="choice"><input type="radio" name="by_foot" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="by_foot" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="by_foot" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you enjoy using public transport?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you enjoy using public transport?">
+            <label class="choice"><input type="radio" name="public_transport" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="public_transport" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="public_transport" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you like staying in busy areas?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you like staying in busy areas?">
+            <label class="choice"><input type="radio" name="busy_areas" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="busy_areas" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="busy_areas" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you prefer quiet neighbourhoods?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you prefer quiet neighbourhoods?">
+            <label class="choice"><input type="radio" name="quiet_neighbourhoods" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="quiet_neighbourhoods" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="quiet_neighbourhoods" value="no" />Not really</label>
+          </div>
+        </div>
+      </fieldset>
+
+      <fieldset>
+        <legend>Personal Travel Style</legend>
+        <div class="question">
+          <label>Do you like travelling solo?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you like travelling solo?">
+            <label class="choice"><input type="radio" name="solo" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="solo" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="solo" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you enjoy travelling in groups?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you enjoy travelling in groups?">
+            <label class="choice"><input type="radio" name="group" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="group" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="group" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you like luxury travel?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you like luxury travel?">
+            <label class="choice"><input type="radio" name="luxury" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="luxury" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="luxury" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you prefer budget travel?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you prefer budget travel?">
+            <label class="choice"><input type="radio" name="budget" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="budget" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="budget" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you like planning ahead?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you like planning ahead?">
+            <label class="choice"><input type="radio" name="planner" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="planner" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="planner" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you enjoy spontaneous trips?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you enjoy spontaneous trips (style)?">
+            <label class="choice"><input type="radio" name="spontaneous_style" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="spontaneous_style" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="spontaneous_style" value="no" />Not really</label>
+          </div>
+        </div>
+        <div class="question">
+          <label>Do you like returning to places you&rsquo;ve already visited?</label>
+          <div class="choices" role="radiogroup" aria-label="Do you like returning to places you've already visited?">
+            <label class="choice"><input type="radio" name="returning" value="yes" />Yes</label>
+            <label class="choice"><input type="radio" name="returning" value="maybe" />Sometimes</label>
+            <label class="choice"><input type="radio" name="returning" value="no" />Not really</label>
+          </div>
+        </div>
+      </fieldset>
+
+      <div class="actions">
+        <button type="submit">Show my travel matches</button>
+        <button type="button" class="ghost" id="resetBtn">Clear answers</button>
       </div>
+    </form>
 
-      <div class="footer">
-        <div class="row">
-          <button class="btn ghost" id="btnReset" type="button">Reset</button>
-        </div>
-        <div class="row">
-          <button class="btn" id="btnBack" type="button">Back</button>
-          <button class="btn primary" id="btnNext" type="button">Next</button>
-        </div>
+    <section id="results" aria-live="polite">
+      <div id="resultMessage"></div>
+      <div id="resultList" class="grid"></div>
+      <div class="actions" style="margin-top:12px;">
+        <button type="button" id="retakeBtn">Adjust my answers</button>
       </div>
     </section>
 
-    <section class="card hidden" id="resultsCard" role="region" aria-live="polite">
-      <div class="panel grid">
-        <div class="row" style="justify-content:space-between; align-items:center">
-          <h2 style="margin:0">Your Travel Matchmaking</h2>
-          <span class="pill">Up to four tailored styles</span>
-        </div>
-        <p class="muted" id="resultsIntro">Here’s what suits you based on your answers.</p>
-        <div id="results" class="results"></div>
-      </div>
-      <div class="footer">
-        <div class="row">
-          <button class="btn" id="btnEdit" type="button">Back to answers</button>
-        </div>
-        <div class="row">
-          <button class="btn ghost" id="btnStartOver" type="button">Start over</button>
-          <button class="btn primary" id="btnDownload" type="button">Download summary</button>
-        </div>
-      </div>
-    </section>
-  </div>
+    <footer>
+      <p>Tip: You don&rsquo;t need to answer every question, but more answers help us personalise the travel styles.</p>
+      <p>We only show the four best matches so you can focus on the experiences that matter most.</p>
+    </footer>
+  </main>
 
   <script>
-    const QUIZ = [
+    const form = document.getElementById('quiz');
+    const resetBtn = document.getElementById('resetBtn');
+    const resultsSection = document.getElementById('results');
+    const resultMessage = document.getElementById('resultMessage');
+    const resultList = document.getElementById('resultList');
+    const retakeBtn = document.getElementById('retakeBtn');
+
+    const profiles = [
       {
-        id: 'general', title: 'General Interests', subtitle: 'Tell us how you like to explore.',
-        questions: [
-          { q: 'Do you enjoy sightseeing?', key: 'sightseeing', tags:['culture','scenery'] },
-          { q: 'Do you like visiting popular landmarks?', key: 'landmarks', tags:['culture','heritage'] },
-          { q: 'Do you prefer hidden or local spots?', key: 'hidden_gems', tags:['offbeat','local','guided'] },
-          { q: 'Do you enjoy guided tours?', key: 'guided_tours', tags:['guided','learning'] },
-          { q: 'Do you like spontaneous trips?', key: 'spontaneous_general', tags:['spontaneous'] },
-        ]
+        id: 'culturalExplorer',
+        title: 'Cultural Explorer',
+        emoji: '🏛️',
+        description: 'Immerse yourself in history, architecture, galleries, and the stories behind each destination.',
+        highlights: ['Museum passes & guided walks', 'Heritage neighbourhood strolls', 'Festival and theatre weekends']
       },
       {
-        id: 'food', title: 'Food & Drink', subtitle: 'Dining, tastings, and foodie finds.',
-        questions: [
-          { q: 'Do you enjoy trying local food?', key: 'local_food', tags:['foodie','local','markets'] },
-          { q: 'Do you like fine dining?', key: 'fine_dining', tags:['luxury','foodie'] },
-          { q: 'Do you enjoy street food?', key: 'street_food', tags:['foodie','markets'] },
-          { q: 'Do you like visiting local cafés?', key: 'local_cafes', tags:['cafes','foodie'] },
-          { q: 'Do you enjoy wine or brewery tours?', key: 'wine_tours', tags:['luxury','events','foodie'] },
-          { q: 'Do you like cooking classes abroad?', key: 'cooking_classes', tags:['learning','foodie'] },
-          { q: 'Do you enjoy local markets?', key: 'local_markets_food', tags:['markets','local'] },
-        ]
+        id: 'foodieAdventure',
+        title: 'Foodie Adventure',
+        emoji: '🍲',
+        description: 'Taste the city one bite at a time with markets, cooking classes, and unforgettable dining rooms.',
+        highlights: ['Street food hops & local cafés', 'Winery or brewery trails', 'Chef-led cooking workshops']
       },
       {
-        id: 'culture', title: 'History & Culture', subtitle: 'Museums, heritage, and the arts.',
-        questions: [
-          { q: 'Do you like visiting museums?', key: 'museums', tags:['culture','learning'] },
-          { q: 'Do you enjoy historical landmarks?', key: 'historical_landmarks', tags:['culture','heritage'] },
-          { q: 'Do you like learning about local history?', key: 'local_history', tags:['culture','learning'] },
-          { q: 'Do you enjoy art galleries?', key: 'art_galleries', tags:['arts'] },
-          { q: 'Do you like architecture?', key: 'architecture', tags:['architecture','culture'] },
-          { q: 'Do you enjoy cultural festivals?', key: 'cultural_festivals', tags:['events','culture'] },
-          { q: 'Do you like exploring heritage sites?', key: 'heritage_sites', tags:['heritage','culture'] },
-          { q: 'Do you enjoy theatre or live performances?', key: 'theatre', tags:['arts','events'] },
-        ]
+        id: 'natureGetaway',
+        title: 'Nature Getaway',
+        emoji: '🌄',
+        description: 'Trade city noise for scenic outlooks, mountain air, beaches, and national parks.',
+        highlights: ['National park loops', 'Sunrise hikes & scenic drives', 'Photography-friendly lookouts']
       },
       {
-        id: 'nature', title: 'Nature & Outdoors', subtitle: 'Green spaces and big skies.',
-        questions: [
-          { q: 'Do you like spending time in nature?', key: 'nature_time', tags:['nature'] },
-          { q: 'Do you enjoy hiking?', key: 'hiking', tags:['adventure','nature'] },
-          { q: 'Do you like beaches?', key: 'beaches', tags:['beach','relax'] },
-          { q: 'Do you enjoy mountain views?', key: 'mountains', tags:['scenery','nature'] },
-          { q: 'Do you like national parks?', key: 'national_parks', tags:['nature','scenery'] },
-          { q: 'Do you enjoy scenic drives?', key: 'scenic_drives', tags:['scenery'] },
-          { q: 'Do you like outdoor adventures?', key: 'outdoor_adventures', tags:['adventure'] },
-          { q: 'Do you enjoy photography of landscapes?', key: 'landscape_photography', tags:['scenery','nature'] },
-        ]
+        id: 'leisureLifestyle',
+        title: 'Leisure & Lifestyle',
+        emoji: '🎉',
+        description: 'Balance spa time with nightlife, markets, and live events for a feel-good escape.',
+        highlights: ['Rooftop bars & music venues', 'Wellness days and hammams', 'Match-day or show tickets']
       },
       {
-        id: 'leisure', title: 'Entertainment & Leisure', subtitle: 'Fun, vibes, and downtime.',
-        questions: [
-          { q: 'Do you like nightlife?', key: 'nightlife', tags:['nightlife'] },
-          { q: 'Do you enjoy live music?', key: 'live_music', tags:['music','events'] },
-          { q: 'Do you like shopping while travelling?', key: 'shopping', tags:['shopping'] },
-          { q: 'Do you enjoy local markets?', key: 'local_markets', tags:['markets'] },
-          { q: 'Do you like spa or wellness activities?', key: 'spa', tags:['wellness','relax'] },
-          { q: 'Do you enjoy relaxing days with no plans?', key: 'no_plans', tags:['relax'] },
-          { q: 'Do you like sports events while abroad?', key: 'sports_events', tags:['sports','events'] },
-        ]
+        id: 'cityHighlights',
+        title: 'City Highlights',
+        emoji: '🚇',
+        description: 'Navigate vibrant neighbourhoods, efficient transit, and a mix of modern skylines and old towns.',
+        highlights: ['Public transit passes', 'Self-guided walking maps', 'Contrasting old-town & modern tours']
       },
       {
-        id: 'city', title: 'City Vibes', subtitle: 'How you like to move through a place.',
-        questions: [
-          { q: 'Do you like modern cities?', key: 'modern_cities', tags:['modern'] },
-          { q: 'Do you prefer old towns?', key: 'old_towns', tags:['oldtown','heritage'] },
-          { q: 'Do you like exploring by foot?', key: 'by_foot', tags:['walking'] },
-          { q: 'Do you enjoy using public transport?', key: 'public_transport', tags:['transit'] },
-          { q: 'Do you like staying in busy areas?', key: 'busy_areas', tags:['busy'] },
-          { q: 'Do you prefer quiet neighbourhoods?', key: 'quiet_neighbourhoods', tags:['quiet'] },
-        ]
-      },
-      {
-        id: 'style', title: 'Personal Travel Style', subtitle: 'Budget, company, and planning preferences.',
-        questions: [
-          { q: 'Do you like travelling solo?', key: 'solo', tags:['solo'] },
-          { q: 'Do you enjoy travelling in groups?', key: 'group', tags:['group'] },
-          { q: 'Do you like luxury travel?', key: 'luxury', tags:['luxury'] },
-          { q: 'Do you prefer budget travel?', key: 'budget', tags:['budget'] },
-          { q: 'Do you like planning ahead?', key: 'planner', tags:['planner'] },
-          { q: 'Do you enjoy spontaneous trips?', key: 'spontaneous_style', tags:['spontaneous'] },
-          { q: 'Do you like returning to places you’ve already visited?', key: 'returning', tags:['comfort'] },
-        ]
-      },
+        id: 'flexibleCompanion',
+        title: 'Flexible Companion',
+        emoji: '🧭',
+        description: 'You design trips around the right company, budget, and level of planning—mix and match as you go.',
+        highlights: ['Solo-friendly stays & group tours', 'Budget-luxury balance itineraries', 'Spontaneous day add-ons']
+      }
     ];
 
-    const PROFILES = [
-      { id:'Culture Maven', icon:'🏛️', tags:['culture','heritage','arts','architecture','learning','events','oldtown'],
-        blurb:'You love stories, museums, and timeless streets. Build days around exhibits, heritage sites, and local traditions.',
-        ideas:['City museum passes','Guided history walks','UNESCO heritage day trips','Festival weekends'] },
-      { id:'Foodie Explorer', icon:'🍜', tags:['foodie','markets','cafes','luxury','local'],
-        blurb:'Tastes and aromas lead your itinerary. From markets to Michelin, food is your compass.',
-        ideas:['Market-to-table tours','Street food safaris','Cooking classes','Winery & brewery trails'] },
-      { id:'Nature Seeker', icon:'🌿', tags:['nature','scenery','beach','mountains','national_parks','adventure'],
-        blurb:'Fresh air, big skies, and trail time recharge you. Prioritise parks, coasts, and scenic routes.',
-        ideas:['National park loops','Sunrise & sunset lookouts','Coastal hikes','Stargazing spots'] },
-      { id:'Leisure & Vibes', icon:'🎉', tags:['nightlife','music','shopping','wellness','relax','sports','events'],
-        blurb:'You travel for fun and feel-good moments—great shows, spa days, and lively nights.',
-        ideas:['Live music calendars','Rooftop bars','Thermal spas & hammams','Match-day tickets'] },
-      { id:'City Wanderer', icon:'🚶‍♀️', tags:['walking','transit','modern','busy','quiet'],
-        blurb:'You thrive in urban textures—walkable streets, metro lines, and neighbourhood vibes.',
-        ideas:['Self-guided walks','Transit day passes','Neighbourhood food crawls','Street art hunts'] },
-      { id:'Offbeat Adventurer', icon:'🧭', tags:['offbeat','guided','spontaneous','adventure'],
-        blurb:'You like the path less taken and the odd guided deep-dive. Keep plans flexible for serendipity.',
-        ideas:['Hidden-gem tours','Day-trip roulette','Cave or canyon adventures','Local-led experiences'] },
-      { id:'Style & Comfort', icon:'🧳', tags:['solo','group','luxury','budget','planner','spontaneous','comfort'],
-        blurb:'How you travel matters: solo vs group, luxury vs budget, planner vs spontaneous—blend to fit your mood.',
-        ideas:['Solo-friendly stays','Small-group tours','Splurge nights + save days','Buffer-free days'] },
-    ];
-
-    const state = {
-      sectionIndex: 0,
-      answers: {}
+    const questionWeights = {
+      sightseeing: ['culturalExplorer', 'cityHighlights'],
+      landmarks: ['culturalExplorer', 'cityHighlights'],
+      hidden_gems: ['flexibleCompanion', 'culturalExplorer'],
+      guided_tours: ['culturalExplorer', 'flexibleCompanion'],
+      spontaneous_general: ['flexibleCompanion'],
+      local_food: ['foodieAdventure'],
+      fine_dining: ['foodieAdventure', 'leisureLifestyle'],
+      street_food: ['foodieAdventure'],
+      local_cafes: ['foodieAdventure', 'cityHighlights'],
+      wine_tours: ['foodieAdventure', 'leisureLifestyle'],
+      cooking_classes: ['foodieAdventure', 'culturalExplorer'],
+      local_markets_food: ['foodieAdventure', 'leisureLifestyle'],
+      museums: ['culturalExplorer'],
+      historical_landmarks: ['culturalExplorer'],
+      local_history: ['culturalExplorer'],
+      art_galleries: ['culturalExplorer'],
+      architecture: ['culturalExplorer', 'cityHighlights'],
+      cultural_festivals: ['culturalExplorer', 'leisureLifestyle'],
+      heritage_sites: ['culturalExplorer'],
+      theatre: ['culturalExplorer', 'leisureLifestyle'],
+      nature_time: ['natureGetaway'],
+      hiking: ['natureGetaway'],
+      beaches: ['natureGetaway', 'leisureLifestyle'],
+      mountains: ['natureGetaway'],
+      national_parks: ['natureGetaway'],
+      scenic_drives: ['natureGetaway'],
+      outdoor_adventures: ['natureGetaway', 'flexibleCompanion'],
+      landscape_photography: ['natureGetaway'],
+      nightlife: ['leisureLifestyle'],
+      live_music: ['leisureLifestyle'],
+      shopping: ['leisureLifestyle', 'cityHighlights'],
+      local_markets: ['foodieAdventure', 'leisureLifestyle'],
+      spa: ['leisureLifestyle'],
+      no_plans: ['leisureLifestyle'],
+      sports_events: ['leisureLifestyle'],
+      modern_cities: ['cityHighlights'],
+      old_towns: ['cityHighlights', 'culturalExplorer'],
+      by_foot: ['cityHighlights'],
+      public_transport: ['cityHighlights'],
+      busy_areas: ['cityHighlights'],
+      quiet_neighbourhoods: ['cityHighlights'],
+      solo: ['flexibleCompanion'],
+      group: ['flexibleCompanion'],
+      luxury: ['flexibleCompanion', 'leisureLifestyle'],
+      budget: ['flexibleCompanion'],
+      planner: ['flexibleCompanion'],
+      spontaneous_style: ['flexibleCompanion'],
+      returning: ['flexibleCompanion']
     };
 
-    const elQuestions = document.getElementById('questions');
-    const elProgressText = document.getElementById('progressText');
-    const elProgressBar = document.getElementById('progressBar');
-    const elQuizTitle = document.getElementById('quizTitle');
-    const elQuizSubtitle = document.getElementById('quizSubtitle');
-    const elHint = document.getElementById('advanceHint');
+    function scoreQuiz(data) {
+      const scores = Object.fromEntries(profiles.map(profile => [profile.id, 0]));
 
-    const quizCard = document.getElementById('quizCard');
-    const resultsCard = document.getElementById('resultsCard');
-    const elResults = document.getElementById('results');
-    const elResultsIntro = document.getElementById('resultsIntro');
+      Object.entries(data).forEach(([question, value]) => {
+        const tags = questionWeights[question];
+        if (!tags) return;
 
-    const btnNext = document.getElementById('btnNext');
-    const btnBack = document.getElementById('btnBack');
-    const btnReset = document.getElementById('btnReset');
-    const btnEdit = document.getElementById('btnEdit');
-    const btnStartOver = document.getElementById('btnStartOver');
-    const btnDownload = document.getElementById('btnDownload');
+        const weight = value === 'yes' ? 2 : value === 'maybe' ? 1 : 0;
+        if (!weight) return;
 
-    function renderSection(){
-      const s = QUIZ[state.sectionIndex];
-      elQuizTitle.textContent = s.title;
-      elQuizSubtitle.textContent = s.subtitle;
-
-      const totalSections = QUIZ.length;
-      elProgressText.textContent = `Section ${state.sectionIndex+1} of ${totalSections}`;
-      const progress = totalSections <= 1 ? 100 : (state.sectionIndex) / (totalSections - 1) * 100;
-      elProgressBar.style.width = `${progress}%`;
-
-      elQuestions.innerHTML = '';
-
-      s.questions.forEach((item, idx)=>{
-        const id = `${s.id}_${idx}`;
-        const wrap = document.createElement('div');
-        wrap.className = 'question';
-        wrap.innerHTML = `
-          <h4 id="${id}_label">${item.q}</h4>
-          <div class="options" role="radiogroup" aria-labelledby="${id}_label">
-            <button type="button" class="chip" role="radio" aria-checked="false" data-key="${item.key}" data-val="yes">Yes</button>
-            <button type="button" class="chip" role="radio" aria-checked="false" data-key="${item.key}" data-val="no">No</button>
-            <button type="button" class="chip" role="radio" aria-checked="false" data-key="${item.key}" data-val="skip">Skip</button>
-          </div>`;
-        elQuestions.appendChild(wrap);
-      });
-
-      elQuestions.querySelectorAll('.chip').forEach(ch => {
-        const { key, val } = ch.dataset;
-        const saved = state.answers[key];
-        if(saved === val){ ch.setAttribute('aria-checked','true'); }
-        ch.addEventListener('click', ()=>{
-          const group = ch.parentElement.querySelectorAll(`.chip[data-key="${key}"]`);
-          group.forEach(btn=>btn.setAttribute('aria-checked','false'));
-          ch.setAttribute('aria-checked','true');
-          state.answers[key] = val;
-          persistAnswers();
-          checkAdvanceHint();
+        tags.forEach(tag => {
+          scores[tag] += weight;
         });
       });
 
-      updateNav();
-      checkAdvanceHint();
+      return scores;
     }
 
-    function updateNav(){
-      btnBack.classList.toggle('disabled', state.sectionIndex === 0);
-      btnNext.textContent = state.sectionIndex === QUIZ.length - 1 ? 'View results' : 'Next';
-    }
+    function buildResults(scores) {
+      const sorted = profiles
+        .map(profile => ({ profile, score: scores[profile.id] || 0 }))
+        .filter(item => item.score > 0)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 4);
 
-    function checkAdvanceHint(){
-      const unanswered = getCurrentSectionUnanswered();
-      if(unanswered.length){
-        elHint.textContent = `Answer ${unanswered.length} more question${unanswered.length>1?'s':''} to improve your match.`;
-      } else {
-        elHint.textContent = '';
-      }
-    }
+      resultList.innerHTML = '';
 
-    function getCurrentSectionUnanswered(){
-      const s = QUIZ[state.sectionIndex];
-      return s.questions.filter(q=>!state.answers[q.key]);
-    }
-
-    function goNext(){
-      if(state.sectionIndex === QUIZ.length - 1){
-        showResults();
+      if (!sorted.length) {
+        resultMessage.textContent = 'Answer a few questions so we can recommend your travel style.';
         return;
       }
-      state.sectionIndex = Math.min(state.sectionIndex + 1, QUIZ.length - 1);
-      renderSection();
-    }
 
-    function goBack(){
-      if(state.sectionIndex === 0){ return; }
-      state.sectionIndex = Math.max(state.sectionIndex - 1, 0);
-      renderSection();
-    }
+      resultMessage.textContent = sorted.length === 1
+        ? 'This style fits you best:'
+        : `Your top ${sorted.length} travel styles:`;
 
-    function resetQuiz(){
-      state.sectionIndex = 0;
-      state.answers = {};
-      persistAnswers();
-      renderSection();
-    }
-
-    function showResults(){
-      const tallies = new Map();
-      Object.entries(state.answers).forEach(([key,val])=>{
-        if(val !== 'yes'){ return; }
-        const section = QUIZ.find(sec=>sec.questions.some(q=>q.key === key));
-        if(!section){ return; }
-        const question = section.questions.find(q=>q.key === key);
-        if(!question){ return; }
-        question.tags.forEach(tag=>{
-          const current = tallies.get(tag) || 0;
-          tallies.set(tag, current + 2);
-        });
-      });
-
-      // Mild penalty for explicit "no" so neutral answers don't dominate
-      Object.entries(state.answers).forEach(([key,val])=>{
-        if(val !== 'no'){ return; }
-        const section = QUIZ.find(sec=>sec.questions.some(q=>q.key === key));
-        const question = section?.questions.find(q=>q.key === key);
-        if(!question){ return; }
-        question.tags.forEach(tag=>{
-          const current = tallies.get(tag) || 0;
-          tallies.set(tag, current - 1);
-        });
-      });
-
-      const scored = PROFILES.map(profile=>{
-        const score = profile.tags.reduce((total,tag)=> total + (tallies.get(tag) || 0), 0);
-        return { profile, score };
-      }).sort((a,b)=> b.score - a.score);
-
-      const top = scored.filter(entry=>entry.score > 0).slice(0,4);
-      const fallback = scored.slice(0,4);
-      const picks = top.length ? top : fallback;
-
-      elResults.innerHTML = '';
-      picks.forEach(({profile, score})=>{
+      sorted.forEach(({ profile, score }) => {
         const card = document.createElement('article');
         card.className = 'result-card';
         card.innerHTML = `
-          <div class="row" style="align-items:center; gap:12px">
-            <span style="font-size:28px">${profile.icon}</span>
-            <div>
-              <h3 style="margin:0 0 4px 0">${profile.id}</h3>
-              <p class="muted" style="margin:0">${profile.blurb}</p>
-            </div>
-          </div>
-          <div class="meta">
-            <span class="tag">Score: ${Math.max(0, score)}</span>
-            ${profile.tags.slice(0,4).map(tag=>`<span class="tag">#${tag}</span>`).join('')}
-          </div>
-          <div>
-            <strong>Try:</strong>
-            <ol>${profile.ideas.map(item=>`<li>${item}</li>`).join('')}</ol>
-          </div>`;
-        elResults.appendChild(card);
+          <h3>${profile.emoji} ${profile.title}</h3>
+          <p>Score: ${score}</p>
+          <p>${profile.description}</p>
+          <ul>${profile.highlights.map(item => `<li>${item}</li>`).join('')}</ul>
+        `;
+        resultList.appendChild(card);
       });
-
-      elResultsIntro.textContent = picks.length ? 'Here’s what suits you based on your answers.' : 'We need a few more “yes” answers to fine-tune your results.';
-
-      quizCard.classList.add('hidden');
-      resultsCard.classList.remove('hidden');
     }
 
-    function backToQuiz(){
-      resultsCard.classList.add('hidden');
-      quizCard.classList.remove('hidden');
-      renderSection();
+    function formDataToObject(formData) {
+      return Array.from(formData.entries()).reduce((acc, [key, value]) => {
+        acc[key] = value;
+        return acc;
+      }, {});
     }
 
-    function downloadSummary(){
-      const items = Array.from(elResults.children);
-      if(!items.length){
-        alert('Take the quiz to see results before downloading a summary.');
-        return;
-      }
-      const summary = items.map(card=>{
-        const title = card.querySelector('h3')?.textContent ?? '';
-        const blurb = card.querySelector('p')?.textContent ?? '';
-        const ideas = Array.from(card.querySelectorAll('ol li')).map(li=>`- ${li.textContent}`).join('\n');
-        return `${title}\n${blurb}\n${ideas}`;
-      }).join('\n\n');
-      const blob = new Blob([summary], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      const link = document.createElement('a');
-      link.href = url;
-      link.download = 'explorewise-travel-summary.txt';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-      URL.revokeObjectURL(url);
-    }
-
-    function persistAnswers(){
-      try {
-        localStorage.setItem('explorewise_answers', JSON.stringify(state.answers));
-      } catch(e){}
-    }
-
-    function hydrateFromStorage(){
-      try {
-        const stored = localStorage.getItem('explorewise_answers');
-        if(stored){
-          const parsed = JSON.parse(stored);
-          if(parsed && typeof parsed === 'object'){
-            state.answers = parsed;
-          }
-        }
-      } catch(e){}
-    }
-
-    btnNext.addEventListener('click', goNext);
-    btnBack.addEventListener('click', goBack);
-    btnReset.addEventListener('click', resetQuiz);
-    btnStartOver.addEventListener('click', ()=>{
-      resetQuiz();
-      backToQuiz();
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const data = formDataToObject(new FormData(form));
+      const scores = scoreQuiz(data);
+      buildResults(scores);
+      resultsSection.classList.add('active');
+      resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
     });
-    btnEdit.addEventListener('click', backToQuiz);
-    btnDownload.addEventListener('click', downloadSummary);
 
-    hydrateFromStorage();
-    renderSection();
+    function clearForm() {
+      form.reset();
+      resultMessage.textContent = '';
+      resultList.innerHTML = '';
+      resultsSection.classList.remove('active');
+    }
+
+    resetBtn.addEventListener('click', clearForm);
+    retakeBtn.addEventListener('click', () => {
+      resultsSection.classList.remove('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
   </script>
 </body>
 </html>
