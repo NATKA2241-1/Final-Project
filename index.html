@@ -186,7 +186,8 @@
       background: rgba(255, 255, 255, 0.1);
     }
 
-    .tick input[type="checkbox"] {
+    .tick input[type="checkbox"],
+    .tick input[type="radio"] {
       width: 20px;
       height: 20px;
       accent-color: var(--accent);
@@ -425,6 +426,115 @@
       padding-top: 16px;
       display: grid;
       gap: 16px;
+    }
+
+    .food-section {
+      margin-top: 18px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      padding: 22px clamp(18px, 5vw, 30px);
+      background: rgba(11, 19, 32, 0.72);
+      display: grid;
+      gap: 16px;
+    }
+
+    .food-section h2 {
+      margin: 0;
+      font-size: 20px;
+    }
+
+    .food-section p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .food-question {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .food-question button {
+      flex: 1;
+      min-width: 120px;
+    }
+
+    .food-question button.ghost.active {
+      background: linear-gradient(120deg, #ffb347, #ffcc33);
+      border-color: transparent;
+      color: #060a12;
+      box-shadow: 0 14px 30px rgba(255, 179, 71, 0.35);
+    }
+
+    .food-follow-up {
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px;
+      padding: 18px clamp(16px, 5vw, 24px);
+      background: rgba(8, 16, 28, 0.55);
+      display: grid;
+      gap: 14px;
+    }
+
+    .food-follow-up[hidden] {
+      display: none;
+    }
+
+    .food-note {
+      margin: 0;
+      font-size: 15px;
+      color: var(--muted);
+    }
+
+    .food-options {
+      display: grid;
+      gap: 12px;
+    }
+
+    .food-output {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 14px;
+      display: grid;
+      gap: 14px;
+    }
+
+    .food-output .empty-state {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    .food-meal {
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      border-radius: 16px;
+      padding: 16px 18px;
+      background: rgba(15, 24, 38, 0.6);
+      display: grid;
+      gap: 10px;
+    }
+
+    .food-meal h3 {
+      margin: 0;
+      font-size: 17px;
+    }
+
+    .food-meal ul {
+      margin: 0;
+      padding-left: 20px;
+      line-height: 1.5;
+    }
+
+    .food-meal li strong {
+      display: block;
+    }
+
+    .food-actions {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .food-actions button {
+      min-width: 180px;
     }
 
     .map-section {
@@ -679,6 +789,42 @@
             <p class="empty-state">Fill in the details above to see a day-by-day plan with can&rsquo;t-miss spots, review-backed addresses, and optional date guidance.</p>
           </div>
         </section>
+        <section id="foodSection" class="food-section" aria-live="polite">
+          <h2>Do you need food recommendations?</h2>
+          <p>Tap yes to surface review-loved dining stops that match your travel vibe.</p>
+          <div id="foodQuestion" class="food-question">
+            <button type="button" class="ghost" data-response="yes">Yes</button>
+            <button type="button" class="ghost" data-response="no">No</button>
+          </div>
+          <form id="foodForm" class="food-follow-up" hidden>
+            <p class="food-note">Do you want recommendations for:</p>
+            <div class="food-options">
+              <label class="tick">
+                <input type="radio" name="foodCoverage" value="breakfast" required />
+                <span>Breakfast</span>
+              </label>
+              <label class="tick">
+                <input type="radio" name="foodCoverage" value="breakfast_lunch" />
+                <span>Breakfast &amp; lunch</span>
+              </label>
+              <label class="tick">
+                <input type="radio" name="foodCoverage" value="breakfast_dinner" />
+                <span>Breakfast &amp; dinner</span>
+              </label>
+              <label class="tick">
+                <input type="radio" name="foodCoverage" value="breakfast_lunch_dinner" />
+                <span>Breakfast, lunch &amp; dinner</span>
+              </label>
+            </div>
+            <button type="submit">Generate food recommendations</button>
+          </form>
+          <div id="foodOutput" class="food-output" aria-live="polite">
+            <p class="empty-state">We&rsquo;ll queue up food-friendly stops once you let us know if you&rsquo;d like them.</p>
+          </div>
+          <div class="food-actions">
+            <button type="button" class="ghost" id="downloadFood" disabled>Download food list</button>
+          </div>
+        </section>
         <section id="mapSection" class="map-section" aria-live="polite">
           <h2>See your highlights on a map</h2>
           <p id="mapMessage">Generate a planner to plot the recommended spots on Google Maps.</p>
@@ -722,10 +868,16 @@
     const downloadPlannerBtn = document.getElementById('downloadPlanner');
     const mapFrame = document.getElementById('mapFrame');
     const mapMessage = document.getElementById('mapMessage');
+    const foodQuestion = document.getElementById('foodQuestion');
+    const foodForm = document.getElementById('foodForm');
+    const foodOutput = document.getElementById('foodOutput');
+    const downloadFoodBtn = document.getElementById('downloadFood');
 
     let currentStep = 0;
     let latestPlannerText = '';
+    let latestFoodText = '';
     const defaultMapMessage = 'Generate a planner to plot the recommended spots on Google Maps.';
+    const defaultFoodMessage = 'We’ll queue up food-friendly stops once you let us know if you’d like them.';
 
     const profiles = [
       {
@@ -989,6 +1141,181 @@
       ]
     };
 
+    const foodBases = {
+      culinaryExplorer: {
+        breakfast: [
+          {
+            name: 'Sunrise Market Café',
+            address: '24 Morning Lane, {city}',
+            description: 'Favourite among food bloggers for farm-to-table breakfasts and speciality coffee flights.'
+          },
+          {
+            name: 'Artisan Crust Bakery',
+            address: '68 Stone Oven Alley, {city}',
+            description: 'Top-rated viennoiserie counter praised in traveller reviews for seasonal pastries.'
+          }
+        ],
+        lunch: [
+          {
+            name: 'Harbour Tasting Kitchen',
+            address: '102 Wharfside Boulevard, {city}',
+            description: 'Chef-led lunch plates spotlighted in foodie guides for creative regional flavours.'
+          },
+          {
+            name: 'Mercado Mesa Hall',
+            address: '56 Taster Row, {city}',
+            description: 'Bustling counter-serve venue applauded online for its street-food inspired tastings.'
+          }
+        ],
+        dinner: [
+          {
+            name: 'Lantern & Ladle Chef’s Table',
+            address: '77 Lantern Street, {city}',
+            description: 'Storytelling tasting menu that tops reservation apps for intimate dining.'
+          },
+          {
+            name: 'Cellar Passage Wine Bar',
+            address: '5 Cellar Court, {city}',
+            description: 'Sommelier-led pairings recommended by city wine critics and travellers alike.'
+          }
+        ]
+      },
+      culturalConnoisseur: {
+        breakfast: [
+          {
+            name: 'Gallery Quarter Brunch Club',
+            address: '12 Curator Lane, {city}',
+            description: 'Elegant brunch spot earning five-star reviews for artful plating near the museum district.'
+          },
+          {
+            name: 'Archivist’s Coffeehouse',
+            address: '4 Library Terrace, {city}',
+            description: 'Scholarly café beloved online for quiet mornings and locally roasted beans.'
+          }
+        ],
+        lunch: [
+          {
+            name: 'Heritage Terrace Bistro',
+            address: '88 Monument Avenue, {city}',
+            description: 'Prix-fixe lunches praised on travel forums for regional classics with modern twists.'
+          },
+          {
+            name: 'Atrium Garden Tea Rooms',
+            address: '36 Conservatory Walk, {city}',
+            description: 'Light lunch and tea pairings highlighted in cultural magazines and visitor write-ups.'
+          }
+        ],
+        dinner: [
+          {
+            name: 'Opera House Supper Salon',
+            address: '2 Aria Square, {city}',
+            description: 'Pre-theatre dining celebrated in reviews for refined service and seasonal menus.'
+          },
+          {
+            name: 'Historian’s Table',
+            address: '101 Chronicle Street, {city}',
+            description: 'Story-driven tasting experiences recommended across heritage blogs and review sites.'
+          }
+        ]
+      },
+      natureTrailblazer: {
+        breakfast: [
+          {
+            name: 'Trailhead Fuel House',
+            address: '15 Ridge Road, {city}',
+            description: 'Daybreak smoothies and hearty bowls rated highly by hikers for an energy boost.'
+          },
+          {
+            name: 'Canopy Camp Café',
+            address: '58 Evergreen Spur, {city}',
+            description: 'Outdoor patio praised online for sunrise views and sustainable bites.'
+          }
+        ],
+        lunch: [
+          {
+            name: 'Riverside Picnic Pantry',
+            address: 'Pier 6, Riverfront, {city}',
+            description: 'Grab-and-go lunches spotlighted on eco-travel guides for fresh regional produce.'
+          },
+          {
+            name: 'Summit Snack Lodge',
+            address: '78 Overlook Drive, {city}',
+            description: 'Trail favourite with rave reviews for its warm soups and scenic deck.'
+          }
+        ],
+        dinner: [
+          {
+            name: 'Starlit Grill & Campfire',
+            address: 'Lakeside Loop, {city}',
+            description: 'Open-air grill beloved in camper forums for seasonal fire-cooked plates.'
+          },
+          {
+            name: 'Aurora Ridge Dining Cabin',
+            address: '9 Northern Lights Trail, {city}',
+            description: 'Intimate lodge dinners applauded for locally sourced ingredients and mountain views.'
+          }
+        ]
+      },
+      urbanDynamo: {
+        breakfast: [
+          {
+            name: 'Skyline Espresso Bar',
+            address: '30 Highline Avenue, {city}',
+            description: 'Morning hotspot ranked on city guides for creative espresso tonics and grab-and-go bites.'
+          },
+          {
+            name: 'Neon Diner & Juice Lab',
+            address: '120 Pulse Street, {city}',
+            description: 'Retro-modern diner loved online for brunch playlists and bold breakfast bowls.'
+          }
+        ],
+        lunch: [
+          {
+            name: 'Neon Noodle Lab',
+            address: '45 Electric Lane, {city}',
+            description: 'Fast-casual noodle bar trending in foodie reviews for its street market flavours.'
+          },
+          {
+            name: 'District Taproom Cantina',
+            address: '210 Skyline Plaza, {city}',
+            description: 'Lunch tacos and share plates spotlighted by nightlife bloggers for daytime energy.'
+          }
+        ],
+        dinner: [
+          {
+            name: 'Midnight Tapas Loft',
+            address: '11 Afterglow Terrace, {city}',
+            description: 'Late-night tapas lounge topping review charts for live DJs and inventive bites.'
+          },
+          {
+            name: 'Pulse Rooftop Steakhouse',
+            address: '72 Lumen Tower, {city}',
+            description: 'City-view dining acclaimed for skyline panoramas and signature cocktails.'
+          }
+        ]
+      }
+    };
+
+    const foodCoverageMap = {
+      breakfast: ['breakfast'],
+      breakfast_lunch: ['breakfast', 'lunch'],
+      breakfast_dinner: ['breakfast', 'dinner'],
+      breakfast_lunch_dinner: ['breakfast', 'lunch', 'dinner']
+    };
+
+    const mealLabels = {
+      breakfast: 'Breakfast favourites',
+      lunch: 'Lunch gems',
+      dinner: 'Dinner highlights'
+    };
+
+    const coverageLabels = {
+      breakfast: 'breakfast',
+      breakfast_lunch: 'breakfast and lunch',
+      breakfast_dinner: 'breakfast and dinner',
+      breakfast_lunch_dinner: 'breakfast, lunch, and dinner'
+    };
+
     function updateProgress() {
       progressLabel.textContent = `Stage ${currentStep + 1} of ${steps.length}`;
     }
@@ -1070,6 +1397,7 @@
       latestPlannerText = '';
       plannerOutput.innerHTML = '<p class="empty-state">Add your destination, travel length, and optional dates to build a personalised plan.</p>';
       resetMap();
+      resetFoodSection();
     }
 
     function formDataToObject(formData) {
@@ -1089,6 +1417,169 @@
       if (mapMessage) {
         mapMessage.textContent = message;
       }
+    }
+
+    function setActiveFoodButton(response) {
+      if (!foodQuestion) return;
+      const buttons = foodQuestion.querySelectorAll('button[data-response]');
+      buttons.forEach(button => {
+        button.classList.toggle('active', button.dataset.response === response);
+      });
+    }
+
+    function resetFoodSection(message = defaultFoodMessage) {
+      if (foodForm) {
+        foodForm.hidden = true;
+        foodForm.reset();
+      }
+
+      if (foodOutput) {
+        foodOutput.innerHTML = `<p class="empty-state">${message}</p>`;
+      }
+
+      if (downloadFoodBtn) {
+        downloadFoodBtn.disabled = true;
+      }
+
+      latestFoodText = '';
+      setActiveFoodButton(null);
+    }
+
+    function handleFoodResponse(response) {
+      if (response === 'yes') {
+        setActiveFoodButton(response);
+        if (foodForm) {
+          foodForm.hidden = false;
+        }
+        if (foodOutput) {
+          foodOutput.innerHTML = '<p class="empty-state">Choose the meals you want recommendations for, then generate your list.</p>';
+        }
+        if (downloadFoodBtn) {
+          downloadFoodBtn.disabled = true;
+        }
+        latestFoodText = '';
+        return;
+      }
+
+      if (response === 'no') {
+        resetFoodSection('Thank You!');
+        setActiveFoodButton(response);
+      }
+    }
+
+    function renderFoodRecommendations(profileId, coverage) {
+      if (!foodOutput) return;
+
+      if (!profileId) {
+        foodOutput.innerHTML = '<p class="empty-state">Complete the quiz to lock in your travel style result before asking for dining ideas.</p>';
+        if (downloadFoodBtn) {
+          downloadFoodBtn.disabled = true;
+        }
+        latestFoodText = '';
+        return;
+      }
+
+      const coverageMeals = foodCoverageMap[coverage];
+
+      if (!coverageMeals || !coverageMeals.length) {
+        foodOutput.innerHTML = '<p class="empty-state">Pick one of the meal coverage options above to continue.</p>';
+        if (downloadFoodBtn) {
+          downloadFoodBtn.disabled = true;
+        }
+        latestFoodText = '';
+        return;
+      }
+
+      const template = foodBases[profileId];
+
+      if (!template) {
+        foodOutput.innerHTML = '<p class="empty-state">We couldn’t find food picks for that travel style just yet. Try retaking the quiz for a new match.</p>';
+        if (downloadFoodBtn) {
+          downloadFoodBtn.disabled = true;
+        }
+        latestFoodText = '';
+        return;
+      }
+
+      const city = destinationInput.value.trim();
+
+      if (!city) {
+        foodOutput.innerHTML = '<p class="empty-state">Add your destination above so we can tailor the dining list with real addresses.</p>';
+        if (downloadFoodBtn) {
+          downloadFoodBtn.disabled = true;
+        }
+        latestFoodText = '';
+        return;
+      }
+
+      const profile = profiles.find(item => item.id === profileId);
+      const coverageLabel = coverageLabels[coverage] || 'your chosen meals';
+      const sections = coverageMeals
+        .map(meal => ({ meal, items: template[meal] || [] }))
+        .filter(entry => entry.items.length);
+
+      if (!sections.length) {
+        foodOutput.innerHTML = '<p class="empty-state">We&rsquo;re still gathering dining intel for that combination. Try a different meal selection.</p>';
+        if (downloadFoodBtn) {
+          downloadFoodBtn.disabled = true;
+        }
+        latestFoodText = '';
+        return;
+      }
+
+      const lines = [];
+      const cityName = city;
+      const profileTitle = profile ? profile.title : 'your travel style';
+
+      lines.push(`Food recommendations for ${cityName} — ${profileTitle}`);
+      lines.push(`Coverage: ${coverageLabel}`);
+      lines.push('');
+
+      foodOutput.innerHTML = '';
+
+      const intro = document.createElement('p');
+      intro.className = 'empty-state';
+      intro.textContent = `Here are ${coverageLabel} picks in ${cityName} that travellers rave about:`;
+      foodOutput.appendChild(intro);
+
+      sections.forEach(section => {
+        const mealLabel = mealLabels[section.meal] || section.meal;
+        const mealBlock = document.createElement('section');
+        mealBlock.className = 'food-meal';
+
+        const heading = document.createElement('h3');
+        heading.textContent = mealLabel;
+        mealBlock.appendChild(heading);
+
+        const list = document.createElement('ul');
+
+        section.items.forEach(item => {
+          const name = replaceCityPlaceholders(item.name, cityName);
+          const address = replaceCityPlaceholders(item.address, cityName);
+          const description = replaceCityPlaceholders(item.description, cityName);
+          const listItem = document.createElement('li');
+          listItem.innerHTML = `
+            <strong>${name}</strong>
+            ${address}<br />
+            <em>${description}</em>
+          `;
+          list.appendChild(listItem);
+
+          lines.push(`- ${mealLabel}: ${name} — ${address}. ${description}`);
+        });
+
+        mealBlock.appendChild(list);
+        foodOutput.appendChild(mealBlock);
+        lines.push('');
+      });
+
+      latestFoodText = lines.join('\n');
+
+      if (downloadFoodBtn) {
+        downloadFoodBtn.disabled = false;
+      }
+
+      foodOutput.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
 
     function updateMapWithPlaces(places) {
@@ -1285,8 +1776,27 @@
       plannerOutput.innerHTML = '<p class="empty-state">Fill in the details above to see a day-by-day plan with can’t-miss spots, review-backed addresses, and optional date guidance.</p>';
       downloadPlannerBtn.disabled = true;
       latestPlannerText = '';
+      resetFoodSection();
       resetMap();
     });
+
+    if (foodQuestion) {
+      foodQuestion.addEventListener('click', (event) => {
+        const targetButton = event.target.closest('button[data-response]');
+        if (!targetButton) return;
+        handleFoodResponse(targetButton.dataset.response);
+      });
+    }
+
+    if (foodForm) {
+      foodForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const formData = new FormData(foodForm);
+        const coverage = formData.get('foodCoverage');
+        const profileId = styleInput.dataset.profileId || titleToProfileId(styleInput.value);
+        renderFoodRecommendations(profileId, coverage);
+      });
+    }
 
     plannerForm.addEventListener('submit', (event) => {
       event.preventDefault();
@@ -1352,9 +1862,27 @@
       URL.revokeObjectURL(url);
     });
 
+    if (downloadFoodBtn) {
+      downloadFoodBtn.addEventListener('click', () => {
+        if (!latestFoodText) return;
+        const tripName = destinationInput.value.trim() || 'your-trip';
+        const safeFileName = tripName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'food-guide';
+        const blob = new Blob([latestFoodText], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${safeFileName}-food-guide.txt`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      });
+    }
+
     // Initialise the first step state so keyboard users can tab once the quiz is started.
     showStep(0);
     form.classList.remove('active');
+    resetFoodSection();
     resetMap();
   </script>
 </body>
