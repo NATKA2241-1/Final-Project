@@ -46,10 +46,122 @@
       opacity: 0.9;
     }
 
+    body.intro-active {
+      overflow: hidden;
+    }
+
+    body.intro-active main {
+      opacity: 0;
+      transform: translateY(24px);
+      pointer-events: none;
+    }
+
     main {
       width: min(460px, 100%);
       position: relative;
       z-index: 0;
+      transition: opacity 0.45s ease, transform 0.45s ease;
+    }
+
+    .intro-screen {
+      position: fixed;
+      inset: 0;
+      z-index: 20;
+      display: grid;
+      place-items: center;
+      padding: 32px 18px;
+      text-align: center;
+      color: #f9fbff;
+      transition: opacity 0.45s ease;
+    }
+
+    .intro-screen::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(rgba(10, 16, 26, 0.55), rgba(10, 16, 26, 0.72)),
+                  url('https://i.postimg.cc/C1fSPpJ3/Gemini-Generated-Image-cj6d0jcj6d0jcj6d.png') center / cover no-repeat;
+      filter: blur(3px);
+      transform: scale(1.03);
+      z-index: -2;
+    }
+
+    .intro-screen::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(140deg, rgba(10, 18, 30, 0.35), rgba(10, 18, 30, 0.65));
+      z-index: -1;
+    }
+
+    .intro-content {
+      max-width: 420px;
+      display: grid;
+      gap: 24px;
+      justify-items: center;
+    }
+
+    .intro-content h1 {
+      margin: 0;
+      font-size: clamp(24px, 5vw, 34px);
+      line-height: 1.4;
+      font-weight: 600;
+    }
+
+    .intro-content p {
+      margin: 0;
+      font-size: clamp(16px, 3.6vw, 18px);
+      line-height: 1.6;
+      color: rgba(249, 251, 255, 0.85);
+    }
+
+    .compass-button {
+      position: relative;
+      width: 148px;
+      height: 148px;
+      padding: 0;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-size: 16px;
+      box-shadow: 0 26px 60px rgba(255, 179, 71, 0.45);
+    }
+
+    .compass-button span {
+      display: block;
+      max-width: 92px;
+      line-height: 1.4;
+    }
+
+    .compass-button::before,
+    .compass-button::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      background: rgba(6, 10, 18, 0.18);
+      transition: transform 0.3s ease;
+    }
+
+    .compass-button::before {
+      width: 6px;
+      height: 72px;
+    }
+
+    .compass-button::after {
+      width: 72px;
+      height: 6px;
+    }
+
+    .compass-button:hover::before,
+    .compass-button:hover::after {
+      transform: rotate(12deg);
+    }
+
+    .intro-screen--hidden {
+      opacity: 0;
+      pointer-events: none;
     }
 
     .quiz-card {
@@ -650,7 +762,14 @@
     }
   </style>
 </head>
-<body>
+<body class="intro-active">
+  <section id="introScreen" class="intro-screen" aria-labelledby="introTitle">
+    <div class="intro-content">
+      <h1 id="introTitle">Hello, thank you for visiting this site where you can plan your trip in one place, just simply fill in the questions in the little test and go from there!</h1>
+      <p>From the quiz to the planner and dining picks, everything lives in one place so you can glide into your next adventure.</p>
+      <button type="button" id="introStartBtn" class="compass-button"><span>Let&rsquo;s start</span></button>
+    </div>
+  </section>
   <main>
     <article class="quiz-card">
       <header>
@@ -889,6 +1008,8 @@
   </main>
 
   <script>
+    const introScreen = document.getElementById('introScreen');
+    const introStartBtn = document.getElementById('introStartBtn');
     const startScreen = document.getElementById('startScreen');
     const startBtn = document.getElementById('startBtn');
     const form = document.getElementById('quiz');
@@ -1372,6 +1493,21 @@
       prevBtn.disabled = index === 0;
       nextBtn.textContent = index === steps.length - 1 ? 'Get my results' : 'Next';
       updateProgress();
+    }
+
+    if (introStartBtn && introScreen) {
+      introStartBtn.addEventListener('click', () => {
+        document.body.classList.remove('intro-active');
+        introScreen.classList.add('intro-screen--hidden');
+        setTimeout(() => {
+          if (introScreen.parentElement) {
+            introScreen.remove();
+          }
+          if (startBtn) {
+            startBtn.focus();
+          }
+        }, 480);
+      });
     }
 
     startBtn.addEventListener('click', () => {
