@@ -851,6 +851,25 @@
           </fieldset>
         </div>
 
+        </div>
+
+        <div class="step" data-step="3">
+          <fieldset>
+            <legend>Nature &amp; Outdoors</legend>
+            <p class="fieldset-note">Tell us how you reconnect with the great outdoors on a trip.</p>
+            <div class="tick-group">
+              <label class="tick"><input type="checkbox" name="nature_time" value="yes" /> <span>Do you like spending time in nature?</span></label>
+              <label class="tick"><input type="checkbox" name="hiking" value="yes" /> <span>Do you enjoy hiking?</span></label>
+              <label class="tick"><input type="checkbox" name="beaches" value="yes" /> <span>Do you like beaches?</span></label>
+              <label class="tick"><input type="checkbox" name="mountain_views" value="yes" /> <span>Do you enjoy mountain views?</span></label>
+              <label class="tick"><input type="checkbox" name="national_parks" value="yes" /> <span>Do you like national parks?</span></label>
+              <label class="tick"><input type="checkbox" name="scenic_drives" value="yes" /> <span>Do you enjoy scenic drives?</span></label>
+              <label class="tick"><input type="checkbox" name="outdoor_adventures" value="yes" /> <span>Do you like outdoor adventures?</span></label>
+              <label class="tick"><input type="checkbox" name="landscape_photography" value="yes" /> <span>Do you enjoy photography of landscapes?</span></label>
+            </div>
+          </fieldset>
+        </div>
+
 
         <div class="step" data-step="3">
           <fieldset>
@@ -1503,6 +1522,75 @@
     function updateProgress() {
       progressLabel.textContent = `Stage ${currentStep + 1} of ${steps.length}`;
     }
+
+    function showStep(index) {
+      currentStep = index;
+      steps.forEach((step, position) => {
+        step.classList.toggle('active', position === index);
+      });
+      prevBtn.disabled = index === 0;
+      nextBtn.textContent = index === steps.length - 1 ? 'Get my results' : 'Next';
+      updateProgress();
+    }
+
+    function startWizardFlow() {
+      if (startScreen) {
+        startScreen.classList.remove('active');
+      }
+      if (resultsSection) {
+        resultsSection.classList.remove('active');
+      }
+      form.classList.add('active');
+      showStep(0);
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    if (introStartBtn && introScreen) {
+      introStartBtn.addEventListener('click', () => {
+        document.body.classList.remove('intro-active');
+        introScreen.classList.add('intro-screen--hidden');
+        setTimeout(() => {
+          if (introScreen.parentElement) {
+            introScreen.remove();
+          }
+          if (startBtn) {
+            startBtn.focus();
+          }
+          startWizardFlow();
+        }, 480);
+      });
+    }
+
+    if (startBtn) {
+      startBtn.addEventListener('click', () => {
+        startWizardFlow();
+      });
+    }
+
+    nextBtn.addEventListener('click', () => {
+      if (currentStep === steps.length - 1) {
+        form.requestSubmit();
+        return;
+      }
+      showStep(Math.min(steps.length - 1, currentStep + 1));
+    });
+
+    prevBtn.addEventListener('click', () => {
+      if (currentStep === 0) return;
+      showStep(Math.max(0, currentStep - 1));
+    });
+
+    function scoreQuiz(data) {
+      const scores = Object.fromEntries(profiles.map(profile => [profile.id, 0]));
+
+      Object.entries(data).forEach(([question, value]) => {
+        const tags = questionWeights[question];
+        if (!tags || value !== 'yes') return;
+        const weight = 2;
+        tags.forEach(tag => {
+          scores[tag] += weight;
+        });
+      });
 
     function showStep(index) {
       currentStep = index;
