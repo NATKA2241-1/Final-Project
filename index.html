@@ -528,6 +528,10 @@
         grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
         align-items: end;
       }
+
+      .planner .date-pair {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
     }
 
     .planner-output {
@@ -829,6 +833,24 @@
             </div>
           </fieldset>
         </div>
+
+        <div class="step" data-step="3">
+          <fieldset>
+            <legend>Nature &amp; Outdoors</legend>
+            <p class="fieldset-note">Tell us how you reconnect with the great outdoors on a trip.</p>
+            <div class="tick-group">
+              <label class="tick"><input type="checkbox" name="nature_time" value="yes" /> <span>Do you like spending time in nature?</span></label>
+              <label class="tick"><input type="checkbox" name="hiking" value="yes" /> <span>Do you enjoy hiking?</span></label>
+              <label class="tick"><input type="checkbox" name="beaches" value="yes" /> <span>Do you like beaches?</span></label>
+              <label class="tick"><input type="checkbox" name="mountain_views" value="yes" /> <span>Do you enjoy mountain views?</span></label>
+              <label class="tick"><input type="checkbox" name="national_parks" value="yes" /> <span>Do you like national parks?</span></label>
+              <label class="tick"><input type="checkbox" name="scenic_drives" value="yes" /> <span>Do you enjoy scenic drives?</span></label>
+              <label class="tick"><input type="checkbox" name="outdoor_adventures" value="yes" /> <span>Do you like outdoor adventures?</span></label>
+              <label class="tick"><input type="checkbox" name="landscape_photography" value="yes" /> <span>Do you enjoy photography of landscapes?</span></label>
+            </div>
+          </fieldset>
+        </div>
+
 
         <div class="step" data-step="3">
           <fieldset>
@@ -1526,6 +1548,567 @@
     prevBtn.addEventListener('click', () => {
       if (currentStep === 0) return;
       showStep(Math.max(0, currentStep - 1));
+    });
+
+    function scoreQuiz(data) {
+      const scores = Object.fromEntries(profiles.map(profile => [profile.id, 0]));
+
+      Object.entries(data).forEach(([question, value]) => {
+        const tags = questionWeights[question];
+        if (!tags || value !== 'yes') return;
+        const weight = 2;
+        tags.forEach(tag => {
+          scores[tag] += weight;
+        });
+      });
+
+      return scores;
+    }
+
+    function buildResults(scores) {
+      const ranked = profiles
+        .map(profile => ({ profile, score: scores[profile.id] || 0 }))
+        .filter(item => item.score > 0)
+        .sort((a, b) => b.score - a.score);
+
+      resultList.innerHTML = '';
+
+      if (!ranked.length) {
+        resultMessage.textContent = 'Tick a few statements in each section so we can pinpoint your single best travel style.';
+        return;
+      }
+
+      const [topMatch] = ranked;
+      resultMessage.textContent = 'Here’s the travel style that matches you best:';
+
+      const card = document.createElement('article');
+      card.className = 'result-card';
+      card.innerHTML = `
+        <h3>${topMatch.profile.emoji} ${topMatch.profile.title}</h3>
+        <p>${topMatch.profile.description}</p>
+        <ul>${topMatch.profile.highlights.map(item => `<li>${item}</li>`).join('')}</ul>
+      `;
+      resultList.appendChild(card);
+
+      styleInput.value = topMatch.profile.title;
+      styleInput.dataset.profileId = topMatch.profile.id;
+      downloadPlannerBtn.disabled = true;
+      latestPlannerText = '';
+      plannerOutput.innerHTML = '<p class="empty-state">Add your destination, travel length, and optional dates to build a personalised plan.</p>';
+      resetMap();
+      resetFoodSection();
+    }
+
+    function formDataToObject(formData) {
+      return Array.from(formData.entries()).reduce((acc, [key, value]) => {
+        acc[key] = value;
+        return acc;
+      }, {});
+    }
+
+    function replaceCityPlaceholders(text, city) {
+      return text.replace(/\{city\}/g, city);
+    }
+
+    function resetMap(message = defaultMapMessage) {
+      if (!mapFrame) return;
+      mapFrame.src = 'about:blank';
+      if (mapMessage) {
+        mapMessage.textContent = message;
+      }
+    }
+
+    function setActiveFoodButton(response) {
+      if (!foodQuestion) return;
+      const buttons = foodQuestion.querySelectorAll('button[data-response]');
+      buttons.forEach(button => {
+        button.classList.toggle('active', button.dataset.response === response);
+      });
+    }
+
+    function resetFoodSection(message = defaultFoodMessage) {
+      if (foodForm) {
+        foodForm.hidden = true;
+        foodForm.reset();
+        if (foodDaysInput) {
+          foodDaysInput.value = '';
+        }
+      }
+
+      if (foodOutput) {
+        foodOutput.innerHTML = `<p class="empty-state">${message}</p>`;
+      }
+
+      if (downloadFoodBtn) {
+        downloadFoodBtn.disabled = true;
+      }
+
+      latestFoodText = '';
+      setActiveFoodButton(null);
+    }
+
+    function handleFoodResponse(response) {
+      if (response === 'yes') {
+        setActiveFoodButton(response);
+        if (foodForm) {
+          foodForm.hidden = false;
+          if (foodDaysInput && !foodDaysInput.value && travelDaysInput && travelDaysInput.value) {
+            foodDaysInput.value = travelDaysInput.value;
+          }
+        }
+        if (foodOutput) {
+          foodOutput.innerHTML = '<p class="empty-state">Choose the meals you want recommendations for, then generate your list.</p>';
+        }
+        if (downloadFoodBtn) {
+          downloadFoodBtn.disabled = true;
+        }
+        latestFoodText = '';
+        return;
+      }
+
+      if (response === 'no') {
+        resetFoodSection('Thank You!');
+        setActiveFoodButton(response);
+      }
+    }
+
+    function renderFoodRecommendations(profileId, coverage) {
+      if (!foodOutput) return;
+
+      if (!profileId) {
+        foodOutput.innerHTML = '<p class="empty-state">Complete the quiz to lock in your travel style result before asking for dining ideas.</p>';
+        if (downloadFoodBtn) {
+          downloadFoodBtn.disabled = true;
+        }
+        latestFoodText = '';
+        return;
+      }
+
+      const coverageMeals = foodCoverageMap[coverage];
+
+      if (!coverageMeals || !coverageMeals.length) {
+        foodOutput.innerHTML = '<p class="empty-state">Pick one of the meal coverage options above to continue.</p>';
+        if (downloadFoodBtn) {
+          downloadFoodBtn.disabled = true;
+        }
+        latestFoodText = '';
+        return;
+      }
+
+      const template = foodBases[profileId];
+
+      if (!template) {
+        foodOutput.innerHTML = '<p class="empty-state">We couldn’t find food picks for that travel style just yet. Try retaking the quiz for a new match.</p>';
+        if (downloadFoodBtn) {
+          downloadFoodBtn.disabled = true;
+        }
+        latestFoodText = '';
+        return;
+      }
+
+      const city = destinationInput.value.trim();
+
+      if (!city) {
+        foodOutput.innerHTML = '<p class="empty-state">Add your destination above so we can tailor the dining list with real addresses.</p>';
+        if (downloadFoodBtn) {
+          downloadFoodBtn.disabled = true;
+        }
+        latestFoodText = '';
+        return;
+      }
+
+      const rawDayCount = foodDaysInput ? Number.parseInt(foodDaysInput.value, 10) : NaN;
+
+      if (Number.isNaN(rawDayCount) || rawDayCount <= 0) {
+        foodOutput.innerHTML = '<p class="empty-state">Tell us how many days you want food recommendations for so we can size the dining list.</p>';
+        if (downloadFoodBtn) {
+          downloadFoodBtn.disabled = true;
+        }
+        latestFoodText = '';
+        if (foodDaysInput) {
+          foodDaysInput.focus();
+        }
+        return;
+      }
+
+      const dayCount = Math.min(Math.max(rawDayCount, 1), 21);
+
+      const profile = profiles.find(item => item.id === profileId);
+      const coverageLabel = coverageLabels[coverage] || 'your chosen meals';
+      const sections = coverageMeals
+        .map(meal => ({ meal, items: template[meal] || [] }))
+        .filter(entry => entry.items.length);
+
+      if (!sections.length) {
+        foodOutput.innerHTML = '<p class="empty-state">We&rsquo;re still gathering dining intel for that combination. Try a different meal selection.</p>';
+        if (downloadFoodBtn) {
+          downloadFoodBtn.disabled = true;
+        }
+        latestFoodText = '';
+        return;
+      }
+
+      const lines = [];
+      const cityName = city;
+      const profileTitle = profile ? profile.title : 'your travel style';
+
+      lines.push(`Food recommendations for ${cityName} — ${profileTitle}`);
+      lines.push(`Coverage: ${coverageLabel}`);
+      lines.push(`Food plan length: ${dayCount} day${dayCount > 1 ? 's' : ''}`);
+      lines.push('');
+
+      foodOutput.innerHTML = '';
+
+      const intro = document.createElement('p');
+      intro.className = 'empty-state';
+      intro.textContent = `Here are ${coverageLabel} picks in ${cityName} for your ${dayCount}-day food plan that travellers rave about:`;
+      foodOutput.appendChild(intro);
+
+      sections.forEach(section => {
+        const mealLabel = mealLabels[section.meal] || section.meal;
+        const mealBlock = document.createElement('section');
+        mealBlock.className = 'food-meal';
+
+        const heading = document.createElement('h3');
+        heading.textContent = mealLabel;
+        mealBlock.appendChild(heading);
+
+        const list = document.createElement('ul');
+
+        for (let day = 0; day < dayCount; day += 1) {
+          const item = section.items[day % section.items.length];
+          const name = replaceCityPlaceholders(item.name, cityName);
+          const address = replaceCityPlaceholders(item.address, cityName);
+          const description = replaceCityPlaceholders(item.description, cityName);
+          const listItem = document.createElement('li');
+          listItem.innerHTML = `
+            <strong>Day ${day + 1}: ${name}</strong>
+            ${address}<br />
+            <em>${description}</em>
+          `;
+          list.appendChild(listItem);
+
+          lines.push(`- Day ${day + 1} ${mealLabel}: ${name} — ${address}. ${description}`);
+        }
+
+        mealBlock.appendChild(list);
+        foodOutput.appendChild(mealBlock);
+        lines.push('');
+      });
+
+      latestFoodText = lines.join('\n');
+
+      if (downloadFoodBtn) {
+        downloadFoodBtn.disabled = false;
+      }
+
+      foodOutput.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    function updateMapWithPlaces(places) {
+      if (!mapFrame) return;
+
+      const uniquePlaces = [];
+      const seen = new Set();
+
+      places.forEach(place => {
+        const key = `${place.location}|${place.address}`;
+        if (!seen.has(key)) {
+          seen.add(key);
+          uniquePlaces.push(place);
+        }
+      });
+
+      if (!uniquePlaces.length) {
+        resetMap();
+        return;
+      }
+
+      const trimmedPlaces = uniquePlaces.slice(0, 10);
+
+      const mapStatusMessage = uniquePlaces.length > trimmedPlaces.length
+        ? 'Showing the first ten recommended spots on Google Maps. Zoom in for more detail.'
+        : 'Visualise your recommended spots on Google Maps. Drag or zoom to explore the neighbourhoods.';
+
+      const formattedAddresses = trimmedPlaces.map(place => {
+        const locationLine = place.location ? `${place.location}, ` : '';
+        return `${locationLine}${place.address}`;
+      });
+
+      const [firstAddress, ...additionalAddresses] = formattedAddresses;
+
+      let mapUrl = '';
+
+      if (additionalAddresses.length) {
+        const destinationParam = additionalAddresses.map(addr => encodeURIComponent(addr)).join('+to:');
+        mapUrl = `https://www.google.com/maps?output=embed&f=d&source=s_d&saddr=${encodeURIComponent(firstAddress)}&daddr=${destinationParam}`;
+      } else {
+        mapUrl = `https://www.google.com/maps?q=${encodeURIComponent(firstAddress)}&t=&z=13&ie=UTF8&iwloc=&output=embed`;
+      }
+
+      mapFrame.src = mapUrl;
+
+      if (mapMessage) {
+        mapMessage.textContent = mapStatusMessage;
+      }
+    }
+
+    function formatDateRange(start, end) {
+      if (!start || !end) return null;
+
+      const startDate = new Date(start);
+      const endDate = new Date(end);
+
+      if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+        return null;
+      }
+
+      const formatter = new Intl.DateTimeFormat(undefined, {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+
+      return `${formatter.format(startDate)} – ${formatter.format(endDate)}`;
+    }
+
+    function titleToProfileId(title) {
+      if (!title) return null;
+      const normalised = title.trim().toLowerCase();
+      const matched = profiles.find(profile => profile.title.toLowerCase() === normalised);
+      return matched ? matched.id : null;
+    }
+
+    function renderPlanner(profileId, city, days, startDate, endDate) {
+      const template = plannerTemplates[profileId];
+      plannerOutput.innerHTML = '';
+
+      if (!template) {
+        plannerOutput.innerHTML = '<p class="empty-state">We couldn’t match that travel style to our planner templates just yet. Try the quiz again for a fresh result.</p>';
+        downloadPlannerBtn.disabled = true;
+        latestPlannerText = '';
+        resetMap('We couldn’t map those spots yet. Try regenerating your planner once you have a matching style.');
+        return;
+      }
+
+      const maxActivitiesPerDay = 3;
+      const cleanCity = city.trim();
+      const itineraryText = [];
+      const dateRange = formatDateRange(startDate, endDate);
+      const mapSpots = [];
+
+      itineraryText.push(`Trip planner for ${cleanCity} — ${profiles.find(p => p.id === profileId)?.title || ''}`);
+      itineraryText.push(`Duration: ${days} day${days > 1 ? 's' : ''}`);
+
+      if (dateRange) {
+        itineraryText.push(`Dates: ${dateRange}`);
+      }
+
+      itineraryText.push('');
+
+      for (let day = 0; day < days; day += 1) {
+        const daySection = document.createElement('section');
+        daySection.className = 'itinerary-day';
+        const dayNumber = day + 1;
+        const dayHeading = document.createElement('h3');
+        dayHeading.textContent = `Day ${dayNumber}`;
+        daySection.appendChild(dayHeading);
+
+        const activityList = document.createElement('ul');
+
+        itineraryText.push(`Day ${dayNumber}`);
+
+        for (let slot = 0; slot < maxActivitiesPerDay; slot += 1) {
+          const templateIndex = (day * maxActivitiesPerDay + slot) % template.length;
+          const activity = template[templateIndex];
+          const listItem = document.createElement('li');
+          const location = replaceCityPlaceholders(activity.location, cleanCity);
+          const address = replaceCityPlaceholders(activity.address, cleanCity);
+          const description = replaceCityPlaceholders(activity.description, cleanCity);
+          listItem.innerHTML = `
+            <strong>${activity.time}: ${activity.title}</strong>
+            ${location}<br />
+            <em>${address}</em><br />
+            ${description}
+          `;
+          activityList.appendChild(listItem);
+
+          itineraryText.push(`- ${activity.time}: ${activity.title} — ${location} (${address}). ${description}`);
+          mapSpots.push({
+            title: activity.title,
+            location,
+            address
+          });
+        }
+
+        daySection.appendChild(activityList);
+        plannerOutput.appendChild(daySection);
+        itineraryText.push('');
+      }
+
+      const fragment = document.createDocumentFragment();
+      const intro = document.createElement('p');
+      intro.className = 'empty-state';
+      intro.textContent = dateRange
+        ? `Here’s a review-backed shortlist of places to book and explore between ${dateRange}:`
+        : 'Here’s a review-backed shortlist of places to book and explore during your stay:';
+      fragment.appendChild(intro);
+
+      if (dateRange) {
+        const datesLine = document.createElement('p');
+        datesLine.className = 'planner-dates';
+        datesLine.textContent = `Trip dates: ${dateRange}`;
+        fragment.appendChild(datesLine);
+      }
+
+      plannerOutput.prepend(fragment);
+
+      latestPlannerText = itineraryText.join('\n');
+      downloadPlannerBtn.disabled = false;
+      updateMapWithPlaces(mapSpots);
+    }
+
+    form.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const data = formDataToObject(new FormData(form));
+      const scores = scoreQuiz(data);
+      buildResults(scores);
+      form.classList.remove('active');
+      resultsSection.classList.add('active');
+      resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    retakeBtn.addEventListener('click', () => {
+      resultsSection.classList.remove('active');
+      form.classList.add('active');
+      showStep(0);
+      form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    });
+
+    restartBtn.addEventListener('click', () => {
+      form.reset();
+      resultsSection.classList.remove('active');
+      form.classList.remove('active');
+      startScreen.classList.add('active');
+      showStep(0);
+      startScreen.scrollIntoView({ behavior: 'smooth', block: 'start' });
+
+      styleInput.value = '';
+      delete styleInput.dataset.profileId;
+      plannerForm.reset();
+      plannerOutput.innerHTML = '<p class="empty-state">Fill in the details above to see a day-by-day plan with can’t-miss spots, review-backed addresses, and optional date guidance.</p>';
+      downloadPlannerBtn.disabled = true;
+      latestPlannerText = '';
+      resetFoodSection();
+      resetMap();
+    });
+
+    if (foodQuestion) {
+      foodQuestion.addEventListener('click', (event) => {
+        const targetButton = event.target.closest('button[data-response]');
+        if (!targetButton) return;
+        handleFoodResponse(targetButton.dataset.response);
+      });
+    }
+
+    if (foodForm) {
+      foodForm.addEventListener('submit', (event) => {
+        event.preventDefault();
+        const formData = new FormData(foodForm);
+        const coverage = formData.get('foodCoverage');
+        const profileId = styleInput.dataset.profileId || titleToProfileId(styleInput.value);
+        renderFoodRecommendations(profileId, coverage);
+      });
+    }
+
+    plannerForm.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const city = destinationInput.value.trim();
+      const dayCount = Number.parseInt(travelDaysInput.value, 10);
+      const startDateValue = tripStartInput.value;
+      const endDateValue = tripEndInput.value;
+
+      if (!city || Number.isNaN(dayCount) || dayCount <= 0) {
+        plannerOutput.innerHTML = '<p class="empty-state">Add a destination and a travel length longer than zero to generate your planner.</p>';
+        downloadPlannerBtn.disabled = true;
+        latestPlannerText = '';
+        resetMap('Add your trip details above to plot the recommendations on Google Maps.');
+        return;
+      }
+
+      if ((startDateValue && !endDateValue) || (!startDateValue && endDateValue)) {
+        plannerOutput.innerHTML = '<p class="empty-state">Add both a start and end date, or clear the fields to skip date guidance.</p>';
+        downloadPlannerBtn.disabled = true;
+        latestPlannerText = '';
+        resetMap('Add a full date range or clear the fields so we can map your recommendations.');
+        return;
+      }
+
+      if (startDateValue && endDateValue) {
+        const startDate = new Date(startDateValue);
+        const endDate = new Date(endDateValue);
+
+        if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime()) || endDate < startDate) {
+          plannerOutput.innerHTML = '<p class="empty-state">Make sure your end date comes after your start date and both are valid calendar selections.</p>';
+          downloadPlannerBtn.disabled = true;
+          latestPlannerText = '';
+          resetMap('Fix the trip dates to see your Google Maps highlights.');
+          return;
+        }
+      }
+
+      if (foodDaysInput) {
+        const existingFoodDays = Number.parseInt(foodDaysInput.value, 10);
+        if (!foodDaysInput.value || Number.isNaN(existingFoodDays) || existingFoodDays <= 0) {
+          foodDaysInput.value = Math.min(Math.max(dayCount, 1), 21);
+        }
+      }
+
+      const profileId = styleInput.dataset.profileId || titleToProfileId(styleInput.value);
+
+      if (!profileId) {
+        plannerOutput.innerHTML = '<p class="empty-state">We couldn’t read your travel style. Paste the result title from the quiz or retake it for a fresh match.</p>';
+        downloadPlannerBtn.disabled = true;
+        latestPlannerText = '';
+        resetMap('Complete the quiz result field so we can tag your recommendations on Google Maps.');
+        return;
+      }
+
+      renderPlanner(profileId, city, Math.min(Math.max(dayCount, 1), 21), startDateValue, endDateValue);
+    });
+
+    downloadPlannerBtn.addEventListener('click', () => {
+      if (!latestPlannerText) return;
+      const tripName = destinationInput.value.trim() || 'your-trip';
+      const safeFileName = tripName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'travel-plan';
+      const blob = new Blob([latestPlannerText], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = `${safeFileName}-planner.txt`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    });
+
+    if (downloadFoodBtn) {
+      downloadFoodBtn.addEventListener('click', () => {
+        if (!latestFoodText) return;
+        const tripName = destinationInput.value.trim() || 'your-trip';
+        const safeFileName = tripName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'food-guide';
+        const blob = new Blob([latestFoodText], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${safeFileName}-food-guide.txt`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      });
+    }
+
     });
 
     function scoreQuiz(data) {
